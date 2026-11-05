@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ygor Gomes | Desenvolvedor Front-End · React, Astro e Automações n8n</title>
+<meta name="description" content="Portfólio interativo de Ygor Gomes, desenvolvedor front-end em São Paulo. Sites, painéis e automações com n8n e IA. Explore o mapa ou abra o modo rápido.">
+<link rel="canonical" href="https://ygor-portfolio.vercel.app/">
+<link rel="alternate" hreflang="pt-BR" href="https://ygor-portfolio.vercel.app/">
+<link rel="alternate" hreflang="en" href="https://ygor-portfolio.vercel.app/?lang=en">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ygor Gomes | Desenvolvedor Front-End · React, Astro e Automações n8n">
+<meta property="og:description" content="Portfólio interativo de Ygor Gomes, desenvolvedor front-end em São Paulo. Sites, painéis e automações com n8n e IA. Explore o mapa ou abra o modo rápido.">
+<meta property="og:url" content="https://ygor-portfolio.vercel.app/">
+<meta property="og:image" content="https://ygor-portfolio.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ygor-portfolio.vercel.app/og.png">
+<meta name="theme-color" content="#2d2a32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Ygor Gomes","jobTitle":"Desenvolvedor Front-End · Automações n8n/IA","url":"https://ygor-portfolio.vercel.app/","sameAs":["https://www.linkedin.com/in/ygor-gs2006/","https://github.com/ygos-96"],"address":{"@type":"PostalAddress","addressLocality":"São Paulo","addressCountry":"BR"}}</script>
+</head>
+<body>
+<a class="skip" href="#shortcuts">Ir para o menu</a>
+
+<canvas id="game" tabindex="0" role="img" aria-label="Mapa interativo do portfólio"></canvas>
+
+<header id="hud" class="hud">
+  <div class="hud__id">
+    <strong id="hud-name">Ygor Gomes</strong>
+    <span id="hud-role">Desenvolvedor Front-End · Automações n8n/IA</span>
+  </div>
+  <nav id="shortcuts" class="hud__nav" aria-label="Atalhos"></nav>
+  <div class="hud__tools">
+    <a id="fast" class="chip" href="/rapido/">Modo rápido</a>
+    <a id="cv" class="chip" href="/Ygor-Gomes-Curriculo.pdf" download>CV</a>
+    <button id="lang" class="chip" type="button" aria-label="Switch to English">EN</button>
+  </div>
+</header>
+
+<button id="prompt" class="prompt" type="button" hidden></button>
+
+<div id="stick" class="stick"><div id="stick-knob" class="stick__knob"></div></div>
+
+<section id="intro" class="intro" aria-labelledby="intro-title">
+  <div class="intro__card">
+    <p class="intro__eyebrow">Portfólio</p>
+    <h1 id="intro-title">Ygor Gomes</h1>
+    <p id="intro-role" class="intro__role">Desenvolvedor Front-End · Automações n8n/IA</p>
+    <p id="intro-hint">Ande pelo bairro e entre nos prédios para conhecer meu trabalho.</p>
+    <button id="start" class="btn btn--primary" type="button">Começar</button>
+    <p id="intro-keys" class="meta">WASD ou setas para andar · E para entrar · Esc para fechar</p>
+    <a id="intro-fast" class="intro__fast" href="/rapido/">Modo rápido →</a>
+  </div>
+</section>
+
+<div id="panel" class="panel" hidden>
+  <div id="panel-box" class="panel__box" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+    <header class="panel__head">
+      <h2 id="panel-title"></h2>
+      <button id="panel-close" class="panel__close" type="button" aria-label="Fechar">✕</button>
+    </header>
+    <div id="panel-body" class="panel__body"></div>
+  </div>
+</div>
+
+<noscript>
+  <div class="noscript">
+    <h1>Ygor Gomes · Desenvolvedor Front-End</h1>
+    <p>Este portfólio é um mapa interativo e precisa de JavaScript. Abra a <a href="/rapido/">versão em texto</a> ou a <a href="/en/rapido/">English version</a>.</p>
+  </div>
+</noscript>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

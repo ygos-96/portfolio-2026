@@ -1,0 +1,16 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfólio interativo de Ygor Gomes: mapa top-down com prédios clicáveis.",
+  "scripts": {
+    "static": "node scripts/build-static.mjs",
+    "dev": "npm run static && vite",
+    "build": "npm run static && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}
