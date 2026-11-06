@@ -3,7 +3,7 @@
 // Unidade do mundo: 1 tile = 1 unidade. x = leste, z = sul (a câmera olha para o norte).
 import * as THREE from 'three'
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
-import { BUILDINGS, H, PLACES, START, T, W, buildWorld } from './world.js'
+import { BUILDINGS, H, PLACES, POND, START, T, W, buildWorld } from './world.js'
 
 const SPEED = 5.4 // unidades por segundo
 const RADIUS = 0.3 // meia largura da caixa de colisão
@@ -340,8 +340,18 @@ class Parts {
     this.m = new THREE.Matrix4()
     this.q = new THREE.Quaternion()
     this.e = new THREE.Euler()
+    this.frame = null
   }
   add(cat, geo, x, y, z, color, { ry = 0, ao = 0, hull = false } = {}) {
+    if (this.frame) {
+      // gira a peça em torno do centro do prédio (os construtores desenham tudo virado para o sul)
+      const { cx, cz, rot } = this.frame
+      const dx = x - cx
+      const dz = z - cz
+      x = cx + dx * Math.cos(rot) + dz * Math.sin(rot)
+      z = cz - dx * Math.sin(rot) + dz * Math.cos(rot)
+      ry += rot
+    }
     geo.computeBoundingBox()
     const { min, max } = geo.boundingBox
     const col = new THREE.Color(color)
@@ -493,50 +503,82 @@ function addLibrary(P, b) {
   return { labelY: 7.6 }
 }
 
+// Estádio oval no estilo do antigo Palestra Itália: bacia de arquibancadas em três níveis (verde, branco e concreto),
+// mais baixa do lado da entrada, cobertura na arquibancada do fundo, refletores altos e portão com letreiro.
+const STAD = { px: 8, pz: 5.4, ring: 1.5, n: 72 } // meio-campo (px, pz), espessura de cada nível, segmentos por nível
+const stadEllipse = (k, off = 0) => ({ a: STAD.px + 1.2 + k * STAD.ring + off, b: STAD.pz + 1.2 + k * STAD.ring + off })
+// altura do nível k no ângulo t (t = π/2 é a frente/sul: mais baixa)
+const stadHeight = (k, t) => (1 + k) * (0.75 + 0.25 * -Math.sin(t))
+
 function addStadium(P, b) {
-  const { w, h: d } = b
-  const cx = b.x + w / 2
-  const fz = b.y + d
+  const cx = b.cx
+  const cz = b.cz
   const green = '#0a7b45'
   const white = '#f4f4ee'
-  P.add('wall', boxGeo(w, 0.35, d, 2), cx, 0.175, b.y + d / 2, '#cdd5cf', { hull: true })
-  // arquibancada norte (fundo, a mais alta)
-  for (let i = 0; i < 3; i++) {
-    const h = 0.35 + (3 - i) * 0.9
-    P.add('wall', boxGeo(w, h, 0.8, 1.6), cx, h / 2, b.y + 0.4 + i * 0.8, i % 2 ? white : green, { ao: 0.3, hull: true })
+  const concrete = '#aeb7b1'
+  const gap = 0.2
+  const tierColor = [green, white, concrete]
+  const N = STAD.n
+  for (let k = 0; k < 3; k++) {
+    const { a, b: bb } = stadEllipse(k)
+    for (let i = 0; i < N; i++) {
+      const t = ((i + 0.5) / N) * Math.PI * 2
+      if (Math.abs(t - Math.PI / 2) < gap) continue // portão
+      const x = a * Math.cos(t)
+      const z = bb * Math.sin(t)
+      let tx = -a * Math.sin(t)
+      let tz = bb * Math.cos(t)
+      const ds = Math.hypot(tx, tz) * ((Math.PI * 2) / N)
+      const len = Math.hypot(tx, tz)
+      tx /= len
+      tz /= len
+      const h = 0.3 + stadHeight(k, t)
+      const ry = Math.atan2(-tz, tx)
+      const col = k === 1 ? (i % 2 ? white : '#d7efe0') : k === 0 ? (i % 6 < 3 ? green : '#0c8a4e') : concrete
+      P.add('wall', boxGeo(ds * 1.14, h, STAD.ring + 0.04, 1.6), cx + x, h / 2, cz + z, col, { ry, ao: 0.3, hull: true })
+      // portinholas escuras na fachada externa
+      if (k === 2 && i % 4 === 0) {
+        const nx = (bb * Math.cos(t)) / Math.hypot(bb * Math.cos(t), a * Math.sin(t))
+        const nz = (a * Math.sin(t)) / Math.hypot(bb * Math.cos(t), a * Math.sin(t))
+        P.add('plain', boxGeo(0.85, 1.5, 0.12, 1), cx + x + nx * (STAD.ring / 2 + 0.03), 0.95, cz + z + nz * (STAD.ring / 2 + 0.03), '#2d3a33', { ry })
+      }
+      // faixa verde na borda de cima do nível de concreto
+      if (k === 2) P.add('wall', boxGeo(ds * 1.14, 0.14, STAD.ring + 0.1, 1.6), cx + x, h + 0.07, cz + z, green, { ry })
+    }
   }
-  // laterais
-  const zLen = d - 3.8
-  const zMid = b.y + 2.4 + zLen / 2
-  for (let i = 0; i < 3; i++) {
-    const h = 0.35 + (3 - i) * 0.7
-    P.add('wall', boxGeo(0.7, h, zLen, 1.6), b.x + 0.35 + i * 0.7, h / 2, zMid, i % 2 ? white : green, { ao: 0.3, hull: true })
-    P.add('wall', boxGeo(0.7, h, zLen, 1.6), b.x + w - 0.35 - i * 0.7, h / 2, zMid, i % 2 ? white : green, { ao: 0.3, hull: true })
+  // cobertura da arquibancada do fundo (norte)
+  const { a: ca, b: cb } = stadEllipse(2, -0.9)
+  for (let i = 0; i < N; i++) {
+    const t = ((i + 0.5) / N) * Math.PI * 2
+    if (!(t > Math.PI + 0.55 && t < Math.PI * 2 - 0.55)) continue
+    const x = ca * Math.cos(t)
+    const z = cb * Math.sin(t)
+    let tx = -ca * Math.sin(t)
+    let tz = cb * Math.cos(t)
+    const len = Math.hypot(tx, tz)
+    const ds = len * ((Math.PI * 2) / N)
+    tx /= len
+    tz /= len
+    const ry = Math.atan2(-tz, tx)
+    P.add('wall', boxGeo(ds * 1.14, 0.22, 3.4, 1.6), cx + x, 5.0, cz + z, white, { ry, hull: true })
+    P.add('wall', boxGeo(ds * 1.14, 0.4, 0.12, 1.6), cx + x + (cb * Math.cos(t) / Math.hypot(cb * Math.cos(t), ca * Math.sin(t))) * 1.7, 4.95, cz + z + (ca * Math.sin(t) / Math.hypot(cb * Math.cos(t), ca * Math.sin(t))) * 1.7, green, { ry })
+    if (i % 6 === 0) P.add('wood', cyl(0.09, 0.09, 4.9, 6), cx + x * 1.07, 2.55, cz + z * 1.07, '#9aa0a6')
   }
-  // arquibancada sul (baixa, com portão no meio)
+  // refletores altos nos quatro cantos
+  for (const [fx, fz] of [[-10.2, -7.6], [10.2, -7.6], [-10.2, 7.8], [10.2, 7.8]]) {
+    P.add('wood', cyl(0.09, 0.14, 8.5, 6), cx + fx, 4.25, cz + fz, '#9aa0a6', { hull: true })
+    P.add('plain', boxGeo(1.5, 0.9, 0.25, 1), cx + fx, 8.7, cz + fz, '#fffbe0')
+  }
+  // portão de entrada com arco e bandeiras
+  const gz = cz + 10.2
   for (const s of [-1, 1]) {
-    P.add('wall', boxGeo((w - 3.2) / 2, 1.2, 1.2, 1.6), cx + (s * (3.2 + (w - 3.2) / 2)) / 2 + s * 0.0, 0.6, fz - 0.6, green, { ao: 0.3, hull: true })
-    P.add('wall', boxGeo((w - 3.2) / 2, 0.15, 1.25, 1.6), cx + (s * (3.2 + (w - 3.2) / 2)) / 2, 1.27, fz - 0.6, white)
+    P.add('wall', boxGeo(0.8, 4.2, 1.2, 1), cx + s * 3.1, 2.1, gz, white, { hull: true })
+    P.add('wood', cyl(0.04, 0.04, 2.6, 6), cx + s * 3.1, 4.2 + 1.3, gz, '#9aa0a6')
+    P.add('plain', boxGeo(1.2, 0.7, 0.05, 1), cx + s * 3.1 + s * 0.62, 6.5, gz, s > 0 ? white : green)
   }
-  // cobertura da arquibancada norte
-  P.add('wall', boxGeo(w, 0.25, 3.2, 1.6), cx, 4.3, b.y + 1.6, white, { hull: true })
-  P.add('wall', boxGeo(w, 0.3, 0.15, 1.6), cx, 4.3, b.y + 3.2, green)
-  for (const s of [-1, 1]) P.add('wood', cyl(0.08, 0.08, 4.2, 6), cx + s * (w / 2 - 0.4), 2.2, b.y + 3.0, '#9aa0a6')
-  // refletores nos quatro cantos
-  for (const [fx, fzz] of [[b.x + 0.5, b.y + 0.5], [b.x + w - 0.5, b.y + 0.5], [b.x + 0.5, fz - 0.5], [b.x + w - 0.5, fz - 0.5]]) {
-    P.add('wood', cyl(0.07, 0.1, 6.5, 6), fx, 3.25, fzz, '#9aa0a6', { hull: true })
-    P.add('plain', boxGeo(1.2, 0.7, 0.25, 1), fx, 6.7, fzz, '#fffbe0')
-  }
-  // portão
-  for (const s of [-1, 1]) P.add('wall', boxGeo(0.5, 3.2, 0.8, 1), cx + s * 1.85, 1.6, fz - 0.4, white, { hull: true })
-  P.add('wall', boxGeo(4.4, 0.8, 0.9, 1), cx, 3.6, fz - 0.4, green, { hull: true })
-  for (const s of [-1, 1]) {
-    P.add('wood', cyl(0.04, 0.04, 2.2, 6), cx + s * 2.0, 4.0 + 1.1, fz - 0.4, '#9aa0a6')
-    P.add('plain', boxGeo(1.0, 0.6, 0.05, 1), cx + s * 2.0 + s * 0.5, 6.0, fz - 0.4, s > 0 ? white : green)
-  }
-  // placar
-  P.add('wood', boxGeo(3, 1.2, 0.3, 1), cx, 5.3, b.y + 0.6, '#1c1c1c', { hull: true })
-  return { labelY: 8.0 }
+  P.add('wall', boxGeo(7.0, 1.1, 1.3, 1), cx, 4.2 + 0.55, gz, green, { hull: true })
+  P.add('wall', boxGeo(6.6, 0.18, 1.4, 1), cx, 5.4, gz, white)
+  return { labelY: 9.5 }
 }
 
 function addStage(P, b) {
@@ -684,42 +726,69 @@ function makeMember(shirt, kind) {
 function buildExtras(scene, reduceMotion) {
   const sceneObjs = { members: [], notes: [] }
   const byKey = (k) => PLACES.find((p) => p.key === k)
-  const sign = (text, w, h, bg, fg, x, y, z) => {
+  const sign = (text, w, h, bg, fg, x, y, z, ry = 0) => {
     const s = textSign(text, w, h, bg, fg)
     s.position.set(x, y, z)
+    if (ry) s.rotation.y = ry
     scene.add(s)
   }
+
+  // estádio Palestra Itália
   const st = byKey('estadio')
-  const stx = st.x + st.w / 2
-  const stf = st.y + st.h
-  sign('PALMEIRAS', 4.2, 0.7, '#0a7b45', '#ffffff', stx, 3.6, stf + 0.09)
-  sign('1914', 2.6, 0.9, '#111111', '#7cfc7c', stx, 5.3, st.y + 0.77)
-  const pit = pitchMesh(st.w - 4.2, st.h - 3.6)
-  pit.position.set(stx, 0.37, st.y + 2.4 + (st.h - 3.6) / 2)
+  const gz = st.cz + 10.2
+  sign('PALMEIRAS', 5.2, 0.8, '#0a7b45', '#ffffff', st.cx, 4.75, gz + 0.66)
+  sign('1914', 2.8, 0.9, '#111111', '#7cfc7c', st.cx, 5.8, gz + 0.66)
+  const pit = pitchMesh(16, 10.8)
+  pit.position.set(st.cx, 0.35, st.cz)
   scene.add(pit)
 
+  // cinema girado 75°
   const ci = byKey('cinema')
-  sign('CINEMA', 6.6, 1.4, '#1c1526', '#ffd166', ci.x + ci.w / 2, 0.3 + 3.8 + 0.3 + 1.0, ci.y + ci.h + 0.07)
+  const ciSignDist = 0.3 + 3.8 + 0.3 + 1.0
+  const ciSignPos = new THREE.Vector3(ci.cx, ciSignDist, ci.cz + ci.h / 2 + 0.07)
+  const dxCi = ciSignPos.x - ci.cx
+  const dzCi = ciSignPos.z - ci.cz
+  const rotCiX = ci.cx + dxCi * Math.cos(ci.rot) + dzCi * Math.sin(ci.rot)
+  const rotCiZ = ci.cz - dxCi * Math.sin(ci.rot) + dzCi * Math.cos(ci.rot)
+  sign('CINEMA', 6.6, 1.4, '#1c1526', '#ffd166', rotCiX, ciSignDist, rotCiZ, ci.rot)
 
+  // biblioteca girada
   const li = byKey('biblioteca')
-  sign('BIBLIOTECA', 4.8, 0.5, '#2f5d3a', '#f6e3c4', li.x + li.w / 2, 3.85, li.y + li.h + 2.12)
+  const liDx = 0
+  const liDz = li.h / 2 + 2.12
+  const rotLiX = li.cx + liDx * Math.cos(li.rot) + liDz * Math.sin(li.rot)
+  const rotLiZ = li.cz - liDx * Math.sin(li.rot) + liDz * Math.cos(li.rot)
+  sign('BIBLIOTECA', 4.8, 0.5, '#2f5d3a', '#f6e3c4', rotLiX, 3.85, rotLiZ, li.rot)
 
+  // palco girado
   const pa = byKey('palco')
-  const pcx = pa.x + pa.w / 2
-  sign('AO VIVO', 3.6, 0.7, '#1f1b3a', '#ff6bd6', pcx, 1.3 + 2.6, pa.y + 0.32)
   const top = 1.3
+  const paRotPt = (x, z) => {
+    const dx = x - pa.cx
+    const dz = z - pa.cz
+    return {
+      x: pa.cx + dx * Math.cos(pa.rot) + dz * Math.sin(pa.rot),
+      z: pa.cz - dx * Math.sin(pa.rot) + dz * Math.cos(pa.rot)
+    }
+  }
+  const paSignP = paRotPt(pa.cx, pa.cz - pa.h / 2 + 0.32)
+  sign('AO VIVO', 3.6, 0.7, '#1f1b3a', '#ff6bd6', paSignP.x, top + 2.6, paSignP.z, pa.rot)
+
   const crew = [
-    ['vocal', '#ff6b6b', pcx, pa.y + 2.5],
-    ['guitar', '#4cc9f0', pcx - 1.7, pa.y + 2.0],
-    ['bass', '#ffd166', pcx + 1.7, pa.y + 2.0],
-    ['drums', '#80ed99', pcx, pa.y + 0.85],
+    ['vocal', '#ff6b6b', pa.cx, pa.cz + 0.5],
+    ['guitar', '#4cc9f0', pa.cx - 1.7, pa.cz],
+    ['bass', '#ffd166', pa.cx + 1.7, pa.cz],
+    ['drums', '#80ed99', pa.cx, pa.cz - 1.2],
   ]
   crew.forEach(([kind, shirt, x, z], i) => {
+    const pt = paRotPt(x, z)
     const m = makeMember(shirt, kind)
-    m.position.set(x, top, z)
+    m.position.set(pt.x, top, pt.z)
+    m.rotation.y = pa.rot
     scene.add(m)
     sceneObjs.members.push({ m, phase: i * 1.3 })
   })
+
   // notas musicais subindo do palco
   const noteCols = ['#ff4d6d', '#4cc9f0', '#ffd166', '#80ed99', '#d65bff', '#ffffff']
   for (let i = 0; i < 6; i++) {
@@ -729,8 +798,9 @@ function buildExtras(scene, reduceMotion) {
     scene.add(n)
     sceneObjs.notes.push({ n, i })
   }
-  const nx = pcx
-  const nz = pa.y + 1.8
+  const paCenter = paRotPt(pa.cx, pa.cz)
+  const nx = paCenter.x
+  const nz = paCenter.z
   return {
     update(time) {
       for (const { m, phase } of sceneObjs.members) {
@@ -767,8 +837,18 @@ function buildExtras(scene, reduceMotion) {
 function buildTown() {
   const P = new Parts()
   const info = new Map()
-  for (const b of BUILDINGS) info.set(b.key, addBuilding(P, b))
-  for (const b of PLACES.filter((p) => !BUILDINGS.includes(p))) info.set(b.key, addLandmark(P, b))
+  const rotPt = (b, v) => {
+    const dx = v.x - b.cx
+    const dz = v.z - b.cz
+    return new THREE.Vector3(b.cx + dx * Math.cos(b.rot) + dz * Math.sin(b.rot), v.y, b.cz - dx * Math.sin(b.rot) + dz * Math.cos(b.rot))
+  }
+  for (const b of PLACES) {
+    P.frame = { cx: b.cx, cz: b.cz, rot: b.rot }
+    const r = BUILDINGS.includes(b) ? addBuilding(P, b) : addLandmark(P, b)
+    if (r.chimney) r.chimney = rotPt(b, r.chimney)
+    info.set(b.key, r)
+  }
+  P.frame = null
   const group = new THREE.Group()
   // (criados direto: toon() faz cache por JSON e não serve para texturas)
   const mk = (o) => new THREE.MeshToonMaterial({ gradientMap: ramp, vertexColors: true, ...o })
@@ -975,8 +1055,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   const rip = canvasTexRipple()
   const pond = new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshBasicMaterial({ map: rip, color: '#c9efff', transparent: true, opacity: 0.55, depthWrite: false }))
   pond.rotation.x = -Math.PI / 2
-  pond.scale.set(4.6, 1.9, 1)
-  pond.position.set(7, 0.04, 29.4)
+  pond.scale.set(POND.rx, POND.ry, 1)
+  pond.position.set(POND.cx, 0.04, POND.cy)
   scene.add(pond)
 
   // prédios fundidos + fumaça
@@ -1223,10 +1303,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
 
     let found = null
     for (const b of PLACES) {
-      const z = b.zone
-      const px = player.x * T
-      const py = player.z * T
-      if (px >= z.x && px <= z.x + z.w && py >= z.y && py <= z.y + z.h) found = b
+      const d = Math.hypot(player.x - b.spot.x, player.z - b.spot.z)
+      if (d <= 2.8) found = b
     }
     if (found?.key !== near?.key) {
       near = found
@@ -1281,7 +1359,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
 
     if (near) {
       glow.visible = true
-      glow.position.set(near.doorX + 1, 0.05, near.y + near.h + 0.75)
+      glow.position.set(near.glow.x, 0.05, near.glow.z)
+      glow.rotation.z = -near.rot
       glow.material.opacity = reduceMotion ? 0.4 : 0.35 + Math.sin(time * 5) * 0.18
     } else glow.visible = false
 
@@ -1316,7 +1395,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
         L.text.textContent = txt
         L.last = txt
       }
-      v3.set(b.doorX + 1, town.info.get(b.key).labelY, b.y + b.h + 0.4).project(camera)
+      v3.set(b.labelPos.x, town.info.get(b.key).labelY, b.labelPos.z).project(camera)
       const visible = v3.z < 1 && v3.z > -1 && Math.abs(v3.x) < 1.15 && Math.abs(v3.y) < 1.15
       const tf = visible ? `translate(${Math.round(((v3.x + 1) / 2) * w)}px, ${Math.round(((1 - v3.y) / 2) * h)}px) translate(-50%, -50%)` : ''
       if (tf !== L.tf) {
@@ -1373,11 +1452,11 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     teleportTo(key) {
       const b = PLACES.find((i) => i.key === key)
       if (!b) return
-      player.x = b.doorX + 1
-      player.z = b.y + b.h + 0.8
+      player.x = b.spot.x
+      player.z = b.spot.z
       player.vx = 0
       player.vz = 0
-      player.rot = 0
+      player.rot = b.rot + Math.PI // virado de frente para a porta
     },
     getNear: () => near,
     destroy() {
