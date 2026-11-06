@@ -1,4 +1,5 @@
 // Motor do jogo: loop, input (teclado + joystick), colisão, câmera e desenho.
+import { createFx } from './fx.js'
 import { BUILDINGS, H, START, T, W, bakeGround, buildWorld, drawPlayer, makeBuilding, makeLamp, makeTree } from './world.js'
 
 const SPEED = 62 // px lógicos por segundo
@@ -6,7 +7,13 @@ const FOOT_W = 5 // meia largura da caixa de colisão
 const FOOT_H = 5
 
 export function createGame(canvas, { onNear, onEnter, getLabels }) {
-  const ctx = canvas.getContext('2d')
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+  // com ?fx=off o efeito HQ é desligado (comparação / depuração)
+  const fxOff = new URLSearchParams(location.search).get('fx') === 'off'
+  const fx = fxOff ? null : createFx(canvas, { animateGrain: !reduceMotion })
+  // com fx, o jogo desenha numa tela fora do DOM e o shader escreve no canvas visível
+  const scene = fx ? document.createElement('canvas') : canvas
+  const ctx = scene.getContext('2d')
   const world = buildWorld()
   const ground = bakeGround(world)
   const buildingSprites = new Map(BUILDINGS.map((b) => [b.key, makeBuilding(b)]))
@@ -22,7 +29,6 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   let last = 0
   let raf = 0
   let time = 0
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // ---------- tamanho ----------
   function resize() {
@@ -34,6 +40,10 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     const S = Math.max(1, Math.round(css * dpr))
     canvas.width = Math.round(cw * dpr)
     canvas.height = Math.round(ch * dpr)
+    if (scene !== canvas) {
+      scene.width = canvas.width
+      scene.height = canvas.height
+    }
     view = { w: canvas.width / S, h: canvas.height / S, S, css, dpr, cw, ch }
   }
 
@@ -122,7 +132,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       else player.dir = vy < 0 ? 'up' : 'down'
       player.t += dt
       const seq = [0, 1, 0, 2]
-      player.frame = seq[Math.floor(player.t / 0.14) % 4]
+      player.frame = seq[Math.floor(player.t * 6) % 4] // 6 poses/s = animação "de dois em dois" a 12 fps
     } else {
       player.frame = 0
       player.t = 0
@@ -145,7 +155,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     const { S, w, h } = view
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.fillStyle = '#6aa354'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, scene.width, scene.height)
     ctx.setTransform(S, 0, 0, S, 0, 0)
     ctx.imageSmoothingEnabled = false
 
@@ -170,7 +180,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
 
     // brilho de destaque na porta próxima
     if (near && !reduceMotion) {
-      const a = 0.25 + 0.2 * Math.sin(time * 5)
+      const a = 0.25 + 0.2 * Math.sin(Math.floor(time * 12) / 12 * 5) // "de dois em dois"
       ctx.fillStyle = `rgba(255,236,160,${a})`
       ctx.fillRect(near.doorX * T, (near.y + near.h) * T, 2 * T, T)
     }
@@ -203,6 +213,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       ctx.fillText(text, sx, sy + 1)
       labelBoxes.push({ key: b.key, x: bx, y: by, w: bw, h: bh })
     }
+
+    fx?.render(scene, view.S, time)
   }
 
   function roundRect(c, x, y, w, h, r) {
