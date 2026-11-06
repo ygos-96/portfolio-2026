@@ -20,12 +20,15 @@
 <meta name="twitter:image" content="https://ygor-portfolio.vercel.app/og.png">
 <meta name="theme-color" content="#2d2a32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Ygor Gomes","jobTitle":"Desenvolvedor Front-End · Automações n8n/IA","url":"https://ygor-portfolio.vercel.app/","sameAs":["https://www.linkedin.com/in/ygor-gs2006/","https://github.com/ygos-96"],"address":{"@type":"PostalAddress","addressLocality":"São Paulo","addressCountry":"BR"}}</script>
 </head>
 <body>
-<a class="skip" href="#shortcuts">Ir para o menu</a>
+<a id="skip" class="skip" href="#btn-places-toggle">Ir para o menu de lugares</a>
 
-<canvas id="game" tabindex="0" role="img" aria-label="Mapa interativo do portfólio"></canvas>
+<main id="main">
+<canvas id="game" tabindex="0" role="application" aria-label="Mapa interativo do portfólio"></canvas>
+</main>
 
 <div id="simpsons-clouds" class="simpsons-clouds" aria-hidden="true">
   <div class="simpsons-mist"></div>
@@ -38,39 +41,47 @@
     <strong id="hud-name">Ygor Gomes</strong>
     <span id="hud-role">Desenvolvedor Front-End · Automações n8n/IA</span>
   </div>
-  <nav id="shortcuts" class="hud__nav" aria-label="Atalhos"></nav>
-  <div class="hud__tools">
-    <button id="btn-weather" class="chip" type="button" title="Clima & Horário">☀️ Dia</button>
-    <button id="btn-audio" class="chip" type="button" title="Efeitos Sonoros">🔊 Som</button>
-    <div id="coffee-counter" class="chip chip--counter" title="Colete todos os 8 cafés pelo mapa!">☕ 0/8</div>
-    <a id="fast" class="chip" href="/rapido/">Modo rápido</a>
-    <a id="cv" class="chip" href="/Ygor-Gomes-Curriculo.pdf" download>CV</a>
-    <button id="lang" class="chip" type="button" aria-label="Switch to English">EN</button>
+  <div id="hud-tools" class="hud__tools" role="toolbar" aria-label="Ferramentas">
+    <button id="btn-weather" class="chip chip--icon" type="button" title="Clima e horário" aria-label="Clima e horário"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
+    <button id="btn-audio" class="chip chip--icon" type="button" aria-pressed="false" title="Som ativado" aria-label="Som ativado"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
+    <output id="coffee-counter" class="chip chip--counter" title="Colete todos os 8 cafés pelo mapa!" aria-label="Cafés coletados"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i> <span>0/8</span></output>
+    <a id="fast" class="chip chip--icon" href="/rapido/" title="Modo rápido" aria-label="Modo rápido"><i class="fa-solid fa-bolt" aria-hidden="true"></i></a>
+    <a id="cv" class="chip chip--icon" href="/Ygor-Gomes-Curriculo.pdf" download title="Baixar currículo (PDF)" aria-label="Baixar currículo (PDF)"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i></a>
+    <button id="lang" class="chip chip--icon" type="button" title="Switch to English" aria-label="Switch to English" lang="en"><i class="fa-solid fa-language" aria-hidden="true"></i></button>
   </div>
 </header>
 
-<div id="action-controls" class="action-controls">
-  <button id="btn-jump" class="action-btn action-btn--jump" type="button" aria-label="Pular">⤴ Pular</button>
-  <button id="btn-emote" class="action-btn action-btn--emote" type="button" aria-label="Acenar">👋 Acenar</button>
+<nav id="places-menu" class="places-menu" aria-label="Lugares do mapa">
+  <button id="btn-places-toggle" class="places-toggle" type="button" aria-expanded="false" aria-controls="shortcuts" title="Lugares do mapa" aria-label="Lugares do mapa">
+    <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+  </button>
+  <ul id="shortcuts" class="places-drawer" hidden></ul>
+</nav>
+
+<div id="action-controls" class="action-controls" role="group" aria-label="Ações do personagem">
+  <button id="btn-jump" class="action-btn action-btn--jump" type="button" title="Pular (Espaço)" aria-label="Pular (Espaço)"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+  <button id="btn-emote" class="action-btn action-btn--emote" type="button" title="Acenar (1)" aria-label="Acenar (1)"><i class="fa-solid fa-hand" aria-hidden="true"></i></button>
 </div>
 
-<div id="toast-achievement" class="toast-achievement" hidden>
-  <div class="toast-achievement__icon">🏆</div>
+<aside id="toast-achievement" class="toast-achievement" role="status" aria-live="polite" hidden>
+  <span class="toast-achievement__icon" aria-hidden="true">🏆</span>
   <div class="toast-achievement__content">
-    <strong>CONQUISTA DESBLOQUEADA: DEV SUPREMO!</strong>
-    <span>Você coletou todos os 8 cafés! Agora o Dev opera a 200% de energia!</span>
+    <strong id="toast-title">Conquista desbloqueada: Dev Supremo!</strong>
+    <span id="toast-text">Você coletou todos os 8 cafés! Agora o Dev opera a 200% de energia!</span>
   </div>
-</div>
+</aside>
 
-<button id="prompt" class="prompt" type="button" hidden></button>
+<button id="prompt" class="prompt" type="button" aria-live="polite" hidden></button>
 
-<div id="stick" class="stick"><div id="stick-knob" class="stick__knob"></div></div>
+<div id="stick" class="stick" aria-hidden="true"><div id="stick-knob" class="stick__knob"></div></div>
 
 <section id="intro" class="intro" aria-labelledby="intro-title">
   <div class="intro__card">
-    <p class="intro__eyebrow">Portfólio</p>
-    <h1 id="intro-title">Ygor Gomes</h1>
-    <p id="intro-role" class="intro__role">Desenvolvedor Front-End · Automações n8n/IA</p>
+    <header>
+      <p id="intro-eyebrow" class="intro__eyebrow">Portfólio</p>
+      <h1 id="intro-title">Ygor Gomes</h1>
+      <p id="intro-role" class="intro__role">Desenvolvedor Front-End · Automações n8n/IA</p>
+    </header>
     <p id="intro-hint">Ande pelo bairro, entre nos prédios para ver meu trabalho e explore o lado leste para conhecer meus gostos.</p>
     <button id="start" class="btn btn--primary" type="button">Começar</button>
     <p id="intro-keys" class="meta">WASD ou setas para andar · Enter para entrar · Esc para fechar</p>
@@ -80,26 +91,32 @@
 
 <div id="panel" class="panel" hidden>
   <div id="panel-box" class="panel__box" role="dialog" aria-modal="true" aria-labelledby="panel-title">
-    <header class="panel__head">
-      <div class="panel__head-info">
-        <span class="panel__badge">🎒 INVENTÁRIO DO DEV · CODEX</span>
-        <div class="panel__title-wrap">
-          <span id="panel-icon" class="panel__icon" aria-hidden="true">📜</span>
+    <aside class="panel__side">
+      <div class="panel__who">
+        <strong id="panel-who">Ygor Gomes</strong>
+        <span id="panel-who-role">Front-End · n8n/IA</span>
+      </div>
+      <div id="panel-tabs" class="panel__tabs" role="tablist" aria-orientation="vertical" aria-label="Seções do portfólio"></div>
+      <figure class="panel__map">
+        <svg id="panel-map" viewBox="0 0 112 66" role="img" aria-label="Mini-mapa"></svg>
+        <figcaption id="panel-map-caption">Você está aqui</figcaption>
+      </figure>
+    </aside>
+    <div class="panel__main">
+      <header class="panel__head">
+        <span id="panel-icon" class="panel__icon" aria-hidden="true"></span>
+        <div class="panel__head-info">
+          <p id="panel-badge" class="panel__badge"><span id="panel-step">1 / 9</span> · <span id="panel-building">Casa</span></p>
           <h2 id="panel-title"></h2>
         </div>
-      </div>
-      <nav id="panel-tabs" class="panel__tabs" aria-label="Abas do inventário"></nav>
-      <button id="panel-close" class="panel__close" type="button" aria-label="Fechar">✕ <span class="panel__close-key">ESC</span></button>
-    </header>
-    <div id="panel-body" class="panel__body"></div>
-    <footer class="panel__foot">
-      <div class="panel__foot-stats">
-        <span class="panel__stat">🎮 LVL <strong>26</strong> FRONT-END</span>
-        <span class="panel__stat">⚡ STACK <strong>REACT · ASTRO · N8N</strong></span>
-        <span class="panel__stat panel__stat--live"><span class="panel__dot-live"></span> DISPONÍVEL</span>
-      </div>
-      <div class="panel__foot-tip">Navegue pelas abas ou aperte <kbd>ESC</kbd> para fechar</div>
-    </footer>
+        <button id="panel-close" class="panel__close" type="button" aria-label="Fechar">✕ <kbd class="panel__close-key">Esc</kbd></button>
+      </header>
+      <div id="panel-body" class="panel__body" role="tabpanel" tabindex="-1"></div>
+      <footer class="panel__foot">
+        <p id="panel-tip" class="panel__foot-tip">Use <kbd>↑</kbd> <kbd>↓</kbd> para trocar de seção · <kbd>Esc</kbd> volta ao mapa</p>
+        <p class="panel__stat panel__stat--live"><span class="panel__dot-live" aria-hidden="true"></span> <span id="panel-available">Disponível</span></p>
+      </footer>
+    </div>
   </div>
 </div>
 

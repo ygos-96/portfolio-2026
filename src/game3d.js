@@ -9,7 +9,17 @@ import { WEATHER_PRESETS } from './weather.js'
 
 const SPEED = 6.6 // unidades por segundo (mais ágil)
 const RADIUS = 0.3 // meia largura da caixa de colisão
-const ICONS = { sobre: '🏠', projetos: '⚙️', formacao: '📚', skills: '🛠️', contato: '✉️', estadio: '⚽', palco: '🎸', cinema: '🎬', biblioteca: '📖' }
+const ICONS = {
+  sobre: '<i class="fa-solid fa-house"></i>',
+  projetos: '<i class="fa-solid fa-gears"></i>',
+  formacao: '<i class="fa-solid fa-graduation-cap"></i>',
+  skills: '<i class="fa-solid fa-screwdriver-wrench"></i>',
+  contato: '<i class="fa-solid fa-envelope"></i>',
+  estadio: '<i class="fa-solid fa-futbol"></i>',
+  palco: '<i class="fa-solid fa-guitar"></i>',
+  cinema: '<i class="fa-solid fa-clapperboard"></i>',
+  biblioteca: '<i class="fa-solid fa-book-open"></i>',
+}
 const INK = '#2b1d3a' // cor do contorno
 
 const isMobile = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600
@@ -376,7 +386,7 @@ class Parts {
   }
 }
 
-function addBuilding(P, b) {
+function addHouse(P, b) {
   const w = b.w
   const d = b.h
   const wallH = b.key === 'projetos' ? 3.7 : 3.1
@@ -441,6 +451,238 @@ function addBuilding(P, b) {
 // ---------- locais de lazer: estádio, palco, cinema e biblioteca ----------
 const cyl = (rt, rb, h, seg = 10) => new THREE.CylinderGeometry(rt, rb, h, seg)
 const ball = (r) => new THREE.SphereGeometry(r, 8, 6)
+
+// ---------- prédios de trabalho temáticos ----------
+const slab = (P, b) => P.add('wall', boxGeo(b.w + 0.3, 0.3, b.h + 0.3, 2), b.x + b.w / 2, 0.15, b.y + b.h / 2, '#cdbf9f', { hull: true })
+
+// engrenagem na parede (eixo em z)
+function addGear(P, x, y, z, r, color, teeth = 10) {
+  P.add('plain', cyl(r, r, 0.22, 16).rotateX(Math.PI / 2), x, y, z, color)
+  for (let i = 0; i < teeth; i++) {
+    const a = (i / teeth) * Math.PI * 2
+    const g = boxGeo(r * 0.38, r * 0.34, 0.22, 1)
+    g.rotateZ(a)
+    g.translate(Math.cos(a) * r * 1.05, Math.sin(a) * r * 1.05, 0)
+    P.add('plain', g, x, y, z, color)
+  }
+  P.add('plain', cyl(r * 0.35, r * 0.35, 0.26, 10).rotateX(Math.PI / 2), x, y, z, '#3b2a1a')
+}
+
+// PROJETOS: oficina com telhado de fábrica, portão de garagem, engrenagens, caixotes e chaminé de metal
+function addWorkshop(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.4
+  slab(P, b)
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, '#e9d5ae', { ao: 0.42, hull: true })
+  P.add('wall', boxGeo(w + 0.08, 0.9, d + 0.08, 1.4), cx, 0.75, cz, '#8a6a4a', { ao: 0.2 })
+  P.add('wood', boxGeo(w + 0.6, 0.25, d + 0.6, 1.2), cx, 0.3 + H + 0.12, cz, '#4a4f58', { hull: true })
+  const rw = (w + 0.6) / 3
+  for (let i = 0; i < 3; i++) P.add('roof', roofGeo(rw, d + 0.6, 1.5, 2.4), cx - (w + 0.6) / 2 + rw * (i + 0.5), 0.3 + H + 0.25, cz, i % 2 ? '#6b7683' : '#7d8896', { ao: 0.25, hull: true })
+  // portão de garagem
+  P.add('wood', boxGeo(4.6, 3.0, 0.22, 1), cx, 1.8, fz + 0.04, '#5a3f28')
+  P.add('plain', boxGeo(4.1, 2.7, 0.16, 1), cx, 1.65, fz + 0.12, '#c9ced6')
+  for (let i = 0; i < 5; i++) P.add('plain', boxGeo(4.1, 0.06, 0.18, 1), cx, 0.65 + i * 0.5, fz + 0.14, '#8d939c')
+  P.add('plain', boxGeo(0.35, 0.12, 0.2, 1), cx, 1.0, fz + 0.2, '#e08a2e')
+  // engrenagens na fachada
+  addGear(P, cx - 3.6, 2.35, fz + 0.12, 0.8, '#e08a2e')
+  addGear(P, cx + 3.55, 1.9, fz + 0.12, 0.55, '#5b8def', 8)
+  addGear(P, cx + 3.1, 2.95, fz + 0.12, 0.32, '#f4c95d', 6)
+  for (const s of [-1, 1]) {
+    P.add('wood', boxGeo(0.14, 1.3, 1.6, 1), cx + s * (w / 2 + 0.04), 2.1, cz, '#ffffff')
+    P.add('glass', boxGeo(0.18, 1.0, 1.3, 1), cx + s * (w / 2 + 0.05), 2.1, cz, '#9fdcff')
+  }
+  // placa do letreiro (texto vem de buildExtras)
+  for (const s of [-1, 1]) P.add('wood', boxGeo(0.22, 1.0, 0.22, 1), cx + s * 1.9, 0.3 + H + 0.6, fz + 0.3, '#4a4f58')
+  P.add('wood', boxGeo(4.6, 1.0, 0.2, 1), cx, 0.3 + H + 1.2, fz + 0.3, '#2d2a32', { hull: true })
+  // caixotes, barril
+  P.add('wood', boxGeo(0.95, 0.95, 0.95, 1), cx + w / 2 + 1.1, 0.8, fz - 0.6, '#c99a5b', { hull: true })
+  P.add('wood', boxGeo(0.8, 0.8, 0.8, 1), cx + w / 2 + 1.1, 1.65, fz - 0.6, '#d9ac6c')
+  P.add('wood', boxGeo(0.8, 0.8, 0.8, 1), cx + w / 2 + 0.9, 0.7, fz + 0.5, '#b88748')
+  P.add('plain', cyl(0.4, 0.4, 0.9, 10), cx - w / 2 - 0.9, 0.75, fz - 0.5, '#e08a2e', { hull: true })
+  P.add('plain', cyl(0.42, 0.42, 0.07, 10), cx - w / 2 - 0.9, 0.55, fz - 0.5, '#3b2a1a')
+  P.add('plain', cyl(0.42, 0.42, 0.07, 10), cx - w / 2 - 0.9, 0.95, fz - 0.5, '#3b2a1a')
+  // chaminé de metal
+  const chx = cx + w / 2 - 1.2
+  const chz = cz - d / 2 + 1.2
+  P.add('plain', cyl(0.3, 0.34, 3.2, 10), chx, 0.3 + H + 1.6, chz, '#6b7683', { hull: true })
+  P.add('plain', cyl(0.38, 0.38, 0.18, 10), chx, 0.3 + H + 3.2, chz, '#3b2a1a')
+  return { chimney: new THREE.Vector3(chx, 0.3 + H + 3.5, chz), labelY: 6.6 }
+}
+
+// FORMAÇÃO: escolinha com torre de relógio, bandeira, escadaria e livros
+function addSchool(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.2
+  const TH = H + 2.2
+  slab(P, b)
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, '#d98a6b', { ao: 0.4, hull: true })
+  P.add('wall', boxGeo(w + 0.06, 0.5, d + 0.06, 1.4), cx, 0.55, cz, '#b5654a', { ao: 0.2 })
+  P.add('wood', boxGeo(w + 0.7, 0.25, d + 0.7, 1.2), cx, 0.3 + H + 0.12, cz, '#2f4f8a', { hull: true })
+  P.add('roof', roofGeo(w + 0.8, d + 0.8, 1.5, 2.8), cx, 0.3 + H + 0.25, cz, '#4f7fcf', { ao: 0.28, hull: true })
+  // torre central
+  const tz = fz - 0.9
+  P.add('wall', boxGeo(3.2, TH, 2.6, 2.4), cx, 0.3 + TH / 2, tz, '#f3ead7', { ao: 0.4, hull: true })
+  P.add('wood', boxGeo(3.7, 0.25, 3.1, 1.2), cx, 0.3 + TH + 0.12, tz, '#2f4f8a', { hull: true })
+  P.add('roof', roofGeo(3.8, 3.2, 2.2, 2.4), cx, 0.3 + TH + 0.25, tz, '#3a5fa3', { ao: 0.25, hull: true })
+  // bandeira
+  const topY = 0.3 + TH + 0.25 + 2.2
+  P.add('wood', cyl(0.05, 0.05, 1.5, 6), cx, topY + 0.65, tz, '#d8d8d8')
+  P.add('plain', boxGeo(0.9, 0.55, 0.05, 1), cx + 0.5, topY + 1.15, tz, '#3fa34d')
+  P.add('plain', boxGeo(0.4, 0.3, 0.06, 1), cx + 0.5, topY + 1.15, tz, '#f4c95d')
+  // relógio
+  const face = tz + 1.3 + 0.07
+  P.add('wood', cyl(0.72, 0.72, 0.1, 18).rotateX(Math.PI / 2), cx, 0.3 + H + 1.5, face, '#5a4632')
+  P.add('plain', cyl(0.6, 0.6, 0.14, 18).rotateX(Math.PI / 2), cx, 0.3 + H + 1.5, face + 0.03, '#fffaf0')
+  P.add('plain', boxGeo(0.06, 0.42, 0.06, 1), cx, 0.3 + H + 1.68, face + 0.1, '#2d2a32')
+  P.add('plain', boxGeo(0.3, 0.06, 0.06, 1), cx + 0.13, 0.3 + H + 1.5, face + 0.1, '#2d2a32')
+  // porta dupla
+  P.add('wood', boxGeo(2.4, 2.7, 0.2, 1), cx, 1.65, fz + 0.4, '#2f4f8a')
+  for (const s of [-1, 1]) P.add('wood', boxGeo(0.95, 2.35, 0.16, 1), cx + s * 0.5, 1.5, fz + 0.5, '#8a5230')
+  P.add('plain', cyl(0.07, 0.07, 0.04, 6).rotateX(Math.PI / 2), cx, 1.5, fz + 0.6, '#ffd166')
+  // escadaria
+  for (let i = 0; i < 3; i++) P.add('wall', boxGeo(3.8 - i * 0.3, 0.16 + i * 0.13, 0.5, 1), cx, (0.16 + i * 0.13) / 2, fz + 1.7 - i * 0.55, '#cdbf9f', { hull: i === 2 })
+  // janelas altas nas alas
+  for (const s of [-1, 1]) {
+    P.add('wood', boxGeo(1.3, 1.9, 0.14, 1), cx + s * 3.0, 2.1, fz + 0.05, '#ffffff')
+    P.add('glass', boxGeo(1.05, 1.65, 0.18, 1), cx + s * 3.0, 2.1, fz + 0.07, '#9fdcff')
+    P.add('wood', boxGeo(1.05, 0.07, 0.2, 1), cx + s * 3.0, 2.1, fz + 0.08, '#ffffff')
+    P.add('wood', boxGeo(0.14, 1.9, 1.3, 1), cx + s * (w / 2 + 0.04), 2.1, cz, '#ffffff')
+    P.add('glass', boxGeo(0.18, 1.65, 1.05, 1), cx + s * (w / 2 + 0.05), 2.1, cz, '#9fdcff')
+  }
+  // livros e lápis gigante
+  const cols = ['#e63946', '#2a9d8f', '#f4a261', '#4f7fcf']
+  for (let i = 0; i < 4; i++) P.add('plain', boxGeo(0.95 - i * 0.07, 0.17, 0.65, 1), cx + w / 2 + 0.8, 0.4 + i * 0.18, fz + 0.5, cols[i])
+  P.add('plain', cyl(0.12, 0.12, 1.5, 6), cx - w / 2 - 0.8, 0.95, fz + 0.4, '#f4c95d', { hull: true })
+  P.add('roof', cyl(0.001, 0.12, 0.28, 6), cx - w / 2 - 0.8, 1.84, fz + 0.4, '#e8c9a0')
+  // chaminé
+  const chx = cx + w / 2 - 1.0
+  const chz = cz - d / 2 + 1.0
+  P.add('wall', boxGeo(0.7, 1.6, 0.7, 1.2), chx, 0.3 + H + 1.5, chz, '#b5654a', { hull: true })
+  return { chimney: new THREE.Vector3(chx, 0.3 + H + 2.5, chz), labelY: 8.0 }
+}
+
+// SKILLS: laboratório moderno com painéis solares, antena parabólica, fachada de vidro e racks
+function addLab(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.0
+  slab(P, b)
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, '#e4eee8', { ao: 0.35, hull: true })
+  P.add('wood', boxGeo(w + 0.3, 0.2, d + 0.3, 1.2), cx, 0.3 + H + 0.1, cz, '#2f6b4a', { hull: true })
+  // platibanda
+  P.add('wood', boxGeo(w + 0.3, 0.5, 0.2, 1), cx, 0.3 + H + 0.45, fz + 0.1, '#2f6b4a', { hull: true })
+  for (const s of [-1, 1]) P.add('wood', boxGeo(0.2, 0.5, d + 0.3, 1), cx + s * (w / 2 + 0.05), 0.3 + H + 0.45, cz, '#2f6b4a')
+  P.add('wood', boxGeo(w + 0.3, 0.5, 0.2, 1), cx, 0.3 + H + 0.45, cz - d / 2 - 0.05, '#2f6b4a')
+  // painéis solares
+  for (let i = 0; i < 3; i++) {
+    const g = boxGeo(1.9, 0.08, 1.3, 1)
+    g.rotateX(-0.45)
+    P.add('plain', g, cx - 2.2 + i * 2.1, 0.3 + H + 0.95, cz - 0.4, '#27407a', { hull: i === 0 })
+    for (const s of [-1, 1]) P.add('wood', boxGeo(0.08, 0.6, 0.08, 1), cx - 2.2 + i * 2.1 + s * 0.8, 0.3 + H + 0.5, cz - 0.4, '#9aa0a6')
+  }
+  // mastro e parabólica
+  const mx = cx + w / 2 - 0.8
+  P.add('wood', cyl(0.07, 0.09, 3.2, 6), mx, 0.3 + H + 1.9, cz - 1.3, '#9aa0a6', { hull: true })
+  P.add('plain', ball(0.14), mx, 0.3 + H + 3.55, cz - 1.3, '#ff4d4d')
+  const dish = new THREE.SphereGeometry(0.75, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2)
+  dish.rotateX(Math.PI * 0.72)
+  P.add('plain', dish, cx - w / 2 + 0.9, 0.3 + H + 1.35, cz + 0.6, '#f2f2f2', { hull: true })
+  P.add('wood', cyl(0.06, 0.06, 0.9, 6), cx - w / 2 + 0.9, 0.3 + H + 0.65, cz + 0.6, '#9aa0a6')
+  // fachada de vidro
+  P.add('wood', boxGeo(2.6, 2.7, 0.2, 1), cx, 1.65, fz + 0.04, '#2f6b4a')
+  P.add('glass', boxGeo(2.2, 2.4, 0.22, 1), cx, 1.55, fz + 0.08, '#7fe0c0')
+  P.add('wood', boxGeo(0.06, 2.4, 0.24, 1), cx, 1.55, fz + 0.09, '#2f6b4a')
+  for (const s of [-1, 1]) {
+    P.add('wood', boxGeo(2.4, 1.9, 0.16, 1), cx + s * 3.0, 2.0, fz + 0.04, '#2f6b4a')
+    P.add('glass', boxGeo(2.1, 1.6, 0.2, 1), cx + s * 3.0, 2.0, fz + 0.07, '#7fe0c0')
+    P.add('wood', boxGeo(0.06, 1.6, 0.22, 1), cx + s * 3.0, 2.0, fz + 0.08, '#2f6b4a')
+  }
+  P.add('roof', roofGeo(3.4, 1.4, 0.4, 1.4), cx, 0.3 + 2.8, fz + 0.65, '#3f7d4d', { ao: 0.2 })
+  // racks de servidor com LEDs
+  for (let i = 0; i < 2; i++) {
+    P.add('plain', boxGeo(0.9, 1.9, 0.8, 1), cx + w / 2 + 0.9, 1.25, fz - 0.9 - i * 1.0, '#2d2a32', { hull: true })
+    for (let j = 0; j < 4; j++) P.add('plain', ball(0.06), cx + w / 2 + 0.9 - 0.25 + (j % 2) * 0.5, 1.9 + (j >> 1) * 0.45, fz - 0.9 - i * 1.0 + 0.42, j % 2 ? '#7cfc7c' : '#ffd166')
+  }
+  // caixa de ferramentas
+  P.add('plain', boxGeo(1.1, 0.55, 0.6, 1), cx - w / 2 - 0.9, 0.58, fz + 0.4, '#e76f51', { hull: true })
+  P.add('plain', boxGeo(0.7, 0.1, 0.1, 1), cx - w / 2 - 0.9, 0.95, fz + 0.4, '#3b2a1a')
+  // respiro
+  const chx = cx + w / 2 - 2.6
+  const chz = cz - d / 2 + 1.0
+  P.add('plain', cyl(0.28, 0.28, 0.9, 10), chx, 0.3 + H + 0.9, chz, '#c9ced6', { hull: true })
+  return { chimney: new THREE.Vector3(chx, 0.3 + H + 1.6, chz), labelY: 6.0 }
+}
+
+// CONTATO: correios com caixa de correio gigante, envelope, relógio, van de entregas e bandeira
+function addPostOffice(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.1
+  slab(P, b)
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, '#f6ead0', { ao: 0.4, hull: true })
+  P.add('wall', boxGeo(w + 0.06, 0.55, d + 0.06, 1.4), cx, 0.58, cz, '#a93d3a', { ao: 0.2 })
+  P.add('wood', boxGeo(w + 0.5, 0.3, d + 0.5, 1.2), cx, 0.3 + H + 0.15, cz, '#a93d3a', { hull: true })
+  P.add('roof', roofGeo(w + 0.7, d + 0.7, 1.3, 2.8), cx, 0.3 + H + 0.3, cz, '#d9534f', { ao: 0.28, hull: true })
+  // porta e janelas
+  P.add('wood', boxGeo(2.4, 2.5, 0.2, 1), cx, 1.55, fz + 0.04, '#4f7fcf')
+  P.add('glass', boxGeo(2.0, 2.2, 0.2, 1), cx, 1.5, fz + 0.08, '#9fdcff')
+  P.add('wood', boxGeo(0.06, 2.2, 0.24, 1), cx, 1.5, fz + 0.09, '#4f7fcf')
+  for (const s of [-1, 1]) {
+    P.add('wood', boxGeo(1.5, 1.3, 0.14, 1), cx + s * 3.0, 1.55, fz + 0.05, '#ffffff')
+    P.add('glass', boxGeo(1.25, 1.05, 0.18, 1), cx + s * 3.0, 1.55, fz + 0.07, '#9fdcff')
+  }
+  // envelope na fachada
+  P.add('plain', boxGeo(1.7, 1.1, 0.14, 1), cx + 2.9, 2.95, fz + 0.1, '#ffffff')
+  for (const s of [-1, 1]) {
+    const g = boxGeo(1.0, 0.07, 0.15, 1)
+    g.rotateZ(s * 0.62)
+    P.add('plain', g, cx + 2.9 - s * 0.42, 3.1, fz + 0.17, '#d9534f')
+  }
+  P.add('plain', ball(0.12), cx + 2.9, 2.85, fz + 0.2, '#d9534f')
+  // relógio
+  P.add('plain', cyl(0.42, 0.42, 0.1, 16).rotateX(Math.PI / 2), cx - 2.9, 2.95, fz + 0.09, '#fffaf0')
+  P.add('plain', boxGeo(0.05, 0.28, 0.05, 1), cx - 2.9, 3.05, fz + 0.16, '#2d2a32')
+  P.add('plain', boxGeo(0.2, 0.05, 0.05, 1), cx - 2.82, 2.95, fz + 0.16, '#2d2a32')
+  // caixa de correio gigante
+  const mx = cx - w / 2 - 1.3
+  P.add('plain', boxGeo(1.1, 1.2, 0.9, 1), mx, 0.9, fz + 0.5, '#3a5fa3', { hull: true })
+  P.add('plain', cyl(0.55, 0.55, 0.9, 12).rotateX(Math.PI / 2), mx, 1.5, fz + 0.5, '#3a5fa3', { hull: true })
+  P.add('plain', boxGeo(0.8, 0.07, 0.05, 1), mx, 1.15, fz + 0.97, '#14233f')
+  P.add('plain', boxGeo(0.9, 0.9, 0.3, 1), mx, 0.5, fz + 0.5, '#2d4a7e')
+  P.add('plain', boxGeo(0.12, 0.45, 0.12, 1), mx - 0.62, 1.55, fz + 0.5, '#d9534f')
+  // bandeira
+  const bx = cx + w / 2 + 0.6
+  P.add('wood', cyl(0.05, 0.05, 3.6, 6), bx, 2.1, fz + 0.9, '#d8d8d8')
+  P.add('plain', boxGeo(1.0, 0.6, 0.05, 1), bx + 0.55, 3.6, fz + 0.9, '#ffd166')
+  // van de entregas
+  const vx = cx + w / 2 + 2.2
+  const vz = cz - 0.2
+  P.add('plain', boxGeo(1.4, 1.2, 2.6, 1), vx, 1.05, vz, '#fffaf0', { hull: true })
+  P.add('plain', boxGeo(1.42, 0.3, 2.62, 1), vx, 0.6, vz, '#d9534f')
+  P.add('plain', boxGeo(1.4, 0.8, 0.9, 1), vx, 0.85, vz + 1.6, '#d9534f', { hull: true })
+  P.add('glass', boxGeo(1.2, 0.4, 0.05, 1), vx, 1.05, vz + 2.06, '#9fdcff')
+  for (const sx of [-1, 1]) for (const sz of [-0.8, 1.5]) P.add('plain', cyl(0.28, 0.28, 0.2, 10).rotateZ(Math.PI / 2), vx + sx * 0.7, 0.4, vz + sz, '#2d2a32')
+  // chaminé
+  const chx = cx - w / 2 + 1.2
+  const chz = cz - d / 2 + 1.2
+  P.add('wall', boxGeo(0.7, 1.5, 0.7, 1.2), chx, 0.3 + H + 1.3, chz, '#a93d3a', { hull: true })
+  return { chimney: new THREE.Vector3(chx, 0.3 + H + 2.2, chz), labelY: 5.6 }
+}
+
+function addBuilding(P, b) {
+  const fn = { projetos: addWorkshop, formacao: addSchool, skills: addLab, contato: addPostOffice }[b.key] || addHouse
+  return fn(P, b)
+}
 
 function addCinema(P, b) {
   const { w, h: d } = b
@@ -761,6 +1003,18 @@ function buildExtras(scene, reduceMotion) {
   const rotLiX = li.cx + liDx * Math.cos(li.rot) + liDz * Math.sin(li.rot)
   const rotLiZ = li.cz - liDx * Math.sin(li.rot) + liDz * Math.cos(li.rot)
   sign('BIBLIOTECA', 4.8, 0.5, '#2f5d3a', '#f6e3c4', rotLiX, 3.85, rotLiZ, li.rot)
+
+  // letreiros dos prédios de trabalho (posição local: lx para a direita, lz para a frente a partir do centro)
+  const bsign = (key, text, w, h, bg, fg, lx, y, lz) => {
+    const b = byKey(key)
+    const fx = lx
+    const fzz = b.h / 2 + lz
+    sign(text, w, h, bg, fg, b.cx + fx * Math.cos(b.rot) + fzz * Math.sin(b.rot), y, b.cz - fx * Math.sin(b.rot) + fzz * Math.cos(b.rot), b.rot)
+  }
+  bsign('projetos', 'OFICINA', 4.2, 0.8, '#2d2a32', '#f4a259', 0, 4.9, 0.42)
+  bsign('formacao', 'ESCOLA', 2.4, 0.5, '#2f4f8a', '#fffaf0', 0, 3.75, 0.46)
+  bsign('skills', 'SKILLS LAB', 3.6, 0.5, '#2f6b4a', '#e4eee8', 0, 3.8, 0.32)
+  bsign('contato', 'CORREIOS', 3.0, 0.5, '#a93d3a', '#fff6e5', 0, 3.0, 0.1)
 
   // palco girado
   const pa = byKey('palco')
