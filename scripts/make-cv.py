@@ -6,7 +6,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.colors import HexColor
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, KeepTogether
 
-SITE = sys.argv[1] if len(sys.argv) > 1 else "https://ygor-portfolio-sigma.vercel.app"
+SITE = sys.argv[1] if len(sys.argv) > 1 else "https://ygor-portfolio.vercel.app"
 INK, SOFT, ACC = HexColor("#2d2a32"), HexColor("#5a5560"), HexColor("#c8553d")
 
 st = {

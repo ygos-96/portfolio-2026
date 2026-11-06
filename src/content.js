@@ -2,7 +2,7 @@
 // Para adicionar um print num projeto: salve em public/shots/<slug>.png (ou .webp)
 // e troque `shot: null` por `shot: '/shots/<slug>.png'` em PROJECT_BASE.
 
-export const SITE_URL = 'https://ygor-portfolio-sigma.vercel.app'
+export const SITE_URL = 'https://ygor-portfolio.vercel.app'
 
 export const LINKS = {
   linkedin: 'https://www.linkedin.com/in/ygor-gs2006/',
