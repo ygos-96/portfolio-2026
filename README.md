@@ -2,7 +2,7 @@
 
 Portfólio interativo: um bairro visto de cima, onde o personagem anda (WASD/setas no desktop, joystick no celular) e entra em cinco prédios clicáveis: Sobre, Projetos, Formação, Skills e Contato. Existe também um **modo rápido** em HTML estático (`/rapido/` e `/en/rapido/`) para recrutadores sem pressa de jogar, leitores de tela e SEO.
 
-- Site: https://ygor-portfolio.vercel.app
+- Site: https://ygor-portfolio-sigma.vercel.app
 - Stack: Vite + JavaScript puro + Canvas 2D. Todo o pixel art é desenhado em código, sem imagens.
 - Idiomas: PT-BR e EN (botão no canto superior direito, ou `?lang=en`).
 - Links diretos: `/#projetos`, `/#contato` etc. abrem o painel correspondente.
@@ -30,7 +30,7 @@ Prints de projetos internos devem ter dados sensíveis ocultados antes de entrar
 
 ## Currículo em PDF
 
-`python3 scripts/make-cv.py https://ygor-portfolio.vercel.app` (precisa de `reportlab`) gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. Edite o texto no próprio script.
+`python3 scripts/make-cv.py https://ygor-portfolio-sigma.vercel.app` (precisa de `reportlab`) gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. Edite o texto no próprio script.
 
 ## Acessibilidade
 
