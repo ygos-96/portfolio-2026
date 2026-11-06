@@ -25,56 +25,101 @@ body {
   margin: 0;
   height: 100%;
 }
-/* ---------- abertura estilo Simpsons (nuvens se abrindo) ---------- */
+/* ---------- abertura estilo Simpsons (zoom por dentro das nuvens e neblina dissipando) ---------- */
 .simpsons-clouds {
   position: fixed;
   inset: 0;
-  z-index: 25;
-  pointer-events: none;
+  z-index: 15;
+  pointer-events: none !important;
   overflow: hidden;
-  transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 1.2s;
+  perspective: 800px;
+  animation: simpsonsOverlayDone 2.8s ease-out forwards;
 }
-.simpsons-clouds.parted {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+.simpsons-mist {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.82) 0%, rgba(232, 246, 255, 0.94) 52%, rgba(210, 236, 252, 0.98) 100%);
+  backdrop-filter: blur(10px);
+  will-change: opacity, backdrop-filter, transform;
+  animation: mistClearZoom 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .simpsons-cloud {
   position: absolute;
-  top: -10vh;
-  bottom: -10vh;
-  width: 78vw;
-  transition: transform 2.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 2.2s ease-out;
+  inset: -20vh -20vw;
+  pointer-events: none !important;
   will-change: transform, opacity;
-  filter: drop-shadow(0 14px 28px rgba(32, 60, 110, 0.28));
 }
 .simpsons-cloud--left {
-  left: -4vw;
   background:
-    radial-gradient(circle at 75% 28%, #ffffff 0%, #ffffff 58%, #dcf0fb 88%, transparent 100%),
-    radial-gradient(circle at 60% 68%, #ffffff 0%, #ffffff 62%, #dcf0fb 92%, transparent 100%),
-    radial-gradient(circle at 85% 48%, #ffffff 0%, #ffffff 64%, #dcf0fb 88%, transparent 100%),
-    radial-gradient(circle at 35% 50%, #ffffff 0%, #ffffff 78%, #cae8f8 100%);
-  border-radius: 0 52% 48% 0 / 0 48% 52% 0;
-  transform: translateX(0);
+    radial-gradient(circle at 38% 35%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.85) 22%, rgba(225, 243, 254, 0.4) 42%, transparent 62%),
+    radial-gradient(circle at 28% 65%, rgba(255, 255, 255, 0.96) 0%, rgba(240, 250, 255, 0.8) 26%, transparent 58%),
+    radial-gradient(circle at 46% 52%, rgba(255, 255, 255, 0.92) 0%, rgba(232, 246, 255, 0.6) 24%, transparent 52%);
+  animation: cloudZoomLeft 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .simpsons-cloud--right {
-  right: -4vw;
   background:
-    radial-gradient(circle at 25% 28%, #ffffff 0%, #ffffff 58%, #dcf0fb 88%, transparent 100%),
-    radial-gradient(circle at 40% 68%, #ffffff 0%, #ffffff 62%, #dcf0fb 92%, transparent 100%),
-    radial-gradient(circle at 15% 48%, #ffffff 0%, #ffffff 64%, #dcf0fb 88%, transparent 100%),
-    radial-gradient(circle at 65% 50%, #ffffff 0%, #ffffff 78%, #cae8f8 100%);
-  border-radius: 52% 0 0 48% / 48% 0 0 52%;
-  transform: translateX(0);
+    radial-gradient(circle at 62% 35%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.85) 22%, rgba(225, 243, 254, 0.4) 42%, transparent 62%),
+    radial-gradient(circle at 72% 65%, rgba(255, 255, 255, 0.96) 0%, rgba(240, 250, 255, 0.8) 26%, transparent 58%),
+    radial-gradient(circle at 54% 52%, rgba(255, 255, 255, 0.92) 0%, rgba(232, 246, 255, 0.6) 24%, transparent 52%);
+  animation: cloudZoomRight 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.simpsons-clouds.parted .simpsons-cloud--left {
-  transform: translateX(-120%) rotate(-6deg);
-  opacity: 0;
+@keyframes mistClearZoom {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+    transform: scale(1);
+  }
+  45% {
+    opacity: 0.68;
+    backdrop-filter: blur(5px);
+    transform: scale(1.12);
+  }
+  85% {
+    opacity: 0.15;
+    backdrop-filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    transform: scale(1.35);
+    visibility: hidden;
+  }
 }
-.simpsons-clouds.parted .simpsons-cloud--right {
-  transform: translateX(120%) rotate(6deg);
-  opacity: 0;
+@keyframes cloudZoomLeft {
+  0% {
+    opacity: 1;
+    transform: scale(0.95) translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6) translate3d(-28%, -6%, 0);
+  }
+}
+@keyframes cloudZoomRight {
+  0% {
+    opacity: 1;
+    transform: scale(0.95) translate3d(0, 0, 0);
+  }
+  55% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6) translate3d(28%, 6%, 0);
+  }
+}
+@keyframes simpsonsOverlayDone {
+  0%, 92% {
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 body {
@@ -445,7 +490,7 @@ body.modal-open .action-controls {
   display: grid;
   place-items: center;
   padding: 16px;
-  background: radial-gradient(circle at center, rgba(20, 16, 28, 0.15) 0%, rgba(20, 16, 28, 0.45) 100%);
+  background: transparent;
   pointer-events: none;
 }
 .intro[hidden] {
@@ -459,9 +504,9 @@ body.modal-open .action-controls {
   background: var(--paper);
   border: 4px solid var(--brown);
   border-radius: 22px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35), 0 6px 0 var(--brown);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32), 0 6px 0 var(--brown);
   padding: 28px 24px;
-  animation: introPop 0.4s cubic-bezier(0.18, 0.9, 0.32, 1.2);
+  animation: introPop 0.55s cubic-bezier(0.18, 0.9, 0.32, 1.2) 1.15s both;
 }
 @keyframes introPop {
   0% { transform: scale(0.92) translateY(12px); opacity: 0; }

@@ -34,6 +34,9 @@ let lang = pickLang()
 let started = false
 let openKey = null
 let lastFocus = null
+let game = null
+let pendingTeleport = null
+const simpsonsClouds = $('#simpsons-clouds')
 const isTouch = matchMedia('(pointer: coarse)').matches
 document.body.classList.toggle('touch', isTouch)
 
@@ -326,9 +329,13 @@ els.btnEmote?.addEventListener('click', () => {
 
 // ---------- jogo ----------
 // O motor 3D (Three.js) carrega sob demanda: o resto da página abre sem esperar por ele.
-let game = null
-let pendingTeleport = null
-const simpsonsClouds = $('#simpsons-clouds')
+// Garantia de segurança: remove a camada de neblina inicial após a animação mesmo se a rede atrasar
+setTimeout(() => {
+  simpsonsClouds?.classList.add('parted')
+  setTimeout(() => {
+    if (simpsonsClouds) simpsonsClouds.style.display = 'none'
+  }, 2400)
+}, 2800)
 
 import('./game3d.js')
   .then(({ createGame }) => {
@@ -353,14 +360,13 @@ import('./game3d.js')
     if (started && !openKey) game.setPaused(false)
     updatePrompt(game.getNear()?.key ?? null)
 
-    // Efeito dos Simpsons: as nuvens se separam dramaticamente revelando a cidade em zoom
-    setTimeout(() => {
+    // Efeito de zoom passando por dentro das nuvens/neblina e revelando a cidade gradualmente
+    requestAnimationFrame(() => {
       simpsonsClouds?.classList.add('parted')
-      sound.collect()
       setTimeout(() => {
         if (simpsonsClouds) simpsonsClouds.style.display = 'none'
-      }, 2500)
-    }, 360)
+      }, 2600)
+    })
   })
   .catch((err) => {
     console.error('Erro ao inicializar Three.js / game3d:', err)

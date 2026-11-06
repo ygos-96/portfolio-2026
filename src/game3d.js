@@ -1265,9 +1265,9 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   rockMesh.castShadow = true
   scene.add(rockMesh)
 
-  // nuvens (uma malha fundida por nuvem)
+  // nuvens (uma malha fundida por nuvem + corredor de nuvens para o mergulho inicial)
   const clouds = []
-  const cloudMat = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.96 })
+  const cloudMat = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.94 })
   for (let i = 0; i < 8; i++) {
     const n = 4 + Math.floor(rnd() * 2)
     const gs = []
@@ -1277,6 +1277,24 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     }
     const c = new THREE.Mesh(mergeGeometries(gs), cloudMat)
     c.position.set(-30 + rnd() * 110, 22 + rnd() * 10, -30 + rnd() * 70)
+    scene.add(c)
+    clouds.push(c)
+  }
+  // Nuvens no corredor de descida da câmera (efeito de passar por dentro das nuvens no zoom inicial)
+  const introCloudOffsets = [
+    [-5.5, 34, 44],
+    [5.8, 32, 42],
+    [-4.2, 25, 35],
+    [4.6, 24, 34],
+  ]
+  for (const [ox, cy, cz] of introCloudOffsets) {
+    const gs = []
+    for (let k = 0; k < 5; k++) {
+      const s = 1.8 + rnd() * 1.3
+      gs.push(new THREE.IcosahedronGeometry(s, 1).scale(1.1, 0.6, 1).translate((k - 2) * 2.1, (rnd() - 0.5) * 0.7, (rnd() - 0.5) * 1.4))
+    }
+    const c = new THREE.Mesh(mergeGeometries(gs), cloudMat)
+    c.position.set(START.x / T + ox, cy, cz)
     scene.add(c)
     clouds.push(c)
   }
@@ -1498,15 +1516,15 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   let idleAcc = 0
   const samples = []
 
-  // Animação inicial cinematográfica "Estilo Simpsons" (mergulho descendo das nuvens)
+  // Animação inicial cinematográfica "Estilo Simpsons" (mergulho passando por dentro das nuvens/neblina)
   const introFly = {
     active: !reduceMotion,
     progress: 0,
-    duration: 2.2,
+    duration: 2.5,
   }
   const wideInit = (canvas.clientWidth / (canvas.clientHeight || 1)) < 0.9 ? 1.5 : 1
-  const camPos = new THREE.Vector3(player.x, 34 * wideInit, player.z + 30 * wideInit)
-  const camLook = new THREE.Vector3(player.x, 0.4, player.z - 4)
+  const camPos = new THREE.Vector3(player.x, 44 * wideInit, player.z + 36 * wideInit)
+  const camLook = new THREE.Vector3(player.x, 0.4, player.z - 5)
   camera.position.copy(camPos)
   camera.lookAt(camLook)
   let camReady = true
@@ -1906,16 +1924,25 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     if (introFly.active) {
       introFly.progress += dt
       const t = Math.min(1, introFly.progress / introFly.duration)
-      // Ease-out cúbico suave descendo do céu para trás do personagem
+      // Ease-out cúbico suave passando por dentro das nuvens/neblina até a cidade
       const ease = 1 - Math.pow(1 - t, 3)
-      const currentStartPos = new THREE.Vector3(player.x, 34 * wide, player.z + 30 * wide)
-      const currentStartLook = new THREE.Vector3(player.x, 0.4, player.z - 4)
+      const currentStartPos = new THREE.Vector3(player.x, 44 * wide, player.z + 36 * wide)
+      const currentStartLook = new THREE.Vector3(player.x, 0.4, player.z - 5)
       camPos.lerpVectors(currentStartPos, targetPos, ease)
       camLook.lerpVectors(currentStartLook, targetLook, ease)
       camera.position.copy(camPos)
       camera.lookAt(camLook)
+
+      // Neblina 3D dissipa gradualmente conforme a câmera atravessa as nuvens e se aproxima da cidade
+      const endNear = currentWeatherKey === 'rain' ? 40 : 65
+      const endFar = currentWeatherKey === 'rain' ? 170 : 260
+      scene.fog.near = 14 + (endNear - 14) * ease
+      scene.fog.far = 68 + (endFar - 68) * ease
+
       if (t >= 1) {
         introFly.active = false
+        scene.fog.near = endNear
+        scene.fog.far = endFar
       }
     } else {
       const ck = reduceMotion ? 1 : 1 - Math.exp(-5.5 * dt)
@@ -1962,7 +1989,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     update(dt)
     animate(dt)
 
-    if (paused) {
+    if (paused && !introFly.active) {
       idleAcc += raw
       if (idleAcc < 0.05) return
       idleAcc = 0
@@ -2006,6 +2033,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     emote: doEmote,
     skipIntroFly() {
       introFly.active = false
+      scene.fog.near = currentWeatherKey === 'rain' ? 40 : 65
+      scene.fog.far = currentWeatherKey === 'rain' ? 170 : 260
     },
     setWeather: applyWeather,
     getWeather: () => currentWeatherKey,
