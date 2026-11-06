@@ -328,6 +328,8 @@ els.btnEmote?.addEventListener('click', () => {
 // O motor 3D (Three.js) carrega sob demanda: o resto da página abre sem esperar por ele.
 let game = null
 let pendingTeleport = null
+const simpsonsClouds = $('#simpsons-clouds')
+
 import('./game3d.js')
   .then(({ createGame }) => {
     game = createGame(els.canvas, {
@@ -350,9 +352,16 @@ import('./game3d.js')
     if (pendingTeleport) game.teleportTo(pendingTeleport)
     if (started && !openKey) game.setPaused(false)
     updatePrompt(game.getNear()?.key ?? null)
+
+    // Efeito dos Simpsons: as nuvens se separam e revelam a cidade
+    setTimeout(() => {
+      simpsonsClouds?.classList.add('parted')
+      sound.collect()
+    }, 180)
   })
-  .catch(() => {
-    // sem WebGL/rede: o modo rápido continua disponível
+  .catch((err) => {
+    console.error('Erro ao inicializar Three.js / game3d:', err)
+    simpsonsClouds?.classList.add('parted')
     els.intro.classList.add('intro--nogl')
   })
 
@@ -360,6 +369,7 @@ function startGame() {
   started = true
   els.intro.hidden = true
   document.body.classList.add('playing')
+  game?.skipIntroFly?.()
   if (!openKey) game?.setPaused(false)
   updatePrompt(game?.getNear()?.key ?? null)
 }

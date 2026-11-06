@@ -1306,10 +1306,10 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   // 8 Cafés colecionáveis espalhados pelo mapa
   let collectedCoffeeCount = 0
   const coffeeItems = COFFEE_SPOTS.map((spot, idx) => {
-    const mesh = makeCoffeeCup()
-    mesh.position.set(spot.x, 0.5, spot.z)
-    scene.add(mesh)
-    return { spot, mesh, collected: false, phase: idx * 0.75 }
+    const cupMesh = makeCoffeeCup()
+    cupMesh.position.set(spot.x, 0.5, spot.z)
+    scene.add(cupMesh)
+    return { spot, mesh: cupMesh, collected: false, phase: idx * 0.75 }
   })
 
   // Sistema de poeira (dust puffs) nos pés ao pular / aterrissar / correr
@@ -1495,9 +1495,18 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   let raf = 0
   let idleAcc = 0
   const samples = []
-  const camPos = new THREE.Vector3()
-  const camLook = new THREE.Vector3()
-  let camReady = false
+
+  // Animação inicial cinematográfica "Estilo Simpsons" (mergulho descendo das nuvens)
+  const introFly = {
+    active: !reduceMotion,
+    progress: 0,
+    duration: 2.6,
+  }
+  const camPos = new THREE.Vector3(player.x, 88, player.z + 70)
+  const camLook = new THREE.Vector3(player.x, 0, player.z - 6)
+  camera.position.copy(camPos)
+  camera.lookAt(camLook)
+  let camReady = true
 
   const KEYMAP = {
     ArrowUp: 'up', KeyW: 'up',
@@ -1886,20 +1895,32 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
       glow.material.opacity = reduceMotion ? 0.4 : 0.35 + Math.sin(time * 5) * 0.18
     } else glow.visible = false
 
-    // câmera de terceira pessoa
+    // câmera de terceira pessoa com mergulho inicial cinematográfico (estilo Simpsons)
     const wide = camera.aspect < 0.9 ? 1.5 : 1
     const targetPos = new THREE.Vector3(player.x, 15 * wide, player.z + 14 * wide)
     const targetLook = new THREE.Vector3(player.x, 0.3, player.z - 2.5)
-    if (!camReady) {
-      camPos.copy(targetPos)
-      camLook.copy(targetLook)
-      camReady = true
+
+    if (introFly.active) {
+      introFly.progress += dt
+      const t = Math.min(1, introFly.progress / introFly.duration)
+      // Ease-out cúbico suave descendo do céu
+      const ease = 1 - Math.pow(1 - t, 3)
+      const startPos = new THREE.Vector3(player.x, 88, player.z + 70)
+      const startLook = new THREE.Vector3(player.x, 0, player.z - 6)
+      camPos.lerpVectors(startPos, targetPos, ease)
+      camLook.lerpVectors(startLook, targetLook, ease)
+      camera.position.copy(camPos)
+      camera.lookAt(camLook)
+      if (t >= 1) {
+        introFly.active = false
+      }
+    } else {
+      const ck = reduceMotion ? 1 : 1 - Math.exp(-5.5 * dt)
+      camPos.lerp(targetPos, ck)
+      camLook.lerp(targetLook, ck)
+      camera.position.copy(camPos)
+      camera.lookAt(camLook)
     }
-    const ck = reduceMotion ? 1 : 1 - Math.exp(-5.5 * dt)
-    camPos.lerp(targetPos, ck)
-    camLook.lerp(targetLook, ck)
-    camera.position.copy(camPos)
-    camera.lookAt(camLook)
 
     sun.position.set(player.x, 0, player.z).add(SUN_OFFSET)
     sun.target.position.set(player.x, 0, player.z)
@@ -1980,6 +2001,9 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     },
     jump: doJump,
     emote: doEmote,
+    skipIntroFly() {
+      introFly.active = false
+    },
     setWeather: applyWeather,
     getWeather: () => currentWeatherKey,
     getCoffeeCount: () => collectedCoffeeCount,
