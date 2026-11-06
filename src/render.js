@@ -27,17 +27,30 @@ const sections = {
     const c = CONTENT[lang]
     const s = c.sobre
     return `
-      ${s.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
-      <p class="status"><span class="dot" aria-hidden="true"></span>${esc(s.status)}</p>
-      <h3>${esc(s.focusTitle)}</h3>
-      <ul class="list">${s.focus.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
-      <h3>${esc(s.trajectoryTitle)}</h3>
-      <ol class="timeline">${s.trajectory
-        .map(
-          (t) => `<li><strong>${esc(t.role)}</strong><span class="meta">${esc(t.org)} · ${esc(t.period)}</span><p>${esc(t.text)}</p></li>`,
-        )
-        .join('')}</ol>
-      <p class="actions">${cvButtons(lang)}</p>`
+      <div class="inv-grid">
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(c.hero.name)}</h3>
+            ${s.paragraphs.map((p) => `<p>${esc(p)}</p>`).join('')}
+            <p class="status"><span class="dot" aria-hidden="true"></span>${esc(s.status)}</p>
+          </div>
+          <div class="inv-card">
+            <h3>${esc(s.focusTitle)}</h3>
+            <ul class="list">${s.focus.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(s.trajectoryTitle)}</h3>
+            <ol class="timeline">${s.trajectory
+              .map(
+                (t) => `<li><strong>${esc(t.role)}</strong><span class="meta">${esc(t.org)} · ${esc(t.period)}</span><p>${esc(t.text)}</p></li>`,
+              )
+              .join('')}</ol>
+            <p class="actions">${cvButtons(lang)}</p>
+          </div>
+        </div>
+      </div>`
   },
 
   projetos(lang) {
@@ -67,26 +80,40 @@ const sections = {
     const f = c.formacao
     const row = (r) => `<li><strong>${esc(r.title)}</strong><span class="meta">${esc(r.org)} · ${esc(r.period)}</span></li>`
     return `
-      <h3>${esc(f.educationTitle)}</h3>
-      <ol class="timeline">${f.education.map(row).join('')}</ol>
-      <h3>${esc(f.coursesTitle)}</h3>
-      <ol class="timeline">${f.courses.map(row).join('')}</ol>
-      <h3>${esc(f.earlyTitle)}</h3>
-      <p>${esc(f.earlyIntro)}</p>
-      <ul class="early">${f.early
-        .map(
-          (e) => `<li><a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(e.name)}</strong></a>
-          <span class="meta">${esc(e.stack)}</span><span>${esc(e.desc)}</span></li>`,
-        )
-        .join('')}</ul>`
+      <div class="inv-grid">
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(f.educationTitle)}</h3>
+            <ol class="timeline">${f.education.map(row).join('')}</ol>
+          </div>
+          <div class="inv-card">
+            <h3>${esc(f.coursesTitle)}</h3>
+            <ol class="timeline">${f.courses.map(row).join('')}</ol>
+          </div>
+        </div>
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(f.earlyTitle)}</h3>
+            <p>${esc(f.earlyIntro)}</p>
+            <ul class="early">${f.early
+              .map(
+                (e) => `<li><a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(e.name)}</strong></a>
+                <span class="meta">${esc(e.stack)}</span><span>${esc(e.desc)}</span></li>`,
+              )
+              .join('')}</ul>
+          </div>
+        </div>
+      </div>`
   },
 
   skills(lang) {
     const k = CONTENT[lang].skills
     return `
-      <div class="skill-grid">${k.groups.map((g) => `<section><h3>${esc(g.title)}</h3>${chips(g.items)}</section>`).join('')}</div>
-      <h3>${esc(k.softTitle)}</h3>${chips(k.soft)}
-      <h3>${esc(k.langsTitle)}</h3>${chips(k.langs)}`
+      <div class="skill-grid">${k.groups.map((g) => `<section class="inv-card"><h3>${esc(g.title)}</h3>${chips(g.items)}</section>`).join('')}</div>
+      <div class="inv-grid" style="margin-top:16px">
+        <div class="inv-card"><h3>${esc(k.softTitle)}</h3>${chips(k.soft)}</div>
+        <div class="inv-card"><h3>${esc(k.langsTitle)}</h3>${chips(k.langs)}</div>
+      </div>`
   },
 
   contato(lang) {
@@ -99,16 +126,26 @@ const sections = {
       whatsapp: LINKS.whatsapp,
     }
     return `
-      <p class="lead">${esc(ct.intro)}</p>
-      <ul class="channels">${ct.channels
-        .map(
-          (ch) => `<li><a class="channel" href="${esc(href[ch.key])}" ${ch.key === 'email' ? '' : 'target="_blank" rel="noopener noreferrer"'}>
-            <span class="channel__label">${esc(ch.label)}</span><span class="channel__value">${esc(ch.value)}</span></a></li>`,
-        )
-        .join('')}</ul>
-      <h3>${esc(ct.cvTitle)}</h3>
-      <p>${esc(ct.cvText)}</p>
-      <p class="actions">${cvButtons(lang)}</p>`
+      <div class="inv-grid">
+        <div class="inv-col">
+          <div class="inv-card">
+            <p class="lead">${esc(ct.intro)}</p>
+            <ul class="channels">${ct.channels
+              .map(
+                (ch) => `<li><a class="channel" href="${esc(href[ch.key])}" ${ch.key === 'email' ? '' : 'target="_blank" rel="noopener noreferrer"'}>
+                  <span class="channel__label">${esc(ch.label)}</span><span class="channel__value">${esc(ch.value)}</span></a></li>`,
+              )
+              .join('')}</ul>
+          </div>
+        </div>
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(ct.cvTitle)}</h3>
+            <p>${esc(ct.cvText)}</p>
+            <p class="actions">${cvButtons(lang)}</p>
+          </div>
+        </div>
+      </div>`
   },
 
   estadio(lang) {
@@ -116,16 +153,26 @@ const sections = {
     const total = TROPHIES.reduce((n, tr) => n + tr.years.length, 0)
     return `
       <p class="lead">${esc(t.intro)}</p>
-      <h3>${esc(t.trophiesTitle)}</h3>
-      <p class="total"><strong>${total}</strong> ${esc(t.total)}</p>
-      <ul class="trophies">${TROPHIES.map(
-        (tr) => `<li class="trophy"><span class="trophy__cup" aria-hidden="true">🏆</span>
-          <strong>${esc(tr[lang])}</strong>
-          <span class="trophy__count">${tr.years.length} ${esc(t.titlesWord)}</span>
-          <span class="trophy__years">${tr.years.join(' · ')}</span></li>`,
-      ).join('')}</ul>
-      <h3>${esc(t.idolsTitle)}</h3>
-      <ul class="idols">${IDOLS.map((i) => `<li><strong>${esc(i.name)}</strong><span>${esc(i[lang])}</span></li>`).join('')}</ul>`
+      <div class="inv-grid">
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(t.trophiesTitle)}</h3>
+            <p class="total"><strong>${total}</strong> ${esc(t.total)}</p>
+            <ul class="trophies">${TROPHIES.map(
+              (tr) => `<li class="trophy"><span class="trophy__cup" aria-hidden="true">🏆</span>
+                <strong>${esc(tr[lang])}</strong>
+                <span class="trophy__count">${tr.years.length} ${esc(t.titlesWord)}</span>
+                <span class="trophy__years">${tr.years.join(' · ')}</span></li>`,
+            ).join('')}</ul>
+          </div>
+        </div>
+        <div class="inv-col">
+          <div class="inv-card">
+            <h3>${esc(t.idolsTitle)}</h3>
+            <ul class="idols">${IDOLS.map((i) => `<li><strong>${esc(i.name)}</strong><span>${esc(i[lang])}</span></li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>`
   },
 
   palco(lang) {

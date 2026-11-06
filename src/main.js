@@ -56,6 +56,8 @@ const els = {
   panel: $('#panel'),
   panelBox: $('#panel-box'),
   panelTitle: $('#panel-title'),
+  panelIcon: $('#panel-icon'),
+  panelTabs: $('#panel-tabs'),
   panelBody: $('#panel-body'),
   panelClose: $('#panel-close'),
 }
@@ -122,12 +124,35 @@ function updatePrompt(key) {
 }
 els.prompt.addEventListener('click', () => promptKey && openPanel(promptKey))
 
+const SECTION_ICONS = {
+  sobre: '🏠',
+  projetos: '⚙️',
+  formacao: '📚',
+  skills: '🛠️',
+  contato: '✉️',
+  estadio: '⚽',
+  palco: '🎸',
+  cinema: '🎬',
+  biblioteca: '📖',
+}
+
 // ---------- painel ----------
 function renderPanel(key) {
   const t = c()
+  if (els.panelIcon) els.panelIcon.textContent = SECTION_ICONS[key] || '📦'
   els.panelTitle.textContent = t.sections[key].title
   els.panelBody.innerHTML = sectionHtml(lang, key)
   els.panel.dataset.section = key
+
+  if (els.panelTabs) {
+    els.panelTabs.innerHTML = SECTION_ORDER.map(
+      (k) => `
+      <button type="button" class="panel__tab ${k === key ? 'is-active' : ''}" data-tab="${k}">
+        <span class="panel__tab-icon" aria-hidden="true">${SECTION_ICONS[k] || '📦'}</span>
+        <span class="panel__tab-label">${t.sections[k].label}</span>
+      </button>`,
+    ).join('')
+  }
 }
 
 function openPanel(key) {
@@ -142,6 +167,21 @@ function openPanel(key) {
   updatePrompt(null)
   els.panelClose.focus()
   if (location.hash !== `#${key}`) history.replaceState(null, '', `#${key}`)
+}
+
+if (els.panelTabs) {
+  els.panelTabs.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-tab]')
+    if (!btn) return
+    const targetKey = btn.dataset.tab
+    if (targetKey && targetKey !== openKey) {
+      openKey = targetKey
+      renderPanel(targetKey)
+      els.panelBody.scrollTop = 0
+      if (location.hash !== `#${targetKey}`) history.replaceState(null, '', `#${targetKey}`)
+      if (game) game.teleportTo(targetKey)
+    }
+  })
 }
 
 function closePanel() {

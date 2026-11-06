@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 import { BUILDINGS, H, PLACES, POND, START, T, W, buildWorld } from './world.js'
 
-const SPEED = 5.4 // unidades por segundo
+const SPEED = 6.6 // unidades por segundo (mais ágil)
 const RADIUS = 0.3 // meia largura da caixa de colisão
 const ICONS = { sobre: '🏠', projetos: '⚙️', formacao: '📚', skills: '🛠️', contato: '✉️', estadio: '⚽', palco: '🎸', cinema: '🎬', biblioteca: '📖' }
 const INK = '#2b1d3a' // cor do contorno
@@ -962,35 +962,119 @@ function makePlayer() {
   root.add(body)
   const skin = '#f6c19a'
   const bx = (w, h, d, color, x, y, z) => mesh(new THREE.BoxGeometry(w, h, d), color, x, y, z)
-  body.add(bx(0.52, 0.58, 0.34, '#2f7bf0', 0, 0.98, 0))
-  body.add(bx(0.54, 0.1, 0.36, '#ffd166', 0, 0.78, 0))
-  body.add(bx(0.36, 0.42, 0.2, '#ffb703', 0, 1.0, -0.27))
+
+  // Jaqueta Streetwear Techwear Corta-Vento (grafite com detalhes em terracota e camiseta branca interna)
+  // Camiseta interna de algodão no peito
+  body.add(bx(0.26, 0.54, 0.35, '#f8fafc', 0, 0.98, 0.01))
+  // Jaqueta aberta nas laterais e costas
+  body.add(bx(0.14, 0.58, 0.35, '#1e222d', -0.19, 0.98, 0))
+  body.add(bx(0.14, 0.58, 0.35, '#1e222d', 0.19, 0.98, 0))
+  body.add(bx(0.52, 0.58, 0.1, '#1e222d', 0, 0.98, -0.12))
+  // Detalhes esportivos terracota vibrante nos ombros/peito
+  body.add(bx(0.12, 0.09, 0.36, '#ff6b35', -0.18, 1.15, 0.01))
+  body.add(bx(0.12, 0.09, 0.36, '#ff6b35', 0.18, 1.15, 0.01))
+  // Gola estruturada / capuz caído na nuca
+  body.add(bx(0.38, 0.14, 0.18, '#161922', 0, 1.28, -0.12))
+
+  // Cinto escuro e fivela metálica moderna
+  body.add(bx(0.54, 0.09, 0.36, '#231e1a', 0, 0.77, 0))
+  body.add(bx(0.12, 0.11, 0.38, '#e2e8f0', 0, 0.77, 0.01))
+  // Bolsinho utilitário lateral na cintura (pouch techwear)
+  body.add(bx(0.12, 0.16, 0.14, '#ff6b35', 0.28, 0.78, 0.02))
+
+  // Alças frontais da mochila no peito com fivelas douradas
+  body.add(bx(0.08, 0.48, 0.03, '#3a2d24', -0.16, 1.0, 0.18))
+  body.add(bx(0.09, 0.05, 0.04, '#ffd166', -0.16, 0.94, 0.185))
+  body.add(bx(0.08, 0.48, 0.03, '#3a2d24', 0.16, 1.0, 0.18))
+  body.add(bx(0.09, 0.05, 0.04, '#ffd166', 0.16, 0.94, 0.185))
+
+  // Mochila de Aventureiro / Dev Explorer nas costas
+  const backpack = new THREE.Group()
+  backpack.position.set(0, 1.0, -0.26)
+  backpack.add(bx(0.38, 0.44, 0.2, '#f48c06', 0, 0, 0)) // corpo da mochila
+  backpack.add(bx(0.32, 0.24, 0.1, '#e85d04', 0, -0.06, -0.11)) // bolso frontal
+  backpack.add(bx(0.24, 0.04, 0.11, '#e0e0e0', 0, -0.02, -0.115)) // faixa refletiva
+  backpack.add(bx(0.16, 0.08, 0.05, '#2b1e15', 0, 0.24, 0.04)) // alça de mão
+  body.add(backpack)
+
+  // Cabeça, Cabelo 3D Estilizado & Headphone Gamer
   const head = new THREE.Group()
   head.position.y = 1.5
   head.add(mesh(new THREE.SphereGeometry(0.26, 14, 12), skin))
-  head.add(mesh(new THREE.SphereGeometry(0.285, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), '#ef4444', 0, 0.03, 0))
-  head.add(bx(0.34, 0.05, 0.26, '#c92d2d', 0, 0.03, 0.3))
+
+  // Olhos expressivos com brilho de vida
   for (const s of [-1, 1]) {
-    head.add(mesh(new THREE.SphereGeometry(0.035, 6, 6), '#2d2a32', s * 0.09, -0.03, 0.235))
-    head.add(mesh(new THREE.SphereGeometry(0.04, 6, 6), '#ff9fb0', s * 0.15, -0.1, 0.2)) // bochechas
+    // Pupila escura
+    head.add(mesh(new THREE.SphereGeometry(0.038, 8, 8), '#1a1824', s * 0.09, -0.02, 0.24))
+    // Brilho especular do olhar
+    head.add(mesh(new THREE.SphereGeometry(0.015, 6, 6), '#ffffff', s * 0.09 + 0.012, 0.0, 0.252))
+    // Bochechas rosadas
+    head.add(mesh(new THREE.SphereGeometry(0.045, 6, 6), '#ff9fb0', s * 0.16, -0.09, 0.2))
+  }
+  // Sorriso sutil e confiante
+  head.add(bx(0.08, 0.02, 0.04, '#c26d55', 0, -0.12, 0.24))
+
+  // Cabelo 3D moderno texturizado
+  head.add(mesh(new THREE.SphereGeometry(0.285, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.58), '#231c19', 0, 0.04, -0.02))
+  // Topete frontal e mechas angulares
+  head.add(bx(0.2, 0.1, 0.16, '#2c221e', 0, 0.26, 0.16))
+  head.add(bx(0.14, 0.12, 0.12, '#231c19', -0.1, 0.2, 0.22))
+  head.add(bx(0.12, 0.1, 0.12, '#231c19', 0.1, 0.2, 0.21))
+  head.add(bx(0.08, 0.18, 0.14, '#231c19', -0.25, 0.05, 0.08))
+  head.add(bx(0.08, 0.18, 0.14, '#231c19', 0.25, 0.05, 0.08))
+
+  // Headphone Gamer descansando no pescoço com LED ciano
+  const hpArch = mesh(new THREE.TorusGeometry(0.24, 0.038, 8, 16, Math.PI * 1.15), '#181a20', 0, -0.22, 0.04)
+  hpArch.rotation.x = Math.PI * 0.55
+  head.add(hpArch)
+  for (const s of [-1, 1]) {
+    // Almofadas auriculares
+    head.add(bx(0.07, 0.14, 0.12, '#232733', s * 0.25, -0.2, 0.05))
+    // Anel de luz LED ciano gamer
+    head.add(bx(0.02, 0.1, 0.08, '#00f0ff', s * 0.29, -0.2, 0.05))
   }
   body.add(head)
-  const limb = (x, y, w, h, color, end) => {
+
+  // Pernas com Calça Cargo e Tênis Sneakers
+  const makeLeg = (x) => {
     const pivot = new THREE.Group()
-    pivot.position.set(x, y, 0)
-    pivot.add(bx(w, h, w, color, 0, -h / 2, 0))
-    if (end === 'shoe') pivot.add(bx(w + 0.03, 0.12, w + 0.16, '#ffffff', 0, -h + 0.04, 0.05))
-    else pivot.add(mesh(new THREE.SphereGeometry(w * 0.62, 8, 8), end, 0, -h - 0.02, 0))
+    pivot.position.set(x, 0.7, 0)
+    // Perna com calça cargo cinza grafite
+    pivot.add(bx(0.2, 0.62, 0.2, '#282d3c', 0, -0.31, 0))
+    // Bolso lateral 3D na coxa
+    pivot.add(bx(0.05, 0.18, 0.14, '#202430', x > 0 ? 0.11 : -0.11, -0.24, 0))
+    // Tênis Sneakers Chunky
+    // Solado robusto branco
+    pivot.add(bx(0.25, 0.11, 0.38, '#ffffff', 0, -0.585, 0.06))
+    // Cabedal preto/grafite do tênis
+    pivot.add(bx(0.23, 0.1, 0.32, '#1e222d', 0, -0.52, 0.04))
+    // Detalhe esportivo terracota
+    pivot.add(bx(0.24, 0.04, 0.14, '#ff6b35', 0, -0.51, 0.08))
     return pivot
   }
-  const legL = limb(-0.13, 0.7, 0.2, 0.62, '#2b2f4a', 'shoe')
-  const legR = limb(0.13, 0.7, 0.2, 0.62, '#2b2f4a', 'shoe')
-  const armL = limb(-0.35, 1.22, 0.15, 0.5, '#2f7bf0', skin)
-  const armR = limb(0.35, 1.22, 0.15, 0.5, '#2f7bf0', skin)
+
+  // Braços com mangas da jaqueta e detalhe canelado
+  const makeArm = (x) => {
+    const pivot = new THREE.Group()
+    pivot.position.set(x, 1.22, 0)
+    // Manga da jaqueta
+    pivot.add(bx(0.16, 0.36, 0.16, '#1e222d', 0, -0.18, 0))
+    // Punho canelado terracota
+    pivot.add(bx(0.17, 0.06, 0.17, '#ff6b35', 0, -0.37, 0))
+    // Mão
+    pivot.add(mesh(new THREE.SphereGeometry(0.1, 8, 8), skin, 0, -0.46, 0))
+    return pivot
+  }
+
+  const legL = makeLeg(-0.13)
+  const legR = makeLeg(0.13)
+  const armL = makeArm(-0.35)
+  const armR = makeArm(0.35)
+
   root.add(legL, legR)
   body.add(armL, armR)
   addOutline(root, 0.03)
-  root.userData = { body, head, legL, legR, armL, armR }
+  root.userData = { body, head, legL, legR, armL, armR, backpack }
   return root
 }
 
@@ -1282,24 +1366,40 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       ix = 0
       iz = 0
     }
-    const k = 1 - Math.exp(-(len > 0.05 && !paused ? 11 : 15) * dt)
+    // Aceleração progressiva e desaceleração suave (inércia fluida)
+    const isMoving = len > 0.05 && !paused
+    const k = 1 - Math.exp((isMoving ? -12 : -15) * dt)
     player.vx += (ix * SPEED - player.vx) * k
     player.vz += (iz * SPEED - player.vz) * k
+
+    // Colisão com deslizamento contínuo nas paredes
     const nx = player.x + player.vx * dt
-    if (!blocked(nx, player.z)) player.x = nx
-    else player.vx = 0
+    if (!blocked(nx, player.z)) {
+      player.x = nx
+    } else {
+      player.vx *= 0.15 // desliza suavemente em vez de parar bruscamente
+    }
     const nz = player.z + player.vz * dt
-    if (!blocked(player.x, nz)) player.z = nz
-    else player.vz = 0
+    if (!blocked(player.x, nz)) {
+      player.z = nz
+    } else {
+      player.vz *= 0.15
+    }
 
     const speed = Math.hypot(player.vx, player.vz)
-    if (speed > 0.4) {
+    if (speed > 0.2) {
       let diff = Math.atan2(player.vx, player.vz) - player.rot
       diff = Math.atan2(Math.sin(diff), Math.cos(diff))
+      // Suavização contínua de giro (smooth turn)
       player.rot += diff * (1 - Math.exp(-14 * dt))
+      // Banking dinâmico ao virar correndo (inclina o corpo para a curva)
+      const targetLean = -diff * Math.min(1, speed / 2.2) * 0.42
+      player.lean = (player.lean || 0) + (targetLean - (player.lean || 0)) * (1 - Math.exp(-11 * dt))
+    } else {
+      player.lean = (player.lean || 0) * (1 - Math.exp(-9 * dt))
     }
     player.amp += (Math.min(1, speed / SPEED) - player.amp) * (1 - Math.exp(-12 * dt))
-    player.phase += dt * (6 + speed * 1.9)
+    player.phase += dt * (7.5 + speed * 2.1)
 
     let found = null
     for (const b of PLACES) {
@@ -1315,16 +1415,50 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   // ---------- animação ----------
   function animate(dt) {
     const u = avatar.userData
-    const sw = Math.sin(player.phase) * 0.85 * player.amp
+    const speed = Math.hypot(player.vx, player.vz)
+    const sw = Math.sin(player.phase) * 0.88 * player.amp
+
+    // Passada natural das pernas com elevação e dobra suave dos pés
     u.legL.rotation.x = sw
     u.legR.rotation.x = -sw
-    u.armL.rotation.x = -sw * 0.9
-    u.armR.rotation.x = sw * 0.9
-    u.body.position.y = Math.abs(Math.sin(player.phase)) * 0.07 * player.amp + Math.sin(time * 2.2) * 0.012 * (1 - player.amp)
-    u.body.rotation.x = 0.14 * player.amp
-    u.head.rotation.y = Math.sin(time * 0.8) * 0.15 * (1 - player.amp)
+    u.legL.position.y = 0.7 + Math.max(0, -sw) * 0.07 * player.amp
+    u.legR.position.y = 0.7 + Math.max(0, sw) * 0.07 * player.amp
+    u.legL.position.z = Math.sin(player.phase) * 0.035 * player.amp
+    u.legR.position.z = -Math.sin(player.phase) * 0.035 * player.amp
+
+    // Balanço dos braços em X e Z com leve abertura natural ao correr
+    u.armL.rotation.x = -sw * 0.85
+    u.armR.rotation.x = sw * 0.85
+    u.armL.rotation.z = -0.14 - Math.abs(sw) * 0.12 * player.amp
+    u.armR.rotation.z = 0.14 + Math.abs(sw) * 0.12 * player.amp
+
+    // Tronco e quadril com balanço lateral dos passos (hip sway) + inclinação na curva
+    const hipSway = Math.sin(player.phase) * 0.06 * player.amp
+    u.body.rotation.z = hipSway + (player.lean || 0)
+    u.body.rotation.x = 0.12 * player.amp + (speed / SPEED) * 0.06
+
+    // Quique suave do corpo ao caminhar + respiração orgânica quando parado
+    const walkBounce = Math.abs(Math.sin(player.phase)) * 0.08 * player.amp
+    const idleBreath = Math.sin(time * 2.4) * 0.014 * (1 - player.amp)
+    u.body.position.y = walkBounce + idleBreath
+
+    // Squash & Stretch elástico suave (toque Nintendo/Cartoon)
+    const squash = Math.sin(player.phase * 2) * 0.032 * player.amp
+    u.body.scale.set(1 + squash * 0.6, 1 - squash, 1 + squash * 0.6)
+
+    // Jiggle sutil da mochila nas costas com amortecimento
+    if (u.backpack) {
+      u.backpack.rotation.x = -0.04 + Math.sin(player.phase * 2) * 0.04 * player.amp
+    }
+
+    // Cabeça com compensação suave ao andar e olhar ao redor no idle
+    u.head.rotation.x = -u.body.rotation.x * 0.4
+    u.head.rotation.y = Math.sin(time * 0.75) * 0.16 * (1 - player.amp)
+    u.head.position.y = 1.5 + Math.sin(time * 2.4) * 0.01 * (1 - player.amp)
+
     avatar.position.set(player.x, 0, player.z)
     avatar.rotation.y = player.rot
+    avatar.rotation.z = (player.lean || 0) * 0.45 // leve inclinação de todo o avatar na curva
 
     if (!reduceMotion) {
       windTime.value = time
