@@ -1153,9 +1153,9 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   const skyTex = new THREE.CanvasTexture(sky)
   skyTex.colorSpace = THREE.SRGBColorSpace
   scene.background = skyTex
-  scene.fog = new THREE.Fog('#d6f0ff', 40, 100)
+  scene.fog = new THREE.Fog('#d6f0ff', 65, 260)
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 200)
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 300)
 
   // luz: hemisfério colorido + sol direcional com sombras
   const hemi = new THREE.HemisphereLight('#eaf6ff', '#8a86d8', 1.9)
@@ -1410,6 +1410,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
 
     // Atualiza névoa
     scene.fog.color.set(p.fog)
+    scene.fog.near = p.isRain ? 40 : 65
+    scene.fog.far = p.isRain ? 170 : 260
 
     // Atualiza luzes
     hemi.color.set(p.hemi.sky)
@@ -1500,10 +1502,11 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   const introFly = {
     active: !reduceMotion,
     progress: 0,
-    duration: 2.6,
+    duration: 2.2,
   }
-  const camPos = new THREE.Vector3(player.x, 88, player.z + 70)
-  const camLook = new THREE.Vector3(player.x, 0, player.z - 6)
+  const wideInit = (canvas.clientWidth / (canvas.clientHeight || 1)) < 0.9 ? 1.5 : 1
+  const camPos = new THREE.Vector3(player.x, 34 * wideInit, player.z + 30 * wideInit)
+  const camLook = new THREE.Vector3(player.x, 0.4, player.z - 4)
   camera.position.copy(camPos)
   camera.lookAt(camLook)
   let camReady = true
@@ -1903,12 +1906,12 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     if (introFly.active) {
       introFly.progress += dt
       const t = Math.min(1, introFly.progress / introFly.duration)
-      // Ease-out cúbico suave descendo do céu
+      // Ease-out cúbico suave descendo do céu para trás do personagem
       const ease = 1 - Math.pow(1 - t, 3)
-      const startPos = new THREE.Vector3(player.x, 88, player.z + 70)
-      const startLook = new THREE.Vector3(player.x, 0, player.z - 6)
-      camPos.lerpVectors(startPos, targetPos, ease)
-      camLook.lerpVectors(startLook, targetLook, ease)
+      const currentStartPos = new THREE.Vector3(player.x, 34 * wide, player.z + 30 * wide)
+      const currentStartLook = new THREE.Vector3(player.x, 0.4, player.z - 4)
+      camPos.lerpVectors(currentStartPos, targetPos, ease)
+      camLook.lerpVectors(currentStartLook, targetLook, ease)
       camera.position.copy(camPos)
       camera.lookAt(camLook)
       if (t >= 1) {

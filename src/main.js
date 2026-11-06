@@ -353,15 +353,18 @@ import('./game3d.js')
     if (started && !openKey) game.setPaused(false)
     updatePrompt(game.getNear()?.key ?? null)
 
-    // Efeito dos Simpsons: as nuvens se separam e revelam a cidade
+    // Efeito dos Simpsons: as nuvens se separam dramaticamente revelando a cidade em zoom
     setTimeout(() => {
       simpsonsClouds?.classList.add('parted')
       sound.collect()
-    }, 180)
+      setTimeout(() => {
+        if (simpsonsClouds) simpsonsClouds.style.display = 'none'
+      }, 2500)
+    }, 360)
   })
   .catch((err) => {
     console.error('Erro ao inicializar Three.js / game3d:', err)
-    simpsonsClouds?.classList.add('parted')
+    if (simpsonsClouds) simpsonsClouds.style.display = 'none'
     els.intro.classList.add('intro--nogl')
   })
 
@@ -369,8 +372,10 @@ function startGame() {
   started = true
   els.intro.hidden = true
   document.body.classList.add('playing')
+  sound.click()
   game?.skipIntroFly?.()
   if (!openKey) game?.setPaused(false)
+  game?.emote?.('wave')
   updatePrompt(game?.getNear()?.key ?? null)
 }
 els.start.addEventListener('click', () => {
