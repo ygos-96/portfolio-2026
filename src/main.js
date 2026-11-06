@@ -118,7 +118,7 @@ function updatePrompt(key) {
   }
   const t = c()
   els.prompt.hidden = false
-  els.prompt.innerHTML = `${isTouch ? '' : '<kbd>E</kbd>'}<span>${t.ui.enterIn} ${t.sections[key].label}</span>`
+  els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${t.ui.enterIn} ${t.sections[key].label}</span>`
 }
 els.prompt.addEventListener('click', () => promptKey && openPanel(promptKey))
 

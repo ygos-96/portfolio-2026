@@ -1,6 +1,6 @@
 // Mundo: mapa em tiles (1 tile = 1 unidade no 3D), colisão e posições de prédios, árvores, postes e flores.
 export const T = 16
-export const W = 48
+export const W = 72
 export const H = 32
 
 const mulberry32 = (a) => () => {
@@ -11,13 +11,23 @@ const mulberry32 = (a) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296
 }
 
-export const BUILDINGS = [
+const BUILDINGS_BASE = [
   { key: 'sobre', x: 4, y: 3, w: 8, h: 5, icon: 'house', roof: '#c8553d', roofDark: '#9e3f2c', wall: '#f6e3c4', trim: '#8a5a3b', accent: '#f4a259' },
   { key: 'projetos', x: 19, y: 2, w: 10, h: 6, icon: 'gear', roof: '#e08a2e', roofDark: '#b86a1c', wall: '#ecd9b8', trim: '#6b4a2f', accent: '#5b8def' },
   { key: 'formacao', x: 36, y: 3, w: 8, h: 5, icon: 'book', roof: '#4f7fcf', roofDark: '#3a5fa3', wall: '#f3ead7', trim: '#5a4632', accent: '#f4c95d' },
   { key: 'skills', x: 6, y: 19, w: 8, h: 5, icon: 'tools', roof: '#5aa469', roofDark: '#3f7d4d', wall: '#f2e1c0', trim: '#7a5230', accent: '#e76f51' },
   { key: 'contato', x: 34, y: 19, w: 8, h: 5, icon: 'mail', roof: '#d9534f', roofDark: '#a93d3a', wall: '#f6ead0', trim: '#6b4a2f', accent: '#4f7fcf' },
-].map((b) => {
+]
+
+// Locais de lazer (bairro leste): estádio, palco, cinema e biblioteca. Larguras pares, como nos prédios acima.
+export const LANDMARKS = [
+  { key: 'cinema', x: 50, y: 3, w: 10, h: 5 },
+  { key: 'biblioteca', x: 62, y: 3, w: 8, h: 5 },
+  { key: 'estadio', x: 50, y: 16, w: 12, h: 8 },
+  { key: 'palco', x: 64, y: 19, w: 6, h: 5 },
+]
+
+const withZone = (b) => {
   const dx = b.x + b.w / 2 - 1
   return {
     ...b,
@@ -27,7 +37,10 @@ export const BUILDINGS = [
     labelX: (b.x + b.w / 2) * T,
     labelY: b.y * T + 18,
   }
-})
+}
+
+export const BUILDINGS = BUILDINGS_BASE.map(withZone)
+export const PLACES = [...BUILDINGS, ...LANDMARKS.map(withZone)]
 
 export const START = { x: 24 * T, y: 15 * T }
 
@@ -44,10 +57,11 @@ export function buildWorld() {
   const road = (x0, x1, y0, y1) => {
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) ground[y][x] = PATH
   }
-  road(2, 45, 12, 13) // rua de cima
-  road(2, 45, 26, 27) // rua de baixo
+  road(2, W - 3, 12, 13) // rua de cima
+  road(2, W - 3, 26, 27) // rua de baixo
   road(23, 24, 12, 27) // avenida central
-  for (const b of BUILDINGS) {
+  road(47, 48, 12, 27) // avenida leste (bairro de lazer)
+  for (const b of PLACES) {
     const top = b.y + b.h
     const bottom = b.y < 10 ? 11 : 25
     road(b.doorX, b.doorX + 1, Math.min(top, bottom), Math.max(top, bottom))
@@ -72,7 +86,7 @@ export function buildWorld() {
 
   // prédios sólidos
   const occupied = new Set()
-  for (const b of BUILDINGS) {
+  for (const b of PLACES) {
     for (let y = b.y; y < b.y + b.h; y++)
       for (let x = b.x; x < b.x + b.w; x++) {
         solid[y][x] = true
@@ -101,7 +115,7 @@ export function buildWorld() {
   // árvores soltas
   let tries = 0
   let placed = 0
-  while (placed < 34 && tries++ < 800) {
+  while (placed < 60 && tries++ < 800) {
     const x = 3 + Math.floor(rng() * (W - 6))
     const y = 3 + Math.floor(rng() * (H - 6))
     if (ground[y][x] !== GRASS || solid[y][x] || occupied.has(`${x},${y}`)) continue
@@ -119,12 +133,13 @@ export function buildWorld() {
     [6, 11], [16, 11], [31, 11], [45 - 2, 11],
     [4, 14], [16, 14], [31, 14], [43, 14],
     [16, 25], [31, 25], [44, 25], [4, 25],
+    [49, 11], [60, 11], [69, 11], [49, 14], [60, 14], [69, 14], [49, 25], [62, 25], [69, 25],
   ].filter(([x, y]) => ground[y][x] === GRASS && !solid[y][x])
   for (const [x, y] of lamps) solid[y][x] = true
 
   // flores (decoração, não colide)
   const flowers = []
-  for (let i = 0; i < 160; i++) {
+  for (let i = 0; i < 300; i++) {
     const x = 2 + Math.floor(rng() * (W - 4))
     const y = 2 + Math.floor(rng() * (H - 4))
     if (ground[y][x] !== GRASS || solid[y][x]) continue

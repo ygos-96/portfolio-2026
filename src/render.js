@@ -1,5 +1,5 @@
 // Funções puras que geram HTML (usadas no navegador e no gerador das páginas estáticas).
-import { CONTENT, LINKS, PROJECT_BASE, SECTION_ORDER, SITE_URL } from './content.js'
+import { ARTISTS, BOOKS, CONTENT, IDOLS, LINKS, MOVIE_GROUPS, PROJECT_BASE, SECTION_ORDER, SITE_URL, SPOTIFY, TROPHIES } from './content.js'
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
@@ -109,6 +109,70 @@ const sections = {
       <h3>${esc(ct.cvTitle)}</h3>
       <p>${esc(ct.cvText)}</p>
       <p class="actions">${cvButtons(lang)}</p>`
+  },
+
+  estadio(lang) {
+    const t = CONTENT[lang].estadio
+    const total = TROPHIES.reduce((n, tr) => n + tr.years.length, 0)
+    return `
+      <p class="lead">${esc(t.intro)}</p>
+      <h3>${esc(t.trophiesTitle)}</h3>
+      <p class="total"><strong>${total}</strong> ${esc(t.total)}</p>
+      <ul class="trophies">${TROPHIES.map(
+        (tr) => `<li class="trophy"><span class="trophy__cup" aria-hidden="true">🏆</span>
+          <strong>${esc(tr[lang])}</strong>
+          <span class="trophy__count">${tr.years.length} ${esc(t.titlesWord)}</span>
+          <span class="trophy__years">${tr.years.join(' · ')}</span></li>`,
+      ).join('')}</ul>
+      <h3>${esc(t.idolsTitle)}</h3>
+      <ul class="idols">${IDOLS.map((i) => `<li><strong>${esc(i.name)}</strong><span>${esc(i[lang])}</span></li>`).join('')}</ul>`
+  },
+
+  palco(lang) {
+    const t = CONTENT[lang].palco
+    return `
+      <p class="lead">${esc(t.intro)}</p>
+      <h3>${esc(t.playlistsTitle)}</h3>
+      <div class="playlists">${SPOTIFY.map(
+        (p) => `<section class="playlist">
+          <h4>${esc(p.name)}</h4>
+          <iframe title="Spotify: ${esc(p.name)}" src="https://open.spotify.com/embed/playlist/${esc(p.id)}?utm_source=generator&amp;theme=0" width="100%" height="352" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          <a href="https://open.spotify.com/playlist/${esc(p.id)}" target="_blank" rel="noopener noreferrer">${esc(t.openOn)} ↗</a>
+        </section>`,
+      ).join('')}</div>
+      <h3>${esc(t.artistsTitle)}</h3>
+      ${chips(ARTISTS)}`
+  },
+
+  cinema(lang) {
+    const t = CONTENT[lang].cinema
+    return `
+      <p class="lead">${esc(t.intro)}</p>
+      ${MOVIE_GROUPS.map((g) => {
+        const [a, b] = g.hue
+        return `<h3>${esc(t.groups[g.key])}</h3>
+        <ul class="movies">${g.items
+          .map(([ptTitle, enTitle, year]) => {
+            const title = lang === 'pt' ? ptTitle : enTitle
+            return `<li class="movie" style="--c1:${a};--c2:${b}"><span class="movie__year">${year}</span><span class="movie__title">${esc(title)}</span></li>`
+          })
+          .join('')}</ul>`
+      }).join('')}
+      <p class="note">${esc(t.posterHint)}</p>`
+  },
+
+  biblioteca(lang) {
+    const t = CONTENT[lang].biblioteca
+    return `
+      <p class="lead">${esc(t.intro)}</p>
+      <ul class="books">${BOOKS.map((bk) => {
+        const [a, b] = bk.hue
+        return `<li class="book">
+          <div class="book__cover" style="--c1:${a};--c2:${b}" aria-hidden="true"><span>${esc(bk.title[lang])}</span></div>
+          <div class="book__info"><h3>${esc(bk.title[lang])}</h3>
+          <p class="meta">${esc(t.by)} ${esc(bk.author)}</p>
+          <p>${esc(bk.desc[lang])}</p></div></li>`
+      }).join('')}</ul>`
   },
 }
 

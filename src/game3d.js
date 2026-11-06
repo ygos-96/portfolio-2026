@@ -3,11 +3,11 @@
 // Unidade do mundo: 1 tile = 1 unidade. x = leste, z = sul (a câmera olha para o norte).
 import * as THREE from 'three'
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
-import { BUILDINGS, H, START, T, W, buildWorld } from './world.js'
+import { BUILDINGS, H, PLACES, START, T, W, buildWorld } from './world.js'
 
 const SPEED = 5.4 // unidades por segundo
 const RADIUS = 0.3 // meia largura da caixa de colisão
-const ICONS = { sobre: '🏠', projetos: '⚙️', formacao: '📚', skills: '🛠️', contato: '✉️' }
+const ICONS = { sobre: '🏠', projetos: '⚙️', formacao: '📚', skills: '🛠️', contato: '✉️', estadio: '⚽', palco: '🎸', cinema: '🎬', biblioteca: '📖' }
 const INK = '#2b1d3a' // cor do contorno
 
 const isMobile = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600
@@ -426,10 +426,349 @@ function addBuilding(P, b) {
   return { chimney: new THREE.Vector3(chx, chy + 1.9, chz), labelY: baseH + wallH + 0.9 }
 }
 
+// ---------- locais de lazer: estádio, palco, cinema e biblioteca ----------
+const cyl = (rt, rb, h, seg = 10) => new THREE.CylinderGeometry(rt, rb, h, seg)
+const ball = (r) => new THREE.SphereGeometry(r, 8, 6)
+
+function addCinema(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.8
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, '#4a3a66', { ao: 0.4, hull: true })
+  P.add('wood', boxGeo(w + 0.1, 0.35, d + 0.1, 1.2), cx, 1.2, cz, '#d9304f')
+  P.add('wood', boxGeo(w + 0.5, 0.3, d + 0.5, 1.2), cx, 0.3 + H + 0.15, cz, '#2a2238', { hull: true })
+  // marquise com lâmpadas
+  P.add('wood', boxGeo(w - 1.2, 0.35, 1.8, 1.2), cx, 3.1, fz + 0.9, '#d9304f', { hull: true })
+  P.add('wood', boxGeo(w - 1.0, 0.12, 1.9, 1.2), cx, 3.34, fz + 0.9, '#ffe08a')
+  for (let i = 0; i < 9; i++) P.add('plain', ball(0.09), cx - (w - 2) / 2 + (i * (w - 2)) / 8, 3.0, fz + 1.82, '#fff2b8')
+  for (const s of [-1, 1]) P.add('wood', cyl(0.12, 0.12, 2.8, 6), cx + s * (w / 2 - 0.9), 1.7, fz + 1.7, '#8a6ea8')
+  // porta e cartazes
+  P.add('wood', boxGeo(2.8, 2.5, 0.2, 1), cx, 1.55, fz + 0.06, '#1c1526')
+  P.add('glass', boxGeo(2.4, 2.1, 0.22, 1), cx, 1.5, fz + 0.08, '#6fb7e8')
+  const cols = ['#e63946', '#f4a261', '#2a9d8f', '#9b5de5']
+  ;[-3.9, -2.4, 2.4, 3.9].forEach((ox, i) => {
+    P.add('wood', boxGeo(1.2, 1.7, 0.08, 1), cx + ox, 2.05, fz + 0.05, '#1c1526')
+    P.add('plain', boxGeo(1.0, 1.5, 0.1, 1), cx + ox, 2.05, fz + 0.1, cols[i])
+  })
+  // placa do letreiro
+  for (const s of [-1, 1]) P.add('wood', boxGeo(0.25, 1.4, 0.25, 1), cx + s * 2.6, 0.3 + H + 0.3 + 0.7, fz - 0.1, '#2a2238')
+  P.add('wood', boxGeo(7, 1.6, 0.3, 1), cx, 0.3 + H + 0.3 + 1.0, fz - 0.1, '#1c1526', { hull: true })
+  return { labelY: 6.9 }
+}
+
+function addLibrary(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const cz = b.y + d / 2
+  const fz = b.y + d
+  const H = 3.4
+  const stone = '#efe2c4'
+  const green = '#3f7d4d'
+  P.add('wall', boxGeo(w, H, d, 2.4), cx, 0.3 + H / 2, cz, stone, { ao: 0.4, hull: true })
+  P.add('wood', boxGeo(w + 0.3, 0.25, d + 0.3, 1.2), cx, 0.3 + H + 0.12, cz, '#8a5a3b', { hull: true })
+  const roofY = 0.3 + H + 0.25
+  P.add('roof', roofGeo(w + 0.8, d + 0.8, 1.6, 2.8), cx, roofY, cz, green, { ao: 0.25, hull: true })
+  // cúpula
+  P.add('wall', cyl(1.3, 1.4, 0.9, 14), cx, roofY + 1.55, cz, stone, { hull: true })
+  P.add('roof', new THREE.SphereGeometry(1.3, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), cx, roofY + 2.0, cz, green, { ao: 0.2, hull: true })
+  P.add('wood', cyl(0.05, 0.05, 0.7, 6), cx, roofY + 2.0 + 1.55, cz, '#8a5a3b')
+  P.add('plain', ball(0.12), cx, roofY + 2.0 + 1.95, cz, '#ffd166')
+  // pórtico com colunas
+  P.add('wall', boxGeo(7.4, 0.2, 2, 2), cx, 0.4, fz + 1.0, '#d8c9a8')
+  for (const ox of [-3, -1, 1, 3]) P.add('wall', cyl(0.2, 0.24, 3.0, 10), cx + ox, 0.5 + 1.5, fz + 1.7, '#fbf3df', { hull: true })
+  P.add('wall', boxGeo(7.4, 0.7, 2.2, 2), cx, 0.5 + 3.0 + 0.35, fz + 1.0, stone, { hull: true })
+  P.add('roof', roofGeo(7.6, 2.4, 0.8, 2.8), cx, 0.5 + 3.7, fz + 1.0, green, { ao: 0.2 })
+  // porta e janelas
+  P.add('wood', boxGeo(2.0, 2.6, 0.2, 1), cx, 1.6, fz + 0.06, '#5a341c')
+  for (const ox of [-2.6, 2.6]) {
+    P.add('wood', boxGeo(1.1, 1.7, 0.14, 1), cx + ox, 2.0, fz + 0.05, '#ffffff')
+    P.add('glass', boxGeo(0.9, 1.5, 0.18, 1), cx + ox, 2.0, fz + 0.07, '#9fdcff')
+  }
+  // pilhas de livros na entrada
+  const bookCols = ['#e63946', '#2a9d8f', '#f4a261', '#4f7fcf', '#9b5de5']
+  for (const s of [-1, 1])
+    for (let i = 0; i < 5; i++) P.add('plain', boxGeo(0.9 - i * 0.06, 0.2, 0.6, 1), cx + s * 4.7, 0.4 + i * 0.21, fz + 0.9, bookCols[(i + (s > 0 ? 2 : 0)) % 5])
+  return { labelY: 7.6 }
+}
+
+function addStadium(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const fz = b.y + d
+  const green = '#0a7b45'
+  const white = '#f4f4ee'
+  P.add('wall', boxGeo(w, 0.35, d, 2), cx, 0.175, b.y + d / 2, '#cdd5cf', { hull: true })
+  // arquibancada norte (fundo, a mais alta)
+  for (let i = 0; i < 3; i++) {
+    const h = 0.35 + (3 - i) * 0.9
+    P.add('wall', boxGeo(w, h, 0.8, 1.6), cx, h / 2, b.y + 0.4 + i * 0.8, i % 2 ? white : green, { ao: 0.3, hull: true })
+  }
+  // laterais
+  const zLen = d - 3.8
+  const zMid = b.y + 2.4 + zLen / 2
+  for (let i = 0; i < 3; i++) {
+    const h = 0.35 + (3 - i) * 0.7
+    P.add('wall', boxGeo(0.7, h, zLen, 1.6), b.x + 0.35 + i * 0.7, h / 2, zMid, i % 2 ? white : green, { ao: 0.3, hull: true })
+    P.add('wall', boxGeo(0.7, h, zLen, 1.6), b.x + w - 0.35 - i * 0.7, h / 2, zMid, i % 2 ? white : green, { ao: 0.3, hull: true })
+  }
+  // arquibancada sul (baixa, com portão no meio)
+  for (const s of [-1, 1]) {
+    P.add('wall', boxGeo((w - 3.2) / 2, 1.2, 1.2, 1.6), cx + (s * (3.2 + (w - 3.2) / 2)) / 2 + s * 0.0, 0.6, fz - 0.6, green, { ao: 0.3, hull: true })
+    P.add('wall', boxGeo((w - 3.2) / 2, 0.15, 1.25, 1.6), cx + (s * (3.2 + (w - 3.2) / 2)) / 2, 1.27, fz - 0.6, white)
+  }
+  // cobertura da arquibancada norte
+  P.add('wall', boxGeo(w, 0.25, 3.2, 1.6), cx, 4.3, b.y + 1.6, white, { hull: true })
+  P.add('wall', boxGeo(w, 0.3, 0.15, 1.6), cx, 4.3, b.y + 3.2, green)
+  for (const s of [-1, 1]) P.add('wood', cyl(0.08, 0.08, 4.2, 6), cx + s * (w / 2 - 0.4), 2.2, b.y + 3.0, '#9aa0a6')
+  // refletores nos quatro cantos
+  for (const [fx, fzz] of [[b.x + 0.5, b.y + 0.5], [b.x + w - 0.5, b.y + 0.5], [b.x + 0.5, fz - 0.5], [b.x + w - 0.5, fz - 0.5]]) {
+    P.add('wood', cyl(0.07, 0.1, 6.5, 6), fx, 3.25, fzz, '#9aa0a6', { hull: true })
+    P.add('plain', boxGeo(1.2, 0.7, 0.25, 1), fx, 6.7, fzz, '#fffbe0')
+  }
+  // portão
+  for (const s of [-1, 1]) P.add('wall', boxGeo(0.5, 3.2, 0.8, 1), cx + s * 1.85, 1.6, fz - 0.4, white, { hull: true })
+  P.add('wall', boxGeo(4.4, 0.8, 0.9, 1), cx, 3.6, fz - 0.4, green, { hull: true })
+  for (const s of [-1, 1]) {
+    P.add('wood', cyl(0.04, 0.04, 2.2, 6), cx + s * 2.0, 4.0 + 1.1, fz - 0.4, '#9aa0a6')
+    P.add('plain', boxGeo(1.0, 0.6, 0.05, 1), cx + s * 2.0 + s * 0.5, 6.0, fz - 0.4, s > 0 ? white : green)
+  }
+  // placar
+  P.add('wood', boxGeo(3, 1.2, 0.3, 1), cx, 5.3, b.y + 0.6, '#1c1c1c', { hull: true })
+  return { labelY: 8.0 }
+}
+
+function addStage(P, b) {
+  const { w, h: d } = b
+  const cx = b.x + w / 2
+  const fz = b.y + d
+  const top = 1.3
+  // plataforma de madeira e degrau
+  P.add('wood', boxGeo(w, 1.0, d - 1.2, 1.2), cx, 0.8, b.y + (d - 1.2) / 2, '#8a5a3b', { hull: true })
+  P.add('wood', boxGeo(2.6, 0.5, 0.9, 1.2), cx, 0.55, b.y + d - 1.2 + 0.45, '#a06a44', { hull: true })
+  // fundo e cortinas
+  P.add('wall', boxGeo(w, 3.6, 0.3, 2), cx, top + 1.8, b.y + 0.15, '#1f1b3a', { ao: 0.3, hull: true })
+  for (const s of [-1, 1]) P.add('plain', boxGeo(0.7, 3.4, 0.5, 1), cx + s * (w / 2 - 0.35), top + 1.7, b.y + 0.7, '#b3202e')
+  // estrutura e luzes coloridas
+  for (const s of [-1, 1]) P.add('wood', cyl(0.07, 0.07, 3.9, 6), cx + s * (w / 2 - 0.05), top + 1.95, b.y + 1.6, '#9aa0a6')
+  P.add('wood', boxGeo(w, 0.25, 0.25, 1), cx, top + 3.9, b.y + 1.6, '#9aa0a6', { hull: true })
+  const lights = ['#ff4d6d', '#4cc9f0', '#ffd166', '#80ed99', '#d65bff']
+  lights.forEach((c, i) => P.add('plain', ball(0.17), cx - 2.2 + i * 1.1, top + 3.65, b.y + 1.75, c))
+  // caixas de som
+  for (const s of [-1, 1])
+    for (let i = 0; i < 2; i++) {
+      P.add('plain', boxGeo(0.9, 1.0, 0.8, 1), cx + s * (w / 2 - 0.65), top + 0.5 + i * 1.0, b.y + 2.9, '#252430', { hull: true })
+      P.add('plain', cyl(0.28, 0.28, 0.05, 12).rotateX(Math.PI / 2), cx + s * (w / 2 - 0.65), top + 0.5 + i * 1.0, b.y + 2.9 + 0.42, '#7d7b8c')
+    }
+  // bateria
+  const kz = b.y + 1.5
+  P.add('plain', cyl(0.45, 0.45, 0.4, 14).rotateX(Math.PI / 2), cx, top + 0.45, kz + 0.3, '#d9304f')
+  for (const s of [-1, 1]) {
+    P.add('plain', cyl(0.25, 0.25, 0.25, 12), cx + s * 0.38, top + 1.0, kz, '#e8e8e8')
+    P.add('plain', cyl(0.35, 0.35, 0.03, 12), cx + s * 1.0, top + 1.55, kz - 0.2, '#e3b341')
+  }
+  return { labelY: 6.2 }
+}
+
+function addLandmark(P, b) {
+  P.add('wall', boxGeo(b.w + 0.3, 0.3, b.h + 0.3, 2), b.x + b.w / 2, 0.15, b.y + b.h / 2, '#cdbf9f')
+  return { cinema: addCinema, biblioteca: addLibrary, estadio: addStadium, palco: addStage }[b.key](P, b)
+}
+
+// letreiros (texto pintado em canvas, sempre de frente para a câmera)
+function textSign(text, w, h, bg, fg) {
+  const cv = document.createElement('canvas')
+  cv.width = 512
+  cv.height = Math.max(32, Math.round((512 * h) / w))
+  const g = cv.getContext('2d')
+  g.fillStyle = bg
+  g.fillRect(0, 0, cv.width, cv.height)
+  g.strokeStyle = fg
+  g.lineWidth = 6
+  g.strokeRect(8, 8, cv.width - 16, cv.height - 16)
+  g.fillStyle = fg
+  g.textAlign = 'center'
+  g.textBaseline = 'middle'
+  let size = cv.height * 0.62
+  const font = (s) => `900 ${Math.round(s)}px "Arial Black", Impact, system-ui, sans-serif`
+  g.font = font(size)
+  while (g.measureText(text).width > cv.width * 0.86 && size > 10) {
+    size -= 2
+    g.font = font(size)
+  }
+  g.fillText(text, cv.width / 2, cv.height / 2 + size * 0.04)
+  const tex = new THREE.CanvasTexture(cv)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.anisotropy = isMobile ? 2 : 4
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex }))
+}
+
+function pitchMesh(w, d) {
+  const cv = document.createElement('canvas')
+  cv.width = 512
+  cv.height = Math.round((512 * d) / w)
+  const g = cv.getContext('2d')
+  for (let i = 0; i < 8; i++) {
+    g.fillStyle = i % 2 ? '#3aa84c' : '#43b955'
+    g.fillRect((i * cv.width) / 8, 0, cv.width / 8 + 1, cv.height)
+  }
+  g.strokeStyle = 'rgba(255,255,255,.9)'
+  g.lineWidth = 5
+  g.strokeRect(10, 10, cv.width - 20, cv.height - 20)
+  g.beginPath()
+  g.moveTo(cv.width / 2, 10)
+  g.lineTo(cv.width / 2, cv.height - 10)
+  g.stroke()
+  g.beginPath()
+  g.arc(cv.width / 2, cv.height / 2, cv.height * 0.2, 0, Math.PI * 2)
+  g.stroke()
+  g.strokeRect(10, cv.height * 0.28, cv.width * 0.13, cv.height * 0.44)
+  g.strokeRect(cv.width - 10 - cv.width * 0.13, cv.height * 0.28, cv.width * 0.13, cv.height * 0.44)
+  const tex = new THREE.CanvasTexture(cv)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.anisotropy = isMobile ? 2 : 4
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshLambertMaterial({ map: tex }))
+  m.rotation.x = -Math.PI / 2
+  m.receiveShadow = true
+  return m
+}
+
+// integrante da banda (animado, fora da malha fundida)
+function makeMember(shirt, kind) {
+  const g = new THREE.Group()
+  const body = new THREE.Group()
+  g.add(body)
+  const bx = (w, h, d, c, x, y, z) => mesh(new THREE.BoxGeometry(w, h, d), c, x, y, z)
+  const skin = '#f6c19a'
+  body.add(bx(0.5, 0.6, 0.32, shirt, 0, 0.95, 0))
+  const head = new THREE.Group()
+  head.position.y = 1.52
+  head.add(mesh(new THREE.SphereGeometry(0.26, 12, 10), skin))
+  head.add(mesh(new THREE.SphereGeometry(0.285, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), kind === 'vocal' ? '#2d2a32' : '#7a4a2a', 0, 0.03, 0))
+  for (const s of [-1, 1]) head.add(mesh(new THREE.SphereGeometry(0.035, 6, 6), '#2d2a32', s * 0.09, -0.03, 0.235))
+  body.add(head)
+  for (const s of [-1, 1]) g.add(bx(0.2, 0.65, 0.2, '#2b2f4a', s * 0.13, 0.33, 0))
+  const arm = (x) => {
+    const p = new THREE.Group()
+    p.position.set(x, 1.22, 0)
+    p.add(bx(0.15, 0.5, 0.15, shirt, 0, -0.25, 0))
+    p.add(mesh(new THREE.SphereGeometry(0.09, 8, 8), skin, 0, -0.52, 0))
+    body.add(p)
+    return p
+  }
+  const armL = arm(-0.35)
+  const armR = arm(0.35)
+  if (kind === 'guitar' || kind === 'bass') {
+    const gt = new THREE.Group()
+    gt.add(bx(0.5, 0.36, 0.1, kind === 'guitar' ? '#d9534f' : '#4f7fcf', 0, 0, 0))
+    const neck = bx(0.75, 0.07, 0.06, '#8a5a3b', 0.55, 0.1, 0)
+    neck.rotation.z = 0.35
+    gt.add(neck)
+    gt.position.set(0.05, 0.8, 0.22)
+    gt.rotation.z = -0.35
+    body.add(gt)
+  }
+  if (kind === 'vocal') {
+    const mic = new THREE.Group()
+    mic.add(mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.3, 6), '#9aa0a6', 0, 0.65, 0))
+    mic.add(mesh(new THREE.SphereGeometry(0.07, 8, 8), '#2d2a32', 0, 1.33, 0))
+    mic.position.set(0, 0, 0.45)
+    g.add(mic)
+  }
+  addOutline(g, 0.03)
+  g.userData = { body, head, armL, armR, kind }
+  return g
+}
+
+function buildExtras(scene, reduceMotion) {
+  const sceneObjs = { members: [], notes: [] }
+  const byKey = (k) => PLACES.find((p) => p.key === k)
+  const sign = (text, w, h, bg, fg, x, y, z) => {
+    const s = textSign(text, w, h, bg, fg)
+    s.position.set(x, y, z)
+    scene.add(s)
+  }
+  const st = byKey('estadio')
+  const stx = st.x + st.w / 2
+  const stf = st.y + st.h
+  sign('PALMEIRAS', 4.2, 0.7, '#0a7b45', '#ffffff', stx, 3.6, stf + 0.09)
+  sign('1914', 2.6, 0.9, '#111111', '#7cfc7c', stx, 5.3, st.y + 0.77)
+  const pit = pitchMesh(st.w - 4.2, st.h - 3.6)
+  pit.position.set(stx, 0.37, st.y + 2.4 + (st.h - 3.6) / 2)
+  scene.add(pit)
+
+  const ci = byKey('cinema')
+  sign('CINEMA', 6.6, 1.4, '#1c1526', '#ffd166', ci.x + ci.w / 2, 0.3 + 3.8 + 0.3 + 1.0, ci.y + ci.h + 0.07)
+
+  const li = byKey('biblioteca')
+  sign('BIBLIOTECA', 4.8, 0.5, '#2f5d3a', '#f6e3c4', li.x + li.w / 2, 3.85, li.y + li.h + 2.12)
+
+  const pa = byKey('palco')
+  const pcx = pa.x + pa.w / 2
+  sign('AO VIVO', 3.6, 0.7, '#1f1b3a', '#ff6bd6', pcx, 1.3 + 2.6, pa.y + 0.32)
+  const top = 1.3
+  const crew = [
+    ['vocal', '#ff6b6b', pcx, pa.y + 2.5],
+    ['guitar', '#4cc9f0', pcx - 1.7, pa.y + 2.0],
+    ['bass', '#ffd166', pcx + 1.7, pa.y + 2.0],
+    ['drums', '#80ed99', pcx, pa.y + 0.85],
+  ]
+  crew.forEach(([kind, shirt, x, z], i) => {
+    const m = makeMember(shirt, kind)
+    m.position.set(x, top, z)
+    scene.add(m)
+    sceneObjs.members.push({ m, phase: i * 1.3 })
+  })
+  // notas musicais subindo do palco
+  const noteCols = ['#ff4d6d', '#4cc9f0', '#ffd166', '#80ed99', '#d65bff', '#ffffff']
+  for (let i = 0; i < 6; i++) {
+    const n = new THREE.Group()
+    n.add(mesh(new THREE.SphereGeometry(0.11, 8, 6), noteCols[i], 0, 0, 0))
+    n.add(mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 5), noteCols[i], 0.09, 0.2, 0))
+    scene.add(n)
+    sceneObjs.notes.push({ n, i })
+  }
+  const nx = pcx
+  const nz = pa.y + 1.8
+  return {
+    update(time) {
+      for (const { m, phase } of sceneObjs.members) {
+        const u = m.userData
+        const t = time * 7 + phase
+        const k = reduceMotion ? 0 : 1
+        u.body.position.y = Math.abs(Math.sin(t)) * 0.07 * k
+        u.head.rotation.z = Math.sin(t * 0.5) * 0.12 * k
+        if (u.kind === 'drums') {
+          u.armL.rotation.x = -1.1 + Math.sin(t * 2) * 0.7 * k
+          u.armR.rotation.x = -1.1 + Math.cos(t * 2) * 0.7 * k
+        } else if (u.kind === 'vocal') {
+          u.armR.rotation.x = -1.5 + Math.sin(t * 0.7) * 0.15 * k
+          u.armL.rotation.x = Math.sin(t) * 0.5 * k
+        } else {
+          u.armR.rotation.x = -0.6 + Math.sin(t * 2) * 0.5 * k
+          u.armL.rotation.x = -0.5
+        }
+      }
+      for (const { n, i } of sceneObjs.notes) {
+        if (reduceMotion) {
+          n.visible = false
+          continue
+        }
+        const t = (time * 0.35 + i / 6) % 1
+        n.position.set(nx + (i - 2.5) * 0.75 + Math.sin(t * 7 + i) * 0.25, top + 3.0 + t * 3, nz)
+        n.scale.setScalar(Math.max(0.01, Math.sin(t * Math.PI)))
+        n.rotation.z = Math.sin(t * 5 + i) * 0.4
+      }
+    },
+  }
+}
+
 function buildTown() {
   const P = new Parts()
   const info = new Map()
   for (const b of BUILDINGS) info.set(b.key, addBuilding(P, b))
+  for (const b of PLACES.filter((p) => !BUILDINGS.includes(p))) info.set(b.key, addLandmark(P, b))
   const group = new THREE.Group()
   // (criados direto: toon() faz cache por JSON e não serve para texturas)
   const mk = (o) => new THREE.MeshToonMaterial({ gradientMap: ramp, vertexColors: true, ...o })
@@ -622,7 +961,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   const SUN_OFFSET = new THREE.Vector3(-16, 34, 14)
 
   // chão
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshLambertMaterial({ map: paintGround(world, BUILDINGS) }))
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshLambertMaterial({ map: paintGround(world, PLACES) }))
   ground.rotation.x = -Math.PI / 2
   ground.position.set(W / 2, 0, H / 2)
   ground.receiveShadow = true
@@ -643,6 +982,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   // prédios fundidos + fumaça
   const town = buildTown()
   scene.add(town.group)
+  const extras = buildExtras(scene, reduceMotion)
   const smoke = []
   for (const b of BUILDINGS)
     for (let i = 0; i < 3; i++) {
@@ -758,7 +1098,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   const labelLayer = document.createElement('div')
   labelLayer.className = 'labels3d'
   const labelEls = new Map()
-  for (const b of BUILDINGS) {
+  for (const b of PLACES) {
     const el = document.createElement('button')
     el.type = 'button'
     el.className = 'label3d'
@@ -792,7 +1132,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       return
     }
     if (paused) return
-    if ((e.code === 'KeyE' || e.code === 'Enter' || e.code === 'Space') && near) {
+    if ((e.code === 'Enter' || e.code === 'NumpadEnter') && near) {
       e.preventDefault()
       onEnter(near.key)
     }
@@ -882,7 +1222,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     player.phase += dt * (6 + speed * 1.9)
 
     let found = null
-    for (const b of BUILDINGS) {
+    for (const b of PLACES) {
       const z = b.zone
       const px = player.x * T
       const py = player.z * T
@@ -937,6 +1277,8 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       }
     }
 
+    extras.update(time)
+
     if (near) {
       glow.visible = true
       glow.position.set(near.doorX + 1, 0.05, near.y + near.h + 0.75)
@@ -967,7 +1309,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     const labels = getLabels()
     const w = canvas.clientWidth
     const h = canvas.clientHeight
-    for (const b of BUILDINGS) {
+    for (const b of PLACES) {
       const L = labelEls.get(b.key)
       const txt = labels[b.key]
       if (L.last !== txt) {
@@ -1029,7 +1371,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       input.stick.y = y
     },
     teleportTo(key) {
-      const b = BUILDINGS.find((i) => i.key === key)
+      const b = PLACES.find((i) => i.key === key)
       if (!b) return
       player.x = b.doorX + 1
       player.z = b.y + b.h + 0.8
