@@ -278,6 +278,113 @@ body.modal-open .stick {
   pointer-events: none;
 }
 
+.chip--counter {
+  background: #fff8e1;
+  border-color: #f48c06;
+  color: #7a3e00;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #b35900;
+}
+
+/* ---------- botões de ação na tela (pulo e emotes) ---------- */
+.action-controls {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+body.modal-open .action-controls {
+  display: none;
+}
+.action-btn {
+  font: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 3px solid var(--brown);
+  background: #ffffff;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--brown);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  touch-action: manipulation;
+  transition: transform 0.1s, background 0.1s;
+}
+.action-btn:hover {
+  background: #ffecb3;
+  transform: translateY(-2px);
+}
+.action-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--brown);
+}
+.action-btn--jump {
+  background: #ffd166;
+  font-size: 15px;
+}
+.action-btn--jump:hover {
+  background: #ffc038;
+}
+
+/* ---------- toast de conquista desbloqueada ---------- */
+.toast-achievement {
+  position: fixed;
+  top: max(20px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #2b233a;
+  border: 3px solid #ffcb52;
+  border-radius: 18px;
+  padding: 14px 22px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 16px rgba(255, 203, 82, 0.5);
+  color: #fff;
+  animation: toastPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  max-width: min(520px, 92vw);
+}
+.toast-achievement[hidden] {
+  display: none;
+}
+@keyframes toastPop {
+  0% { transform: translate(-50%, -30px) scale(0.9); opacity: 0; }
+  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+.toast-achievement__icon {
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  animation: bounceCup 1s infinite alternate ease-in-out;
+}
+@keyframes bounceCup {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px) rotate(8deg); }
+}
+.toast-achievement__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.toast-achievement__content strong {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #ffd166;
+}
+.toast-achievement__content span {
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
 /* ---------- intro ---------- */
 .intro {
   position: fixed;

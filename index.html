@@ -34,11 +34,27 @@
   </div>
   <nav id="shortcuts" class="hud__nav" aria-label="Atalhos"></nav>
   <div class="hud__tools">
+    <button id="btn-weather" class="chip" type="button" title="Clima & Horário">☀️ Dia</button>
+    <button id="btn-audio" class="chip" type="button" title="Efeitos Sonoros">🔊 Som</button>
+    <div id="coffee-counter" class="chip chip--counter" title="Colete todos os 8 cafés pelo mapa!">☕ 0/8</div>
     <a id="fast" class="chip" href="/rapido/">Modo rápido</a>
     <a id="cv" class="chip" href="/Ygor-Gomes-Curriculo.pdf" download>CV</a>
     <button id="lang" class="chip" type="button" aria-label="Switch to English">EN</button>
   </div>
 </header>
+
+<div id="action-controls" class="action-controls">
+  <button id="btn-jump" class="action-btn action-btn--jump" type="button" aria-label="Pular">⤴ Pular</button>
+  <button id="btn-emote" class="action-btn action-btn--emote" type="button" aria-label="Acenar">👋 Acenar</button>
+</div>
+
+<div id="toast-achievement" class="toast-achievement" hidden>
+  <div class="toast-achievement__icon">🏆</div>
+  <div class="toast-achievement__content">
+    <strong>CONQUISTA DESBLOQUEADA: DEV SUPREMO!</strong>
+    <span>Você coletou todos os 8 cafés! Agora o Dev opera a 200% de energia!</span>
+  </div>
+</div>
 
 <button id="prompt" class="prompt" type="button" hidden></button>
 

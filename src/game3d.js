@@ -4,6 +4,8 @@
 import * as THREE from 'three'
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 import { BUILDINGS, H, PLACES, POND, START, T, W, buildWorld } from './world.js'
+import { sound } from './audio.js'
+import { WEATHER_PRESETS } from './weather.js'
 
 const SPEED = 6.6 // unidades por segundo (mais ágil)
 const RADIUS = 0.3 // meia largura da caixa de colisão
@@ -934,12 +936,14 @@ function buildTrees(world) {
   return Object.values(meshes)
 }
 
+let lampMat = null
 function buildLamps(world) {
   const n = world.lamps.length
+  lampMat = toon('#fff2b8', { emissive: '#ffc94a', emissiveIntensity: 0.9 })
   const parts = [
     [new THREE.CylinderGeometry(0.16, 0.2, 0.18, 8).translate(0, 0.09, 0), toon('#3b3a4a')],
     [new THREE.CylinderGeometry(0.05, 0.07, 2.2, 6).translate(0, 1.2, 0), toon('#3b3a4a')],
-    [new THREE.BoxGeometry(0.38, 0.42, 0.38).translate(0, 2.45, 0), toon('#fff2b8', { emissive: '#ffc94a', emissiveIntensity: 0.9 })],
+    [new THREE.BoxGeometry(0.38, 0.42, 0.38).translate(0, 2.45, 0), lampMat],
     [new THREE.ConeGeometry(0.34, 0.25, 4).rotateY(Math.PI / 4).translate(0, 2.8, 0), toon('#3b3a4a')],
   ]
   return parts.map(([geo, mat]) => {
@@ -953,6 +957,47 @@ function buildLamps(world) {
     })
     return im
   })
+}
+
+// Locais dos 8 cafés colecionáveis espalhados pelo mapa
+const COFFEE_SPOTS = [
+  { x: 30, z: 32, id: 'start' }, // Perto da entrada / Sobre
+  { x: 42, z: 27, id: 'lake' }, // Deck do Lago
+  { x: 23, z: 24, id: 'proj' }, // Praça dos Projetos
+  { x: 34, z: 20, id: 'form' }, // Entrada de Formação
+  { x: 19, z: 36, id: 'skills' }, // Parque das Skills
+  { x: 44, z: 38, id: 'cinema' }, // Esquina do Cinema
+  { x: 38, z: 46, id: 'stadium' }, // Gramado do Estádio
+  { x: 25, z: 42, id: 'contact' }, // Totem de Contato
+]
+
+function makeCoffeeCup() {
+  const g = new THREE.Group()
+  // Caneca cerâmica branca
+  const cup = mesh(new THREE.CylinderGeometry(0.2, 0.16, 0.32, 12), '#ffffff', 0, 0.16, 0)
+  // Café líquido escuro
+  const coffee = mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.04, 12), '#3d2011', 0, 0.3, 0)
+  // Alça
+  const handle = mesh(new THREE.TorusGeometry(0.1, 0.035, 6, 12, Math.PI * 1.3), '#ffffff', 0.2, 0.16, 0)
+  handle.rotation.z = -Math.PI / 2
+  // Anel dourado flutuante
+  const ring = mesh(new THREE.TorusGeometry(0.32, 0.025, 6, 16), '#ffd166', 0, 0.16, 0)
+  ring.rotation.x = Math.PI / 2
+
+  g.add(cup, coffee, handle, ring)
+  addOutline(g, 0.02)
+  return g
+}
+
+function makeMiniLaptop() {
+  const g = new THREE.Group()
+  const base = mesh(new THREE.BoxGeometry(0.32, 0.02, 0.22), '#1e222d', 0, 0.45, 0.22)
+  const screen = mesh(new THREE.BoxGeometry(0.32, 0.22, 0.02), '#1e222d', 0, 0.55, 0.12)
+  screen.rotation.x = -0.22
+  const display = mesh(new THREE.PlaneGeometry(0.28, 0.18), '#00f0ff', 0, 0.55, 0.132)
+  display.rotation.x = -0.22
+  g.add(base, screen, display)
+  return g
 }
 
 // ---------- personagem ----------
@@ -1071,15 +1116,19 @@ function makePlayer() {
   const armL = makeArm(-0.35)
   const armR = makeArm(0.35)
 
+  const laptop = makeMiniLaptop()
+  laptop.visible = false
+  body.add(laptop)
+
   root.add(legL, legR)
   body.add(armL, armR)
   addOutline(root, 0.03)
-  root.userData = { body, head, legL, legR, armL, armR, backpack }
+  root.userData = { body, head, legL, legR, armL, armR, backpack, laptop }
   return root
 }
 
 // ---------- jogo ----------
-export function createGame(canvas, { onNear, onEnter, getLabels }) {
+export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAllCollected }) {
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
   const world = buildWorld()
   let level = isMobile ? 1 : 0
@@ -1108,8 +1157,9 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 200)
 
-  // luz: hemisfério colorido (sombras azuladas/roxas) + sol quente
-  scene.add(new THREE.HemisphereLight('#eaf6ff', '#8a86d8', 1.9))
+  // luz: hemisfério colorido + sol direcional com sombras
+  const hemi = new THREE.HemisphereLight('#eaf6ff', '#8a86d8', 1.9)
+  scene.add(hemi)
   const sun = new THREE.DirectionalLight('#fff0cc', 2.1)
   sun.castShadow = true
   const sc = sun.shadow.camera
@@ -1253,10 +1303,173 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   glow.position.y = 0.05
   scene.add(glow)
 
+  // 8 Cafés colecionáveis espalhados pelo mapa
+  let collectedCoffeeCount = 0
+  const coffeeItems = COFFEE_SPOTS.map((spot, idx) => {
+    const mesh = makeCoffeeCup()
+    mesh.position.set(spot.x, 0.5, spot.z)
+    scene.add(mesh)
+    return { spot, mesh, collected: false, phase: idx * 0.75 }
+  })
+
+  // Sistema de poeira (dust puffs) nos pés ao pular / aterrissar / correr
+  const dustParticles = []
+  function spawnDust(x, z, count = 4) {
+    for (let i = 0; i < count; i++) {
+      const p = mesh(new THREE.SphereGeometry(0.07 + rnd() * 0.05, 6, 5), '#ffffff', x + (rnd() - 0.5) * 0.35, 0.06, z + (rnd() - 0.5) * 0.35)
+      p.material.transparent = true
+      p.material.opacity = 0.8
+      p.userData = {
+        vx: (rnd() - 0.5) * 1.6,
+        vy: 0.6 + rnd() * 1.2,
+        vz: (rnd() - 0.5) * 1.6,
+        life: 0.35 + rnd() * 0.15,
+        maxLife: 0.45,
+      }
+      scene.add(p)
+      dustParticles.push(p)
+    }
+  }
+
+  // Vaga-lumes noturnos reluzentes na grama e no lago
+  const fireflies = []
+  const ffGeo = new THREE.SphereGeometry(0.055, 6, 6)
+  for (let i = 0; i < 26; i++) {
+    const ffMat = new THREE.MeshBasicMaterial({ color: '#caff70', transparent: true, opacity: 0 })
+    const ff = new THREE.Mesh(ffGeo, ffMat)
+    ff.position.set(10 + rnd() * (W - 20), 0.4 + rnd() * 1.8, 10 + rnd() * (H - 20))
+    ff.userData = {
+      baseX: ff.position.x,
+      baseY: ff.position.y,
+      baseZ: ff.position.z,
+      phase: rnd() * Math.PI * 2,
+      speed: 0.5 + rnd() * 0.8,
+    }
+    scene.add(ff)
+    fireflies.push(ff)
+  }
+
+  // Chuva volumétrica procedural
+  const rainCount = 320
+  const rainGeom = new THREE.BufferGeometry()
+  const rainPos = new Float32Array(rainCount * 6)
+  for (let i = 0; i < rainCount; i++) {
+    const rx = (rnd() - 0.5) * 44
+    const ry = rnd() * 24
+    const rz = (rnd() - 0.5) * 44
+    rainPos[i * 6 + 0] = rx
+    rainPos[i * 6 + 1] = ry
+    rainPos[i * 6 + 2] = rz
+    rainPos[i * 6 + 3] = rx - 0.1
+    rainPos[i * 6 + 4] = ry - 0.7
+    rainPos[i * 6 + 5] = rz + 0.1
+  }
+  rainGeom.setAttribute('position', new THREE.BufferAttribute(rainPos, 3))
+  const rainMat = new THREE.LineBasicMaterial({ color: '#b0cadb', transparent: true, opacity: 0.55 })
+  const rainMesh = new THREE.LineSegments(rainGeom, rainMat)
+  rainMesh.visible = false
+  scene.add(rainMesh)
+
+  // Confetes comemorativos para quando coletar todos os cafés
+  const confetti = []
+  function spawnConfetti(px, pz) {
+    const colors = ['#ffd166', '#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6']
+    const geo = new THREE.PlaneGeometry(0.12, 0.12)
+    for (let i = 0; i < 80; i++) {
+      const mat = new THREE.MeshBasicMaterial({ color: pick(colors), side: THREE.DoubleSide })
+      const c = new THREE.Mesh(geo, mat)
+      c.position.set(px + (rnd() - 0.5) * 16, 10 + rnd() * 8, pz + (rnd() - 0.5) * 16)
+      c.userData = {
+        vx: (rnd() - 0.5) * 2.2,
+        vy: -2.0 - rnd() * 2.5,
+        vz: (rnd() - 0.5) * 2.2,
+        rotX: (rnd() - 0.5) * 7,
+        rotY: (rnd() - 0.5) * 7,
+        life: 5.0,
+      }
+      scene.add(c)
+      confetti.push(c)
+    }
+  }
+
+  // Clima dinâmico e presets de iluminação
+  let currentWeatherKey = 'day'
+  function applyWeather(presetKey) {
+    const p = WEATHER_PRESETS[presetKey] || WEATHER_PRESETS.day
+    currentWeatherKey = presetKey
+
+    // Atualiza textura do céu
+    const sg = sky.getContext('2d')
+    const grad = sg.createLinearGradient(0, 0, 0, 256)
+    grad.addColorStop(0, p.sky[0])
+    grad.addColorStop(0.55, p.sky[1])
+    grad.addColorStop(1, p.sky[2])
+    sg.fillStyle = grad
+    sg.fillRect(0, 0, 2, 256)
+    skyTex.needsUpdate = true
+
+    // Atualiza névoa
+    scene.fog.color.set(p.fog)
+
+    // Atualiza luzes
+    hemi.color.set(p.hemi.sky)
+    hemi.groundColor.set(p.hemi.ground)
+    hemi.intensity = p.hemi.intensity
+
+    sun.color.set(p.sun.color)
+    sun.intensity = p.sun.intensity
+    SUN_OFFSET.set(...p.sun.pos)
+
+    // Postes acesos ou apagados
+    if (lampMat) {
+      lampMat.emissiveIntensity = p.lampEmissive
+    }
+
+    // Chuva
+    rainMesh.visible = p.isRain
+  }
+
   // personagem
-  const player = { x: START.x / T, z: START.y / T, vx: 0, vz: 0, rot: 0, phase: 0, amp: 0 }
+  const player = {
+    x: START.x / T,
+    y: 0,
+    z: START.y / T,
+    vx: 0,
+    vy: 0,
+    vz: 0,
+    rot: 0,
+    phase: 0,
+    amp: 0,
+    isGrounded: true,
+    stepTimer: 0,
+    afkTimer: 0,
+    currentEmote: null,
+    emoteTimer: 0,
+  }
   const avatar = makePlayer()
   scene.add(avatar)
+
+  function doJump() {
+    if (player.isGrounded && !paused) {
+      player.vy = 8.6
+      player.isGrounded = false
+      player.afkTimer = 0
+      if (player.currentEmote === 'sit') {
+        player.currentEmote = null
+        if (avatar.userData.laptop) avatar.userData.laptop.visible = false
+      }
+      sound.jump()
+      spawnDust(player.x, player.z, 5)
+    }
+  }
+
+  function doEmote(type) {
+    if (paused) return
+    player.currentEmote = type
+    player.emoteTimer = type === 'dance' ? 3.0 : 2.0
+    player.afkTimer = 0
+    if (avatar.userData.laptop) avatar.userData.laptop.visible = type === 'sit'
+  }
 
   // rótulos HTML sobre os prédios
   const labelLayer = document.createElement('div')
@@ -1286,13 +1499,39 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
   const camLook = new THREE.Vector3()
   let camReady = false
 
-  const KEYMAP = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' }
+  const KEYMAP = {
+    ArrowUp: 'up', KeyW: 'up',
+    ArrowDown: 'down', KeyS: 'down',
+    ArrowLeft: 'left', KeyA: 'left',
+    ArrowRight: 'right', KeyD: 'right',
+    ShiftLeft: 'shift', ShiftRight: 'shift',
+  }
   function onKeyDown(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return
+    if (e.code === 'Space') {
+      if (!paused) {
+        e.preventDefault()
+        doJump()
+      }
+      return
+    }
+    if (e.code === 'Digit1') {
+      doEmote('wave')
+      return
+    }
+    if (e.code === 'Digit2') {
+      doEmote('dance')
+      return
+    }
     const dir = KEYMAP[e.code]
     if (dir) {
       if (!paused) e.preventDefault()
       input.keys.add(dir)
+      player.afkTimer = 0
+      if (player.currentEmote === 'sit') {
+        player.currentEmote = null
+        if (avatar.userData.laptop) avatar.userData.laptop.visible = false
+      }
       return
     }
     if (paused) return
@@ -1366,18 +1605,49 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       ix = 0
       iz = 0
     }
-    // Aceleração progressiva e desaceleração suave (inércia fluida)
-    const isMoving = len > 0.05 && !paused
-    const k = 1 - Math.exp((isMoving ? -12 : -15) * dt)
-    player.vx += (ix * SPEED - player.vx) * k
-    player.vz += (iz * SPEED - player.vz) * k
 
-    // Colisão com deslizamento contínuo nas paredes
+    // Sprint com Shift
+    const moveSpeed = input.keys.has('shift') ? SPEED * 1.5 : SPEED
+
+    // Aceleração progressiva e inércia
+    const isMoving = len > 0.05 && !paused
+    if (isMoving) {
+      player.afkTimer = 0
+      if (player.currentEmote === 'sit') {
+        player.currentEmote = null
+        if (avatar.userData.laptop) avatar.userData.laptop.visible = false
+      }
+    } else {
+      player.afkTimer += dt
+      if (player.afkTimer > 9.0 && player.isGrounded && !player.currentEmote && !paused) {
+        player.currentEmote = 'sit'
+        if (avatar.userData.laptop) avatar.userData.laptop.visible = true
+      }
+    }
+
+    const k = 1 - Math.exp((isMoving ? -12 : -15) * dt)
+    player.vx += (ix * moveSpeed - player.vx) * k
+    player.vz += (iz * moveSpeed - player.vz) * k
+
+    // Física Vertical / Gravidade do Pulo
+    if (!player.isGrounded) {
+      player.vy -= 26 * dt
+      player.y += player.vy * dt
+      if (player.y <= 0) {
+        player.y = 0
+        player.vy = 0
+        player.isGrounded = true
+        sound.land()
+        spawnDust(player.x, player.z, 5)
+      }
+    }
+
+    // Colisão horizontal com deslizamento
     const nx = player.x + player.vx * dt
     if (!blocked(nx, player.z)) {
       player.x = nx
     } else {
-      player.vx *= 0.15 // desliza suavemente em vez de parar bruscamente
+      player.vx *= 0.15
     }
     const nz = player.z + player.vz * dt
     if (!blocked(player.x, nz)) {
@@ -1387,12 +1657,21 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     }
 
     const speed = Math.hypot(player.vx, player.vz)
+
+    // Sons de passos rítmicos na caminhada/corrida
+    if (player.isGrounded && speed > 1.2 && !paused) {
+      player.stepTimer += dt * (speed / SPEED)
+      if (player.stepTimer > 0.35) {
+        player.stepTimer = 0
+        sound.step()
+        if (input.keys.has('shift')) spawnDust(player.x, player.z, 2)
+      }
+    }
+
     if (speed > 0.2) {
       let diff = Math.atan2(player.vx, player.vz) - player.rot
       diff = Math.atan2(Math.sin(diff), Math.cos(diff))
-      // Suavização contínua de giro (smooth turn)
       player.rot += diff * (1 - Math.exp(-14 * dt))
-      // Banking dinâmico ao virar correndo (inclina o corpo para a curva)
       const targetLean = -diff * Math.min(1, speed / 2.2) * 0.42
       player.lean = (player.lean || 0) + (targetLean - (player.lean || 0)) * (1 - Math.exp(-11 * dt))
     } else {
@@ -1400,6 +1679,28 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     }
     player.amp += (Math.min(1, speed / SPEED) - player.amp) * (1 - Math.exp(-12 * dt))
     player.phase += dt * (7.5 + speed * 2.1)
+
+    // Coleta dos cafés espalhados
+    for (const item of coffeeItems) {
+      if (!item.collected) {
+        item.mesh.rotation.y += dt * 2.2
+        item.mesh.position.y = 0.5 + Math.sin(time * 3 + item.phase) * 0.12
+        const d = Math.hypot(player.x - item.spot.x, player.z - item.spot.z)
+        if (d < 1.15) {
+          item.collected = true
+          item.mesh.visible = false
+          spawnDust(item.spot.x, item.spot.z, 8)
+          sound.collect()
+          collectedCoffeeCount++
+          onCollect?.(collectedCoffeeCount, COFFEE_SPOTS.length)
+          if (collectedCoffeeCount === COFFEE_SPOTS.length) {
+            sound.fanfare()
+            spawnConfetti(player.x, player.z)
+            onAllCollected?.()
+          }
+        }
+      }
+    }
 
     let found = null
     for (const b of PLACES) {
@@ -1418,47 +1719,134 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     const speed = Math.hypot(player.vx, player.vz)
     const sw = Math.sin(player.phase) * 0.88 * player.amp
 
-    // Passada natural das pernas com elevação e dobra suave dos pés
-    u.legL.rotation.x = sw
-    u.legR.rotation.x = -sw
-    u.legL.position.y = 0.7 + Math.max(0, -sw) * 0.07 * player.amp
-    u.legR.position.y = 0.7 + Math.max(0, sw) * 0.07 * player.amp
-    u.legL.position.z = Math.sin(player.phase) * 0.035 * player.amp
-    u.legR.position.z = -Math.sin(player.phase) * 0.035 * player.amp
+    if (player.currentEmote === 'sit') {
+      // Sentado relaxando com laptop
+      u.legL.rotation.x = -1.45
+      u.legR.rotation.x = -1.45
+      u.legL.position.y = 0.25
+      u.legR.position.y = 0.25
+      u.armL.rotation.x = -0.7
+      u.armR.rotation.x = -0.7
+      u.armL.rotation.z = -0.3
+      u.armR.rotation.z = 0.3
+      u.body.position.y = -0.35 + Math.sin(time * 2.2) * 0.01
+      u.head.rotation.x = 0.25
+      u.head.rotation.y = 0
+    } else if (player.currentEmote === 'wave') {
+      // Acenando
+      u.legL.rotation.x = sw
+      u.legR.rotation.x = -sw
+      u.armL.rotation.x = -sw * 0.85
+      u.armR.rotation.x = -2.3 + Math.sin(time * 12) * 0.35
+      u.armR.rotation.z = 0.5
+      u.head.rotation.y = 0.2
+      player.emoteTimer -= dt
+      if (player.emoteTimer <= 0) player.currentEmote = null
+    } else if (player.currentEmote === 'dance') {
+      // Dancinha comemorativa
+      avatar.rotation.y += dt * 6.5
+      u.armL.rotation.x = -2.2 + Math.sin(time * 14) * 0.4
+      u.armR.rotation.x = -2.2 - Math.sin(time * 14) * 0.4
+      u.armL.rotation.z = -0.4
+      u.armR.rotation.z = 0.4
+      u.body.position.y = Math.abs(Math.sin(time * 12)) * 0.25
+      player.emoteTimer -= dt
+      if (player.emoteTimer <= 0) player.currentEmote = null
+    } else {
+      // Animação padrão de caminhada / corrida
+      u.legL.rotation.x = sw
+      u.legR.rotation.x = -sw
+      u.legL.position.y = 0.7 + Math.max(0, -sw) * 0.07 * player.amp
+      u.legR.position.y = 0.7 + Math.max(0, sw) * 0.07 * player.amp
+      u.legL.position.z = Math.sin(player.phase) * 0.035 * player.amp
+      u.legR.position.z = -Math.sin(player.phase) * 0.035 * player.amp
 
-    // Balanço dos braços em X e Z com leve abertura natural ao correr
-    u.armL.rotation.x = -sw * 0.85
-    u.armR.rotation.x = sw * 0.85
-    u.armL.rotation.z = -0.14 - Math.abs(sw) * 0.12 * player.amp
-    u.armR.rotation.z = 0.14 + Math.abs(sw) * 0.12 * player.amp
+      u.armL.rotation.x = -sw * 0.85
+      u.armR.rotation.x = sw * 0.85
+      u.armL.rotation.z = -0.14 - Math.abs(sw) * 0.12 * player.amp
+      u.armR.rotation.z = 0.14 + Math.abs(sw) * 0.12 * player.amp
 
-    // Tronco e quadril com balanço lateral dos passos (hip sway) + inclinação na curva
-    const hipSway = Math.sin(player.phase) * 0.06 * player.amp
-    u.body.rotation.z = hipSway + (player.lean || 0)
-    u.body.rotation.x = 0.12 * player.amp + (speed / SPEED) * 0.06
+      const hipSway = Math.sin(player.phase) * 0.06 * player.amp
+      u.body.rotation.z = hipSway + (player.lean || 0)
+      u.body.rotation.x = 0.12 * player.amp + (speed / SPEED) * 0.06
 
-    // Quique suave do corpo ao caminhar + respiração orgânica quando parado
-    const walkBounce = Math.abs(Math.sin(player.phase)) * 0.08 * player.amp
-    const idleBreath = Math.sin(time * 2.4) * 0.014 * (1 - player.amp)
-    u.body.position.y = walkBounce + idleBreath
+      const walkBounce = Math.abs(Math.sin(player.phase)) * 0.08 * player.amp
+      const idleBreath = Math.sin(time * 2.4) * 0.014 * (1 - player.amp)
+      u.body.position.y = walkBounce + idleBreath
 
-    // Squash & Stretch elástico suave (toque Nintendo/Cartoon)
-    const squash = Math.sin(player.phase * 2) * 0.032 * player.amp
-    u.body.scale.set(1 + squash * 0.6, 1 - squash, 1 + squash * 0.6)
+      const squash = Math.sin(player.phase * 2) * 0.032 * player.amp
+      u.body.scale.set(1 + squash * 0.6, 1 - squash, 1 + squash * 0.6)
 
-    // Jiggle sutil da mochila nas costas com amortecimento
-    if (u.backpack) {
-      u.backpack.rotation.x = -0.04 + Math.sin(player.phase * 2) * 0.04 * player.amp
+      if (u.backpack) {
+        u.backpack.rotation.x = -0.04 + Math.sin(player.phase * 2) * 0.04 * player.amp
+      }
+
+      u.head.rotation.x = -u.body.rotation.x * 0.4
+      u.head.rotation.y = Math.sin(time * 0.75) * 0.16 * (1 - player.amp)
+      u.head.position.y = 1.5 + Math.sin(time * 2.4) * 0.01 * (1 - player.amp)
+
+      if (u.laptop) u.laptop.visible = false
     }
 
-    // Cabeça com compensação suave ao andar e olhar ao redor no idle
-    u.head.rotation.x = -u.body.rotation.x * 0.4
-    u.head.rotation.y = Math.sin(time * 0.75) * 0.16 * (1 - player.amp)
-    u.head.position.y = 1.5 + Math.sin(time * 2.4) * 0.01 * (1 - player.amp)
+    avatar.position.set(player.x, player.y, player.z)
+    if (player.currentEmote !== 'dance') avatar.rotation.y = player.rot
+    avatar.rotation.z = (player.lean || 0) * 0.45
 
-    avatar.position.set(player.x, 0, player.z)
-    avatar.rotation.y = player.rot
-    avatar.rotation.z = (player.lean || 0) * 0.45 // leve inclinação de todo o avatar na curva
+    // Atualização de partículas de poeira
+    for (let i = dustParticles.length - 1; i >= 0; i--) {
+      const p = dustParticles[i]
+      p.userData.life -= dt
+      p.position.x += p.userData.vx * dt
+      p.position.y += p.userData.vy * dt
+      p.position.z += p.userData.vz * dt
+      p.material.opacity = (p.userData.life / p.userData.maxLife) * 0.75
+      if (p.userData.life <= 0) {
+        scene.remove(p)
+        dustParticles.splice(i, 1)
+      }
+    }
+
+    // Atualização de vaga-lumes à noite/pôr do sol
+    for (const ff of fireflies) {
+      const d = ff.userData
+      d.phase += dt * d.speed
+      ff.position.x = d.baseX + Math.sin(d.phase) * 0.7
+      ff.position.y = Math.max(0.2, d.baseY + Math.cos(d.phase * 1.4) * 0.35)
+      ff.position.z = d.baseZ + Math.cos(d.phase * 0.8) * 0.7
+      const targetOp = (currentWeatherKey === 'night' || currentWeatherKey === 'sunset') ? (0.45 + Math.sin(d.phase * 3.2) * 0.35) : 0
+      ff.material.opacity += (targetOp - ff.material.opacity) * 0.08
+    }
+
+    // Atualização da chuva
+    if (rainMesh.visible) {
+      const attr = rainMesh.geometry.attributes.position
+      const arr = attr.array
+      for (let i = 1; i < arr.length; i += 6) {
+        arr[i] -= dt * 36
+        arr[i + 3] -= dt * 36
+        if (arr[i] < 0) {
+          arr[i] += 24
+          arr[i + 3] += 24
+        }
+      }
+      attr.needsUpdate = true
+      rainMesh.position.set(player.x, 0, player.z)
+    }
+
+    // Atualização de confetes
+    for (let i = confetti.length - 1; i >= 0; i--) {
+      const c = confetti[i]
+      c.userData.life -= dt
+      c.position.x += c.userData.vx * dt
+      c.position.y += c.userData.vy * dt
+      c.position.z += c.userData.vz * dt
+      c.rotation.x += c.userData.rotX * dt
+      c.rotation.y += c.userData.rotY * dt
+      if (c.position.y < 0.05 || c.userData.life <= 0) {
+        scene.remove(c)
+        confetti.splice(i, 1)
+      }
+    }
 
     if (!reduceMotion) {
       windTime.value = time
@@ -1498,7 +1886,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       glow.material.opacity = reduceMotion ? 0.4 : 0.35 + Math.sin(time * 5) * 0.18
     } else glow.visible = false
 
-    // câmera de terceira pessoa (inclinada, segue suave)
+    // câmera de terceira pessoa
     const wide = camera.aspect < 0.9 ? 1.5 : 1
     const targetPos = new THREE.Vector3(player.x, 15 * wide, player.z + 14 * wide)
     const targetLook = new THREE.Vector3(player.x, 0.3, player.z - 2.5)
@@ -1550,7 +1938,6 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     update(dt)
     animate(dt)
 
-    // com painel/intro aberto o mapa fica ao fundo: renderiza a ~20 fps para poupar bateria
     if (paused) {
       idleAcc += raw
       if (idleAcc < 0.05) return
@@ -1559,7 +1946,6 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
     renderer.render(scene, camera)
     updateLabels()
 
-    // se o FPS cair durante o jogo, desce um nível de qualidade (nunca sobe de volta)
     if (!paused && time > 3 && level < LEVELS.length - 1 && raw < 0.25) {
       samples.push(raw)
       if (samples.length >= 90) {
@@ -1590,8 +1976,14 @@ export function createGame(canvas, { onNear, onEnter, getLabels }) {
       player.z = b.spot.z
       player.vx = 0
       player.vz = 0
-      player.rot = b.rot + Math.PI // virado de frente para a porta
+      player.rot = b.rot + Math.PI
     },
+    jump: doJump,
+    emote: doEmote,
+    setWeather: applyWeather,
+    getWeather: () => currentWeatherKey,
+    getCoffeeCount: () => collectedCoffeeCount,
+    getTotalCoffee: () => COFFEE_SPOTS.length,
     getNear: () => near,
     destroy() {
       cancelAnimationFrame(raf)

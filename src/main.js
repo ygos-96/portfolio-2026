@@ -1,6 +1,8 @@
 import './style.css'
 import { CONTENT, SECTION_ORDER } from './content.js'
 import { sectionHtml } from './render.js'
+import { sound } from './audio.js'
+import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
 
 const $ = (s) => document.querySelector(s)
 const store = {
@@ -60,6 +62,13 @@ const els = {
   panelTabs: $('#panel-tabs'),
   panelBody: $('#panel-body'),
   panelClose: $('#panel-close'),
+  btnWeather: $('#btn-weather'),
+  btnAudio: $('#btn-audio'),
+  coffeeCounter: $('#coffee-counter'),
+  btnJump: $('#btn-jump'),
+  btnEmote: $('#btn-emote'),
+  actionControls: $('#action-controls'),
+  toastAchievement: $('#toast-achievement'),
 }
 
 const c = () => CONTENT[lang]
@@ -157,6 +166,7 @@ function renderPanel(key) {
 
 function openPanel(key) {
   if (!SECTION_ORDER.includes(key)) return
+  sound.click()
   lastFocus = document.activeElement
   openKey = key
   renderPanel(key)
@@ -175,6 +185,7 @@ if (els.panelTabs) {
     if (!btn) return
     const targetKey = btn.dataset.tab
     if (targetKey && targetKey !== openKey) {
+      sound.click()
       openKey = targetKey
       renderPanel(targetKey)
       els.panelBody.scrollTop = 0
@@ -186,6 +197,7 @@ if (els.panelTabs) {
 
 function closePanel() {
   if (!openKey) return
+  sound.click()
   openKey = null
   els.panel.hidden = true
   document.body.classList.remove('modal-open')
@@ -271,6 +283,47 @@ if (isTouch) {
   els.stickZone.addEventListener('pointercancel', end)
 }
 
+// ---------- clima e som ----------
+const weatherOrder = ['day', 'sunset', 'night', 'rain']
+let currentWeatherIdx = 0
+let initialWeather = 'day'
+
+function updateWeatherButton(key, isReal = false) {
+  if (!els.btnWeather) return
+  const p = WEATHER_PRESETS[key] || WEATHER_PRESETS.day
+  els.btnWeather.textContent = `${p.label}${isReal ? ' (Real)' : ''}`
+}
+
+detectRealWeather((presetKey, isApiResult) => {
+  initialWeather = presetKey
+  currentWeatherIdx = weatherOrder.indexOf(presetKey)
+  if (currentWeatherIdx === -1) currentWeatherIdx = 0
+  if (game) game.setWeather(presetKey)
+  updateWeatherButton(presetKey, isApiResult)
+})
+
+els.btnWeather?.addEventListener('click', () => {
+  sound.click()
+  currentWeatherIdx = (currentWeatherIdx + 1) % weatherOrder.length
+  const nextKey = weatherOrder[currentWeatherIdx]
+  game?.setWeather(nextKey)
+  updateWeatherButton(nextKey, false)
+})
+
+els.btnAudio?.addEventListener('click', () => {
+  const isMuted = sound.toggleMute()
+  els.btnAudio.textContent = isMuted ? '🔇 Mudo' : '🔊 Som'
+  if (!isMuted) sound.click()
+})
+
+els.btnJump?.addEventListener('click', () => {
+  game?.jump()
+})
+
+els.btnEmote?.addEventListener('click', () => {
+  game?.emote('wave')
+})
+
 // ---------- jogo ----------
 // O motor 3D (Three.js) carrega sob demanda: o resto da página abre sem esperar por ele.
 let game = null
@@ -281,7 +334,19 @@ import('./game3d.js')
       getLabels: labels,
       onNear: (key) => updatePrompt(key),
       onEnter: (key) => openPanel(key),
+      onCollect: (collected, total) => {
+        if (els.coffeeCounter) els.coffeeCounter.textContent = `☕ ${collected}/${total}`
+      },
+      onAllCollected: () => {
+        if (els.toastAchievement) {
+          els.toastAchievement.hidden = false
+          setTimeout(() => {
+            els.toastAchievement.hidden = true
+          }, 6000)
+        }
+      },
     })
+    game.setWeather(initialWeather)
     if (pendingTeleport) game.teleportTo(pendingTeleport)
     if (started && !openKey) game.setPaused(false)
     updatePrompt(game.getNear()?.key ?? null)
