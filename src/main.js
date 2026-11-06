@@ -1,7 +1,6 @@
 import './style.css'
 import { CONTENT, SECTION_ORDER } from './content.js'
 import { sectionHtml } from './render.js'
-import { createGame } from './game.js'
 
 const $ = (s) => document.querySelector(s)
 const store = {
@@ -187,7 +186,8 @@ els.nav.addEventListener('click', (e) => {
   const b = e.target.closest('[data-open]')
   if (!b) return
   if (!started) startGame()
-  game?.teleportTo(b.dataset.open)
+  if (game) game.teleportTo(b.dataset.open)
+  else pendingTeleport = b.dataset.open
   openPanel(b.dataset.open)
 })
 
@@ -232,18 +232,31 @@ if (isTouch) {
 }
 
 // ---------- jogo ----------
-const game = createGame(els.canvas, {
-  getLabels: labels,
-  onNear: (key) => updatePrompt(key),
-  onEnter: (key) => openPanel(key),
-})
+// O motor 3D (Three.js) carrega sob demanda: o resto da página abre sem esperar por ele.
+let game = null
+let pendingTeleport = null
+import('./game3d.js')
+  .then(({ createGame }) => {
+    game = createGame(els.canvas, {
+      getLabels: labels,
+      onNear: (key) => updatePrompt(key),
+      onEnter: (key) => openPanel(key),
+    })
+    if (pendingTeleport) game.teleportTo(pendingTeleport)
+    if (started && !openKey) game.setPaused(false)
+    updatePrompt(game.getNear()?.key ?? null)
+  })
+  .catch(() => {
+    // sem WebGL/rede: o modo rápido continua disponível
+    els.intro.classList.add('intro--nogl')
+  })
 
 function startGame() {
   started = true
   els.intro.hidden = true
   document.body.classList.add('playing')
-  if (!openKey) game.setPaused(false)
-  updatePrompt(game.getNear()?.key ?? null)
+  if (!openKey) game?.setPaused(false)
+  updatePrompt(game?.getNear()?.key ?? null)
 }
 els.start.addEventListener('click', () => {
   startGame()
@@ -262,7 +275,8 @@ applyLang()
 const fromHash = location.hash.slice(1)
 if (SECTION_ORDER.includes(fromHash)) {
   startGame()
-  game.teleportTo(fromHash)
+  pendingTeleport = fromHash
+  game?.teleportTo(fromHash)
   openPanel(fromHash)
 } else {
   els.start.focus({ preventScroll: true })
