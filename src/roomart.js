@@ -49,6 +49,16 @@ export function floorTex(kind, [c1, c2], W, D) {
         }
       }
       speckle(g, w, h, 1400, 0.1)
+      g.lineWidth = 1
+      for (let i = 0; i < 260; i++) {
+        const y = rnd() * h
+        const x = rnd() * w
+        g.strokeStyle = `rgba(60,30,10,${0.05 + rnd() * 0.1})`
+        g.beginPath()
+        g.moveTo(x, y)
+        g.bezierCurveTo(x + 40, y + (rnd() - 0.5) * 3, x + 90, y + (rnd() - 0.5) * 3, x + 140 + rnd() * 80, y + (rnd() - 0.5) * 2)
+        g.stroke()
+      }
     } else if (kind === 'tile' || kind === 'lab') {
       for (let i = 0; i < W; i++)
         for (let j = 0; j < D; j++) {
@@ -475,34 +485,6 @@ export const ART = {
       for (let i = 0; i < 9; i++) g.fillRect(128, 150 + i * 14, 100, 6)
       for (let i = 0; i < 8; i++) g.fillRect(24, 236 + i * 12, 204, 5)
     }),
-  basketball: () =>
-    tex(128, 64, (g, w, h) => {
-      g.fillStyle = '#e8741f'
-      g.fillRect(0, 0, w, h)
-      g.strokeStyle = '#2a1608'
-      g.lineWidth = 3
-      for (const x of [0, w / 2, w]) {
-        g.beginPath()
-        g.moveTo(x, 0)
-        g.lineTo(x, h)
-        g.stroke()
-      }
-      g.beginPath()
-      g.moveTo(0, h / 2)
-      g.lineTo(w, h / 2)
-      g.stroke()
-    }),
-  soccer: () =>
-    tex(128, 64, (g, w, h) => {
-      g.fillStyle = '#ffffff'
-      g.fillRect(0, 0, w, h)
-      g.fillStyle = '#1a1a1a'
-      for (const [x, y] of [[16, 16], [48, 40], [80, 14], [112, 42], [64, 8], [30, 54]]) {
-        g.beginPath()
-        for (let i = 0; i < 5; i++) g.lineTo(x + Math.cos((i * 2 * Math.PI) / 5) * 9, y + Math.sin((i * 2 * Math.PI) / 5) * 9)
-        g.fill()
-      }
-    }),
   keys: () =>
     tex(128, 48, (g, w, h) => {
       g.fillStyle = '#2a2a35'
@@ -512,6 +494,283 @@ export const ART = {
           g.fillStyle = (r + c) % 7 === 0 ? '#ff6bd6' : '#52526a'
           g.fillRect(4 + c * 8.6, 4 + r * 10.5, 7, 8.5)
         }
+    }),
+  basketball: () =>
+    tex(512, 256, (g, w, h) => {
+      const gr = g.createLinearGradient(0, 0, 0, h)
+      gr.addColorStop(0, '#c4571a')
+      gr.addColorStop(0.5, '#e3772a')
+      gr.addColorStop(1, '#b24c14')
+      g.fillStyle = gr
+      g.fillRect(0, 0, w, h)
+      // couro granulado
+      for (let i = 0; i < 14000; i++) {
+        const x = rnd() * w
+        const y = rnd() * h
+        g.fillStyle = rnd() > 0.45 ? `rgba(90,35,5,${0.1 + rnd() * 0.16})` : `rgba(255,190,120,${0.06 + rnd() * 0.1})`
+        g.beginPath()
+        g.arc(x, y, 0.7 + rnd() * 0.9, 0, 7)
+        g.fill()
+      }
+      // gomos: meridianos, equador e os dois canais curvos
+      const seam = (draw) => {
+        g.lineCap = 'round'
+        g.strokeStyle = 'rgba(0,0,0,.35)'
+        g.lineWidth = 9
+        draw()
+        g.strokeStyle = '#1b0e06'
+        g.lineWidth = 5
+        draw()
+      }
+      for (const x of [0, w / 2, w])
+        seam(() => {
+          g.beginPath()
+          g.moveTo(x, 0)
+          g.lineTo(x, h)
+          g.stroke()
+        })
+      seam(() => {
+        g.beginPath()
+        g.moveTo(0, h / 2)
+        g.lineTo(w, h / 2)
+        g.stroke()
+      })
+      for (const off of [0.25, 0.75])
+        seam(() => {
+          g.beginPath()
+          for (let x = 0; x <= w; x += 4) {
+            const y = h / 2 + Math.sin(((x / w) * 2 + off) * Math.PI * 2) * h * 0.3
+            x === 0 ? g.moveTo(x, y) : g.lineTo(x, y)
+          }
+          g.stroke()
+        })
+    }),
+  soccer: () =>
+    tex(512, 256, (g, w, h) => {
+      const gr = g.createLinearGradient(0, 0, 0, h)
+      gr.addColorStop(0, '#e4e6ea')
+      gr.addColorStop(0.5, '#ffffff')
+      gr.addColorStop(1, '#d6d9de')
+      g.fillStyle = gr
+      g.fillRect(0, 0, w, h)
+      const penta = (lon, lat) => {
+        const cx = (lon / 360 + 0.5) * w
+        const cy = (0.5 - lat / 180) * h
+        const sx = 1 / Math.max(0.35, Math.cos((lat * Math.PI) / 180))
+        for (const ox of [-w, 0, w]) {
+          g.fillStyle = '#16161a'
+          g.beginPath()
+          for (let i = 0; i < 5; i++) {
+            const a = (i * 2 * Math.PI) / 5 - Math.PI / 2
+            g.lineTo(cx + ox + Math.cos(a) * 30 * sx, cy + Math.sin(a) * 30)
+          }
+          g.closePath()
+          g.fill()
+          // costuras ligando os gomos
+          g.strokeStyle = 'rgba(70,70,80,.55)'
+          g.lineWidth = 2
+          for (let i = 0; i < 5; i++) {
+            const a = (i * 2 * Math.PI) / 5 - Math.PI / 2
+            g.beginPath()
+            g.moveTo(cx + ox + Math.cos(a) * 30 * sx, cy + Math.sin(a) * 30)
+            g.lineTo(cx + ox + Math.cos(a) * 62 * sx, cy + Math.sin(a) * 62)
+            g.stroke()
+          }
+        }
+      }
+      for (let i = 0; i < 5; i++) {
+        penta(-180 + i * 72, 26.6)
+        penta(-144 + i * 72, -26.6)
+      }
+      g.fillStyle = '#16161a'
+      g.fillRect(0, 0, w, 16)
+      g.fillRect(0, h - 16, w, 16)
+    }),
+  profile: () =>
+    tex(320, 160, (g, w, h) => {
+      g.fillStyle = '#0f1220'
+      g.fillRect(0, 0, w, h)
+      g.fillStyle = '#1b2036'
+      g.fillRect(10, 10, w - 20, h - 20)
+      g.fillStyle = '#f4a259'
+      g.beginPath()
+      g.arc(52, 56, 26, 0, 7)
+      g.fill()
+      g.fillStyle = '#1c1526'
+      g.fillRect(36, 74, 32, 22)
+      text(g, 'Ygor Gomes', 190, 40, 20, '#ffffff', '800')
+      text(g, 'Dev Front-End · n8n/IA', 190, 62, 12, '#4cc9f0', '700')
+      g.fillStyle = '#4a4f66'
+      for (let i = 0; i < 4; i++) g.fillRect(100, 84 + i * 14, 150 - i * 18, 6)
+      g.fillStyle = '#5dca87'
+      g.beginPath()
+      g.arc(260, 120, 8, 0, 7)
+      g.fill()
+    }),
+  desktop: () =>
+    tex(512, 160, (g, w, h) => {
+      const gr = g.createLinearGradient(0, 0, w, h)
+      gr.addColorStop(0, '#2b1a5e')
+      gr.addColorStop(1, '#0a6a8a')
+      g.fillStyle = gr
+      g.fillRect(0, 0, w, h)
+      g.fillStyle = 'rgba(15,18,32,.92)'
+      g.fillRect(24, 16, 190, 110)
+      g.fillStyle = 'rgba(255,255,255,.9)'
+      g.fillRect(250, 22, 230, 96)
+      const cols = ['#ff6bd6', '#4cc9f0', '#ffd166', '#7cfc7c']
+      for (let i = 0; i < 7; i++) {
+        g.fillStyle = cols[i % 4]
+        g.fillRect(34, 28 + i * 13, 30 + ((i * 37) % 120), 6)
+      }
+      g.fillStyle = '#5a5f78'
+      for (let i = 0; i < 6; i++) g.fillRect(262, 34 + i * 14, 120 + ((i * 29) % 90), 6)
+      g.fillStyle = 'rgba(10,10,20,.9)'
+      g.fillRect(0, h - 20, w, 20)
+      g.fillStyle = '#4cc9f0'
+      g.fillRect(8, h - 14, 24, 8)
+    }),
+  landing: () =>
+    tex(256, 200, (g, w, h) => {
+      g.fillStyle = '#f6f1e4'
+      g.fillRect(0, 0, w, h)
+      g.fillStyle = '#2d2a32'
+      g.fillRect(0, 0, w, 20)
+      g.fillStyle = '#f4a259'
+      g.fillRect(10, 6, 30, 8)
+      g.fillStyle = '#4f7fcf'
+      g.fillRect(0, 20, w, 70)
+      text(g, 'Seu site aqui', w / 2, 52, 22, '#ffffff', '800')
+      g.fillStyle = '#ffd166'
+      g.beginPath()
+      g.roundRect(w / 2 - 32, 66, 64, 16, 6)
+      g.fill()
+      for (let i = 0; i < 3; i++) {
+        g.fillStyle = '#e6dcc4'
+        g.fillRect(16 + i * 78, 104, 66, 44)
+        g.fillStyle = ['#c8553d', '#3a8fd8', '#5aa469'][i]
+        g.fillRect(16 + i * 78, 104, 66, 12)
+      }
+      g.fillStyle = '#8a8392'
+      for (let i = 0; i < 3; i++) g.fillRect(16, 160 + i * 10, 130 - i * 24, 5)
+    }),
+  diagram: () =>
+    tex(320, 200, (g, w, h) => {
+      g.fillStyle = '#f7f7f2'
+      g.fillRect(0, 0, w, h)
+      g.strokeStyle = '#2d2a32'
+      g.lineWidth = 3
+      const box = (x, y, bw, bh, c) => {
+        g.fillStyle = c
+        g.beginPath()
+        g.roundRect(x, y, bw, bh, 8)
+        g.fill()
+        g.stroke()
+      }
+      box(20, 70, 70, 50, '#ffd166')
+      box(125, 20, 70, 50, '#9be7ff')
+      box(125, 120, 70, 50, '#ff9ec7')
+      box(230, 70, 70, 50, '#b8f2a0')
+      g.beginPath()
+      for (const [a, b, c, d] of [[90, 85, 125, 50], [90, 105, 125, 140], [195, 50, 230, 85], [195, 145, 230, 105]]) {
+        g.moveTo(a, b)
+        g.lineTo(c, d)
+      }
+      g.stroke()
+      g.fillStyle = '#2d2a32'
+      for (const [x, y] of [[40, 90], [145, 40], [145, 140], [250, 90]]) g.fillRect(x, y, 30, 5)
+    }),
+  kanban: () =>
+    tex(320, 200, (g, w, h) => {
+      g.fillStyle = '#2d3a5a'
+      g.fillRect(0, 0, w, h)
+      const cols = ['#ff9ec7', '#ffd166', '#9be7ff', '#b8f2a0']
+      for (let c = 0; c < 3; c++) {
+        g.fillStyle = 'rgba(255,255,255,.12)'
+        g.fillRect(12 + c * 102, 12, 94, h - 24)
+        for (let i = 0; i < 4 - c; i++) {
+          g.fillStyle = cols[(c + i) % 4]
+          g.fillRect(20 + c * 102, 24 + i * 40, 78, 30)
+          g.fillStyle = 'rgba(0,0,0,.35)'
+          g.fillRect(26 + c * 102, 34 + i * 40, 50, 4)
+        }
+      }
+    }),
+  diploma: (title) =>
+    tex(256, 190, (g, w, h) => {
+      g.fillStyle = '#f7efd9'
+      g.fillRect(0, 0, w, h)
+      g.strokeStyle = '#b08a3e'
+      g.lineWidth = 6
+      g.strokeRect(10, 10, w - 20, h - 20)
+      g.lineWidth = 2
+      g.strokeRect(20, 20, w - 40, h - 40)
+      text(g, 'DIPLOMA', w / 2, 52, 24, '#7a5a1f')
+      text(g, title, w / 2, 92, 15, '#2d2a32', '800')
+      g.fillStyle = '#9a8a6a'
+      g.fillRect(50, 114, w - 100, 4)
+      g.fillRect(70, 126, w - 140, 4)
+      g.fillStyle = '#c1121f'
+      g.beginPath()
+      g.arc(w - 52, h - 50, 20, 0, 7)
+      g.fill()
+      g.fillRect(w - 66, h - 36, 10, 24)
+      g.fillRect(w - 50, h - 36, 10, 24)
+    }),
+  poster: (kind) =>
+    tex(256, 340, (g, w, h) => {
+      const sets = {
+        pop: ['#6e5ce6', '#ffd166'],
+        terror: ['#2a1038', '#ff6b6b'],
+        sandler: ['#e08a2e', '#ffffff'],
+        carrey: ['#2a9d8f', '#ffe08a'],
+      }
+      const [bg, fg] = sets[kind]
+      g.fillStyle = bg
+      g.fillRect(0, 0, w, h)
+      g.fillStyle = fg
+      if (kind === 'pop') {
+        g.beginPath()
+        for (let i = 0; i < 24; i++) {
+          const a = (i * Math.PI) / 12
+          const r = i % 2 ? 60 : 110
+          g.lineTo(w / 2 + Math.cos(a) * r, 140 + Math.sin(a) * r)
+        }
+        g.closePath()
+        g.fill()
+        text(g, 'POP!', w / 2, 140, 54, bg)
+      } else if (kind === 'terror') {
+        g.beginPath()
+        g.arc(w / 2, 120, 70, 0, 7)
+        g.fill()
+        g.fillStyle = bg
+        g.beginPath()
+        g.arc(w / 2 + 28, 108, 62, 0, 7)
+        g.fill()
+        g.fillStyle = fg
+        for (let i = 0; i < 7; i++) g.fillRect(20 + i * 34, 200 + ((i * 17) % 40), 8, 60)
+      } else {
+        for (const s of [-1, 1]) {
+          g.beginPath()
+          g.ellipse(w / 2 + s * 34, 120, 44, 56, 0, 0, 7)
+          g.fill()
+        }
+        g.fillStyle = bg
+        for (const s of [-1, 1]) {
+          g.beginPath()
+          g.ellipse(w / 2 + s * 48, 108, 8, 12, 0, 0, 7)
+          g.fill()
+        }
+        g.lineWidth = 6
+        g.strokeStyle = bg
+        g.beginPath()
+        g.arc(w / 2 - 34, 134, 22, 0.2, Math.PI - 0.2)
+        g.stroke()
+        g.beginPath()
+        g.arc(w / 2 + 34, 150, 22, Math.PI + 0.2, -0.2)
+        g.stroke()
+      }
+      text(g, kind === 'pop' ? 'CULTURA POP' : kind === 'terror' ? 'TERROR' : kind === 'sandler' ? 'COMÉDIA' : 'COMÉDIA', w / 2, 290, 24, fg)
     }),
   rug: (c1, c2) =>
     tex(256, 160, (g, w, h) => {

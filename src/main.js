@@ -37,7 +37,7 @@ let lastFocus = null
 let game = null
 let pendingTeleport = null
 const simpsonsClouds = $('#simpsons-clouds')
-const isTouch = matchMedia('(pointer: coarse)').matches
+const isTouch = matchMedia('(pointer: coarse) and (hover: none)').matches
 document.body.classList.toggle('touch', isTouch)
 
 const els = {
@@ -132,6 +132,7 @@ function applyLang() {
   els.start.textContent = t.ui.start
   els.introFast.textContent = `${t.ui.fast} →`
   els.introFast.href = fastHref()
+  $('#intro-credits').textContent = t.ui.credits
   els.hudName.textContent = t.hero.name
   els.hudRole.textContent = t.hero.role
   els.introEyebrow.textContent = t.ui.eyebrow
@@ -146,6 +147,8 @@ function applyLang() {
   document.getElementById('action-controls').setAttribute('aria-label', t.ui.actions)
   els.btnJump.title = els.btnJump.ariaLabel = t.ui.jump
   els.btnEmote.title = els.btnEmote.ariaLabel = t.ui.wave
+  const runBtn = document.getElementById('btn-run')
+  if (runBtn) runBtn.title = runBtn.ariaLabel = t.ui.run
   updateAudioButton()
   updateWeatherButton(weatherKey, weatherIsReal)
   refreshMusicUi()
@@ -728,6 +731,22 @@ els.btnAudio?.addEventListener('click', () => {
 els.btnJump?.addEventListener('click', () => {
   game?.jump()
 })
+
+// botão B (só no celular): segure para correr
+const btnRun = $('#btn-run')
+if (btnRun) {
+  const run = (on) => {
+    game?.setRun?.(on)
+    btnRun.classList.toggle('is-held', on)
+  }
+  btnRun.addEventListener('pointerdown', (e) => {
+    e.preventDefault()
+    btnRun.setPointerCapture?.(e.pointerId)
+    run(true)
+  })
+  ;['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => btnRun.addEventListener(ev, () => run(false)))
+  btnRun.addEventListener('contextmenu', (e) => e.preventDefault())
+}
 
 els.btnEmote?.addEventListener('click', () => {
   game?.emote('wave')

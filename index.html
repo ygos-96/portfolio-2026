@@ -60,8 +60,9 @@
 </nav>
 
 <div id="action-controls" class="action-controls" role="group" aria-label="Ações do personagem">
-  <button id="btn-jump" class="action-btn action-btn--jump" type="button" title="Pular (Espaço)" aria-label="Pular (Espaço)"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
-  <button id="btn-emote" class="action-btn action-btn--emote" type="button" title="Acenar (1)" aria-label="Acenar (1)"><i class="fa-solid fa-hand" aria-hidden="true"></i></button>
+  <button id="btn-emote" class="action-btn action-btn--emote" data-key="X" type="button" title="Acenar (1)" aria-label="Acenar (1)"><i class="fa-solid fa-hand" aria-hidden="true"></i></button>
+  <button id="btn-jump" class="action-btn action-btn--jump" data-key="A" type="button" title="Pular (Espaço)" aria-label="Pular (Espaço)"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
+  <button id="btn-run" class="action-btn action-btn--run" data-key="B" type="button" title="Correr (segure)" aria-label="Correr (segure)"><i class="fa-solid fa-person-running" aria-hidden="true"></i></button>
 </div>
 
 <aside id="toast-achievement" class="toast-achievement" role="status" aria-live="polite" hidden>
@@ -87,6 +88,7 @@
     <button id="start" class="btn btn--primary" type="button">Começar</button>
     <p id="intro-keys" class="meta">WASD ou setas para andar · Enter para entrar · Esc para fechar</p>
     <a id="intro-fast" class="intro__fast" href="/rapido/">Modo rápido →</a>
+    <a id="intro-credits" class="intro__credits" href="/creditos/">Créditos das fotos</a>
   </div>
 </section>
 

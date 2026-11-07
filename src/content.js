@@ -189,12 +189,12 @@ export const TROPHIES = [
 ]
 
 export const PROJECT_BASE = {
-  'central-ygor': { stack: ['Astro', 'React', 'Tailwind', 'Supabase', 'n8n', 'Vercel'], shot: null, hue: ['#5b8def', '#8e7dff'] },
-  'dash-campanhas': { stack: ['React 19', 'Vite', 'Tailwind 4', 'Node.js'], shot: null, hue: ['#f4a259', '#e76f51'], internal: true },
-  'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: null, hue: ['#3b3b4f', '#c8553d'] },
+  'central-ygor': { stack: ['Astro', 'React', 'Tailwind', 'Supabase', 'n8n', 'Vercel'], shot: '/shots/central-ygor.png', hue: ['#5b8def', '#8e7dff'] },
+  'portfolio-3d': { stack: ['Three.js', 'Vite', 'JavaScript', 'Spotify API'], shot: '/shots/jogo-casa.png', hue: ['#f4a259', '#e76f51'] },
+  'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: '/shots/original-sp-tattoo.png', hue: ['#3b3b4f', '#c8553d'] },
   conexus: { stack: ['n8n', 'Webhooks', 'REST', 'JSON', 'LLMs'], shot: null, hue: ['#2a9d8f', '#5aa469'] },
-  rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: null, hue: ['#1c1c1c', '#f0a92b'] },
-  blog: { stack: ['Next.js', 'Tailwind', 'MDX', 'GitHub API', 'Vercel'], shot: null, hue: ['#4f7fcf', '#2a9d8f'] },
+  rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: '/shots/rogyfacul.png', hue: ['#1c1c1c', '#f0a92b'] },
+  blog: { stack: ['Next.js', 'Tailwind', 'MDX', 'GitHub API', 'Vercel'], shot: '/shots/blog.png', hue: ['#4f7fcf', '#2a9d8f'] },
 }
 
 const pt = {
@@ -235,6 +235,7 @@ const pt = {
     coffees: 'Cafés coletados',
     coffeesHint: 'Colete todos os 8 cafés pelo mapa!',
     actions: 'Ações do personagem',
+    run: 'Correr (segure)',
     jump: 'Pular (Espaço)',
     wave: 'Acenar (1)',
     tabs: 'Seções do portfólio',
@@ -242,6 +243,8 @@ const pt = {
     available: 'Disponível',
     panelTip: 'Use {lr} para navegar · {esc} fecha',
     leave: 'Sair do prédio',
+    credits: 'Créditos das fotos',
+    credits: 'Créditos das fotos',
     playMusic: 'Tocar música no palco',
     musicPause: 'Pausar música',
     musicResume: 'Retomar música',
@@ -324,16 +327,16 @@ const pt = {
         ],
       },
       {
-        slug: 'dash-campanhas',
-        name: 'Dash de Campanhas',
-        tag: 'Painel interno · plataforma de cursos online',
+        slug: 'portfolio-3d',
+        name: 'Portfólio interativo 3D',
+        tag: 'Este site · jogo em Three.js',
         summary:
-          'Painel que junta campanhas de anúncios, cadastros (leads), vendas e a saúde das páginas no ar. Acesso por login, com cargos de administrador e usuário.',
+          'Meu portfólio é um mapa 3D explorável: cada prédio tem uma sala por dentro com minhas informações, e há um palco com música do Spotify e show de fogos.',
         points: [
-          'Investimento, leads e custo por lead das contas da Meta Ads',
-          'Central de ações com recomendações do dia e comparação entre períodos',
-          'Registros separados por tipo e por projeto, com filtros',
-          'Testes automatizados e documentação de deploy',
+          'Three.js com visual toon, prédios temáticos e salas internas',
+          'Funciona no celular, com joystick e botões de ação',
+          'Conteúdo em português e inglês, com menus acessíveis',
+          'Fotos reais com licença livre e página de créditos',
         ],
       },
       {
@@ -495,6 +498,7 @@ const en = {
     coffees: 'Coffees collected',
     coffeesHint: 'Collect all 8 coffees around the map!',
     actions: 'Character actions',
+    run: 'Run (hold)',
     jump: 'Jump (Space)',
     wave: 'Wave (1)',
     tabs: 'Portfolio sections',
@@ -502,6 +506,8 @@ const en = {
     available: 'Available',
     panelTip: 'Use {lr} to browse · {esc} closes',
     leave: 'Leave the building',
+    credits: 'Photo credits',
+    credits: 'Photo credits',
     playMusic: 'Play music on stage',
     musicPause: 'Pause music',
     musicResume: 'Resume music',
@@ -584,16 +590,16 @@ const en = {
         ],
       },
       {
-        slug: 'dash-campanhas',
-        name: 'Campaign Dashboard',
-        tag: 'Internal tool · online course platform',
+        slug: 'portfolio-3d',
+        name: 'Interactive 3D portfolio',
+        tag: 'This site · a Three.js game',
         summary:
-          'A dashboard that brings together ad campaigns, sign-ups (leads), sales and the health of live pages. Login with administrator and user roles.',
+          'My portfolio is an explorable 3D map: every building has a room inside with my info, plus a stage with Spotify music and a fireworks show.',
         points: [
-          'Spend, leads and cost per lead from Meta Ads accounts',
-          'Action center with daily recommendations and period comparison',
-          'Records split by type and project, with filters',
-          'Automated tests and deployment docs',
+          'Three.js with a toon look, themed buildings and indoor rooms',
+          'Works on mobile, with a joystick and action buttons',
+          'Content in Portuguese and English, with accessible menus',
+          'Real free-license photos and a credits page',
         ],
       },
       {

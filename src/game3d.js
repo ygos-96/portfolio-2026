@@ -2330,7 +2330,10 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     if (room) {
       const rcx = ROOM_ORIGIN.x + ROOM_W / 2
       const rcz = ROOM_ORIGIN.z + ROOM_D / 2
-      targetPos.set(rcx + (player.x - rcx) * 0.18, 11.4 * wide, rcz + 9.2 * wide)
+      // distância mínima para a sala caber na largura da tela (14.6 = distância da câmera nos 11.4/9.2 padrão)
+      const halfW = Math.tan((camera.fov * Math.PI) / 360) * camera.aspect
+      const fit = Math.max(1, 8.4 / halfW / 14.6)
+      targetPos.set(rcx + (player.x - rcx) * 0.18, 11.4 * fit, rcz + 9.2 * fit)
       targetLook.set(rcx + (player.x - rcx) * 0.12, 0.8, rcz - 0.4)
     }
 
@@ -2519,6 +2522,10 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     setPaused(v) {
       paused = v
       if (v) clearInput()
+    },
+    setRun(on) {
+      if (on) input.keys.add('shift')
+      else input.keys.delete('shift')
     },
     setStick(x, y) {
       input.stick.x = x
