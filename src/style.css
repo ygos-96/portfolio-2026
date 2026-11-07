@@ -714,10 +714,10 @@ body.modal-open .action-controls {
 }
 
 .panel__box {
-  width: min(1180px, 96vw);
-  height: min(86vh, 760px);
-  display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  width: min(820px, 94vw);
+  max-height: min(86vh, 760px);
+  display: flex;
+  flex-direction: column;
   background: #fffaf0;
   border: 3px solid var(--brown);
   border-radius: 22px;
@@ -726,67 +726,7 @@ body.modal-open .action-controls {
   animation: boxRise 0.5s var(--ease-out) 0.12s both;
 }
 
-/* barra lateral */
-.panel__side {
-  background: #2d2a32;
-  color: #fff6e5;
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 0;
-  overflow-y: auto;
-}
-.panel__who {
-  padding: 2px 8px 12px;
-  border-bottom: 1px solid #4a4455;
-  display: flex;
-  flex-direction: column;
-}
-.panel__who strong { font-size: 15px; }
-.panel__who span { font-size: 12px; color: #a8a1b3; }
-.panel__tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.panel__tab {
-  all: unset;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 9px;
-  font-size: 13px;
-  color: #d4cde0;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.15s, color 0.15s;
-}
-.panel__tab:hover { background: #3b3547; transform: translateX(3px); }
-.panel__tab[aria-selected='true'] { background: #f4a259; color: #2d2a32; font-weight: 800; transform: none; }
-.panel__tab-icon { width: 18px; text-align: center; font-size: 14px; }
-.panel__tab:focus-visible { outline: 3px solid #fff; outline-offset: 1px; box-shadow: none; }
-.panel__sep { border-top: 1px solid #4a4455; margin: 6px 4px; }
-
-/* mini-mapa */
-.panel__map { margin: auto 0 0; padding-top: 10px; border-top: 1px solid #4a4455; }
-.panel__map svg { width: 100%; display: block; background: #5a9a4c; border-radius: 8px; border: 2px solid #1c3a18; }
-.panel__map figcaption { font-size: 11px; color: #a8a1b3; margin-top: 6px; text-align: center; }
-.mm-road { stroke: #e3c98d; stroke-width: 3; fill: none; }
-.mm-dot { fill: #fff6e5; stroke: #2d2a32; stroke-width: 1; cursor: pointer; }
-.mm-dot:hover { fill: #ffd166; }
-.mm-dot--on { fill: #f4a259; stroke: #fff; stroke-width: 1.6; }
-.mm-pulse { fill: none; stroke: #fff; stroke-width: 1; transform-origin: center; transform-box: fill-box; animation: mmPulse 1.6s ease-out infinite; }
-@keyframes mmPulse { from { transform: scale(0.6); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
-
 /* coluna principal */
-.panel__main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
-}
 .panel__head {
   position: relative;
   display: flex;
@@ -899,19 +839,63 @@ body.modal-open .action-controls {
 .panel__dot-live { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; box-shadow: 0 0 8px #4caf50; animation: pulseDot 1.4s infinite; }
 @keyframes pulseDot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } }
 
-/* celular: menu lateral vira barra no topo */
+/* setas, pontinhos e "ver tudo" */
+.panel__arrow {
+  all: unset;
+  box-sizing: border-box;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.24);
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.15s var(--ease-out), background 0.15s;
+}
+.panel__arrow:hover { background: rgba(0, 0, 0, 0.42); transform: scale(1.1); }
+.panel__arrow:focus-visible { outline: 3px solid #fff; }
+.panel__arrow[hidden] { display: none; }
+.panel__dots { display: flex; gap: 5px; align-items: center; }
+.panel__dots i { width: 7px; height: 7px; border-radius: 50%; background: #4a4455; transition: all 0.2s; }
+.panel__dots i.on { width: 20px; border-radius: 4px; background: #f4a259; }
+.panel__all {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 0;
+  background: #f4a259;
+  color: #2d2a32;
+  cursor: pointer;
+}
+.panel__all:hover { background: #ffc07a; }
+.panel__all[hidden] { display: none; }
+.panel__foot { gap: 14px; }
+.panel__foot-tip { margin-right: auto !important; }
+
+/* tela de transição ao entrar/sair dos prédios */
+.fade {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #1c1526;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.fade.is-on { opacity: 1; pointer-events: auto; }
+
 @media (max-width: 760px) {
-  .panel { padding: 0; }
-  .panel__box { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); width: 100vw; height: 100dvh; border-radius: 0; border-width: 0; }
-  .panel__side { flex-direction: row; align-items: center; padding: 8px; overflow-x: auto; overflow-y: hidden; gap: 6px; }
-  .panel__who, .panel__map, .panel__sep { display: none; }
-  .panel__tabs { flex-direction: row; }
-  .panel__tab { flex: none; padding: 8px 10px; }
-  .panel__tab-label { display: none; }
-  .panel__tab[aria-selected='true'] .panel__tab-label { display: inline; }
-  .panel__foot-tip { display: none; }
-  .panel__head { padding: 12px 14px; }
-  .panel__close-key { display: none; }
+  .panel { padding: 0; align-items: end; }
+  .panel__box { width: 100vw; max-height: 92dvh; border-radius: 22px 22px 0 0; border-width: 3px 0 0; }
+  .panel__head { padding: 12px 14px; gap: 10px; }
+  .panel__arrow { width: 36px; height: 36px; }
+  .panel__foot-tip, .panel__close-key { display: none; }
+  .panel__icon { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .panel, .panel__box, .panel__body > * { animation: none; }
@@ -1759,3 +1743,10 @@ kbd {
 .panel[data-section='skills'] .inv-card { cursor: default; }
 .panel .chips li { transition: transform 0.15s var(--ease-out), background 0.15s, color 0.15s; }
 .panel .chips li:hover { transform: translateY(-2px); background: var(--th); color: #fff; border-color: var(--th-dark); }
+
+/* ficha de um assunto: o título já aparece no cabeçalho, então não repete dentro do card */
+.slice > h3:first-child,
+.slice > .inv-card > h3:first-child,
+.slice > .quick > h3:first-child,
+.slice > article.card > h3 { display: none; }
+.slice > .inv-card:hover { transform: none; }

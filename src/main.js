@@ -1,6 +1,5 @@
 import './style.css'
 import { CONTENT, LINKS, SECTION_ORDER } from './content.js'
-import { PLACES, STREET_N, STREET_S, W as MAP_W, H as MAP_H } from './world.js'
 import { sectionHtml } from './render.js'
 import { sound } from './audio.js'
 import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
@@ -65,7 +64,10 @@ const els = {
   panelBox: $('#panel-box'),
   panelTitle: $('#panel-title'),
   panelIcon: $('#panel-icon'),
-  panelTabs: $('#panel-tabs'),
+  panelPrev: $('#panel-prev'),
+  panelNext: $('#panel-next'),
+  panelDots: $('#panel-dots'),
+  panelAll: $('#panel-all'),
   panelBody: $('#panel-body'),
   panelClose: $('#panel-close'),
   btnWeather: $('#btn-weather'),
@@ -82,14 +84,10 @@ const els = {
   hudTools: $('#hud-tools'),
   panelStep: $('#panel-step'),
   panelBuilding: $('#panel-building'),
-  panelWho: $('#panel-who'),
-  panelWhoRole: $('#panel-who-role'),
-  panelMap: $('#panel-map'),
-  panelMapCaption: $('#panel-map-caption'),
-  panelAvailable: $('#panel-available'),
   panelTip: $('#panel-tip'),
 }
 
+const reduceMotionPref = matchMedia('(prefers-reduced-motion: reduce)').matches
 let soundMuted = false
 let weatherKey = 'day'
 let weatherIsReal = false
@@ -137,12 +135,7 @@ function applyLang() {
   els.placesMenu.setAttribute('aria-label', t.ui.places)
   els.toastTitle.textContent = t.ui.achievementTitle
   els.toastText.textContent = t.ui.achievementText
-  els.panelWho.textContent = t.hero.name
-  els.panelWhoRole.textContent = t.hero.role
-  els.panelMapCaption.textContent = t.ui.youAreHere
-  els.panelAvailable.textContent = t.ui.available
-  els.panelTip.innerHTML = t.ui.panelTip.replace('{esc}', '<kbd>Esc</kbd>').replace('{updown}', '<kbd>↑</kbd> <kbd>↓</kbd>')
-  els.panelTabs.setAttribute('aria-label', t.ui.tabs)
+  els.panelTip.innerHTML = t.ui.panelTip.replace('{esc}', '<kbd>Esc</kbd>').replace('{lr}', '<kbd>←</kbd> <kbd>→</kbd>')
   els.coffeeCounter.title = t.ui.coffeesHint
   els.coffeeCounter.setAttribute('aria-label', t.ui.coffees)
   document.getElementById('action-controls').setAttribute('aria-label', t.ui.actions)
@@ -181,10 +174,80 @@ function labels() {
   return out
 }
 
+// ---------- prédios por dentro ----------
+let roomKey = null // prédio em que estamos (null = no mapa)
+let sliceId = null // assunto aberto na ficha (null = seção inteira)
+let transitioning = false
+let roomHs = null // hotspot em que o jogador está parado
+
+const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotionPref ? 0 : ms))
+const fadeEl = $('#fade')
+async function fade(on) {
+  fadeEl.classList.toggle('is-on', on)
+  await wait(430)
+}
+
+async function enterBuilding(key) {
+  if (transitioning || roomKey || !game || !SECTION_ORDER.includes(key)) return
+  transitioning = true
+  game.setPaused(true)
+  updatePrompt(null)
+  sound.click()
+  await fade(true)
+  game.enterRoom(key)
+  roomKey = key
+  roomHs = null
+  document.body.classList.add('in-room')
+  updateRoomPrompt(null)
+  await wait(160)
+  await fade(false)
+  game.setPaused(false)
+  transitioning = false
+}
+
+async function leaveBuilding() {
+  if (transitioning || !roomKey) return
+  transitioning = true
+  game.setPaused(true)
+  sound.click()
+  if (openKey) closePanel()
+  await fade(true)
+  game.exitRoom()
+  roomKey = null
+  roomHs = null
+  document.body.classList.remove('in-room')
+  els.prompt.hidden = true
+  await wait(160)
+  await fade(false)
+  game.setPaused(false)
+  transitioning = false
+  updatePrompt(game.getNear()?.key ?? null)
+}
+
+// cada hotspot da sala mostra um pedaço do conteúdo da seção (o texto continua num lugar só: render.js)
+const sliceCache = new Map()
+function roomSlices(key) {
+  const ck = `${lang}:${key}`
+  if (sliceCache.has(ck)) return sliceCache.get(ck)
+  const tmp = document.createElement('div')
+  tmp.innerHTML = (key === 'contato' ? contactQuick() : '') + sectionHtml(lang, key)
+  const list = []
+  for (const hs of game.getRoomHotspots()) {
+    const nodes = hs.pick.flatMap((sel) => [...tmp.querySelectorAll(sel)])
+    if (!nodes.length) continue
+    const first = nodes[0]
+    const head = first.matches('h3, h4') ? first : first.querySelector('h3, h4, strong')
+    list.push({ id: hs.id, title: head?.textContent.trim() || c().sections[key].title, html: nodes.map((n) => n.outerHTML).join('') })
+  }
+  sliceCache.set(ck, list)
+  return list
+}
+
 // ---------- prompt de entrada ----------
 let promptKey = null
 function updatePrompt(key) {
   promptKey = key
+  if (roomKey) return updateRoomPrompt(roomHs)
   if (!key || openKey || !started) {
     els.prompt.hidden = true
     return
@@ -193,11 +256,28 @@ function updatePrompt(key) {
   els.prompt.hidden = false
   els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${t.ui.enterIn} ${t.sections[key].label}</span>`
 }
-els.prompt.addEventListener('click', () => promptKey && openPanel(promptKey))
+function updateRoomPrompt(hs) {
+  roomHs = hs
+  if (!hs || openKey || !roomKey || transitioning) {
+    els.prompt.hidden = true
+    return
+  }
+  const u = c().ui
+  const label = hs.kind === 'exit' ? u.leave : `${u.view} ${roomSlices(roomKey).find((s) => s.id === hs.id)?.title ?? ''}`
+  els.prompt.hidden = false
+  els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${label}</span>`
+}
+function openRoomHotspot(hs) {
+  if (!hs) return
+  if (hs.kind === 'exit') leaveBuilding()
+  else openSlice(hs.id)
+}
+els.prompt.addEventListener('click', () => {
+  if (roomKey) openRoomHotspot(roomHs)
+  else if (promptKey) enterBuilding(promptKey)
+})
 
-// ---------- painel ----------
-const WORK_COUNT = 5 // as 5 primeiras seções são os prédios de trabalho; o resto é o lado de lazer
-
+// ---------- painel / ficha ----------
 function contactQuick() {
   const u = c().ui
   const wa = `${LINKS.whatsapp}?text=${encodeURIComponent(u.waMessage)}`
@@ -212,37 +292,35 @@ function contactQuick() {
   </section>`
 }
 
-function renderMiniMap(key) {
-  const dots = PLACES.map((b) => {
-    const on = b.key === key
-    const r = b.key === 'estadio' ? 4.2 : 3
-    return `${on ? `<circle class="mm-pulse" cx="${b.cx}" cy="${b.cz}" r="${r}"/>` : ''}<circle class="mm-dot${on ? ' mm-dot--on' : ''}" data-map="${b.key}" cx="${b.cx}" cy="${b.cz}" r="${on ? r + 1 : r}"><title>${c().sections[b.key].label}</title></circle>`
-  }).join('')
-  els.panelMap.innerHTML = `<path class="mm-road" d="M0 ${STREET_N} H${MAP_W} M0 ${STREET_S} H${MAP_W}"/>${dots}`
-}
-
 function renderPanel(key) {
   const t = c()
-  const i = SECTION_ORDER.indexOf(key)
-  els.panelIcon.innerHTML = `<i class="${SECTION_FA_ICONS[key] || 'fa-solid fa-box-open'}" aria-hidden="true"></i>`
-  els.panelTitle.textContent = t.sections[key].title
-  els.panelStep.textContent = `${i + 1} / ${SECTION_ORDER.length}`
-  els.panelBuilding.textContent = t.sections[key].building
-  els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + sectionHtml(lang, key)
   els.panel.dataset.section = key
-  els.panelTabs.innerHTML = SECTION_ORDER.map(
-    (k, n) => `${n === WORK_COUNT ? '<div class="panel__sep" role="presentation"></div>' : ''}
-      <button type="button" role="tab" id="tab-${k}" class="panel__tab ${k === key ? 'is-active' : ''}" data-tab="${k}" aria-selected="${k === key}" aria-controls="panel-body" tabindex="${k === key ? 0 : -1}">
-        <span class="panel__tab-icon" aria-hidden="true"><i class="${SECTION_FA_ICONS[k] || 'fa-solid fa-box-open'}"></i></span>
-        <span class="panel__tab-label">${t.sections[k].label}</span>
-      </button>`,
-  ).join('')
-  els.panelBody.setAttribute('aria-labelledby', `tab-${key}`)
-  els.panelTabs.querySelector('.is-active')?.scrollIntoView({ block: 'nearest', inline: 'center' })
-  renderMiniMap(key)
+  els.panelIcon.innerHTML = `<i class="${SECTION_FA_ICONS[key] || 'fa-solid fa-box-open'}" aria-hidden="true"></i>`
+  let total
+  let pos
+  if (sliceId && roomKey) {
+    const list = roomSlices(key)
+    pos = Math.max(0, list.findIndex((s) => s.id === sliceId))
+    total = list.length
+    els.panelTitle.textContent = list[pos].title
+    els.panelBody.innerHTML = `<div class="slice">${list[pos].html}</div>`
+  } else {
+    pos = SECTION_ORDER.indexOf(key)
+    total = SECTION_ORDER.length
+    els.panelTitle.textContent = t.sections[key].title
+    els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + sectionHtml(lang, key)
+  }
+  els.panelStep.textContent = `${pos + 1} / ${total}`
+  els.panelBuilding.textContent = t.sections[key].building
+  els.panelDots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i === pos ? 'on' : ''}"></i>`).join('')
+  els.panelAll.hidden = !sliceId
+  els.panelAll.textContent = t.ui.seeAll
+  els.panelPrev.setAttribute('aria-label', t.ui.prev)
+  els.panelNext.setAttribute('aria-label', t.ui.next)
+  els.panelBody.removeAttribute('aria-labelledby')
 }
 
-// copiar e-mail (contato rápido) e clicar nos pontos do mini-mapa
+// copiar e-mail (contato rápido)
 els.panelBody.addEventListener('click', async (e) => {
   const btn = e.target.closest('[data-copy]')
   if (!btn) return
@@ -261,19 +339,42 @@ els.panelBody.addEventListener('click', async (e) => {
     btn.classList.remove('is-ok')
   }, 1800)
 })
-els.panelMap.addEventListener('click', (e) => {
-  const k = e.target.closest('[data-map]')?.dataset.map
-  if (k) switchTab(k)
+
+// setas: dentro da sala percorrem os assuntos; fora dela, as seções
+function step(dir) {
+  if (!openKey) return
+  sound.click()
+  if (sliceId && roomKey) {
+    const list = roomSlices(roomKey)
+    const i = list.findIndex((s) => s.id === sliceId)
+    sliceId = list[(i + dir + list.length) % list.length].id
+    game.teleportInRoom(sliceId)
+    renderPanel(roomKey)
+  } else {
+    const k = SECTION_ORDER[(SECTION_ORDER.indexOf(openKey) + dir + SECTION_ORDER.length) % SECTION_ORDER.length]
+    openKey = k
+    renderPanel(k)
+    if (location.hash !== `#${k}`) history.replaceState(null, '', `#${k}`)
+    if (!roomKey) game?.teleportTo(k)
+  }
+  els.panelBody.scrollTop = 0
+}
+els.panelPrev.addEventListener('click', () => step(-1))
+els.panelNext.addEventListener('click', () => step(1))
+els.panelAll.addEventListener('click', () => {
+  sliceId = null
+  sound.click()
+  renderPanel(openKey)
+  els.panelBody.scrollTop = 0
 })
 
-function switchTab(targetKey) {
-  if (!targetKey || targetKey === openKey) return
-  sound.click()
-  openKey = targetKey
-  renderPanel(targetKey)
+function showPanel() {
+  els.panel.hidden = false
+  document.body.classList.add('modal-open')
   els.panelBody.scrollTop = 0
-  if (location.hash !== `#${targetKey}`) history.replaceState(null, '', `#${targetKey}`)
-  if (game) game.teleportTo(targetKey)
+  game?.setPaused(true)
+  updatePrompt(null)
+  els.panelClose.focus({ preventScroll: true })
 }
 
 function openPanel(key) {
@@ -281,45 +382,31 @@ function openPanel(key) {
   sound.click()
   lastFocus = document.activeElement
   openKey = key
+  sliceId = null
   renderPanel(key)
-  els.panel.hidden = false
-  document.body.classList.add('modal-open')
-  els.panelBody.scrollTop = 0
-  game?.setPaused(true)
-  updatePrompt(null)
-  els.panelTabs.querySelector('.is-active')?.focus({ preventScroll: true })
+  showPanel()
   if (location.hash !== `#${key}`) history.replaceState(null, '', `#${key}`)
 }
 
-if (els.panelTabs) {
-  els.panelTabs.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-tab]')
-    if (!btn) return
-    switchTab(btn.dataset.tab)
-  })
-  // navegação por teclado (padrão WAI-ARIA tabs): setas, Home e End
-  els.panelTabs.addEventListener('keydown', (e) => {
-    const i = SECTION_ORDER.indexOf(openKey)
-    let n = -1
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % SECTION_ORDER.length
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + SECTION_ORDER.length) % SECTION_ORDER.length
-    else if (e.key === 'Home') n = 0
-    else if (e.key === 'End') n = SECTION_ORDER.length - 1
-    if (n < 0) return
-    e.preventDefault()
-    switchTab(SECTION_ORDER[n])
-    els.panelTabs.querySelector('.is-active')?.focus()
-  })
+function openSlice(id) {
+  if (!roomKey || !roomSlices(roomKey).some((s) => s.id === id)) return
+  sound.click()
+  lastFocus = document.activeElement
+  openKey = roomKey
+  sliceId = id
+  renderPanel(roomKey)
+  showPanel()
 }
 
 function closePanel() {
   if (!openKey) return
   sound.click()
   openKey = null
+  sliceId = null
   els.panel.hidden = true
   document.body.classList.remove('modal-open')
-  if (started) game?.setPaused(false)
-  history.replaceState(null, '', location.pathname + location.search)
+  if (started && !transitioning) game?.setPaused(false)
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search)
   updatePrompt(game?.getNear()?.key ?? null)
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus()
 }
@@ -329,10 +416,19 @@ els.panel.addEventListener('click', (e) => {
   if (e.target === els.panel) closePanel()
 })
 document.addEventListener('keydown', (e) => {
-  if (!openKey) return
+  if (!openKey) {
+    if (e.key === 'Escape' && roomKey && !transitioning) leaveBuilding()
+    return
+  }
   if (e.key === 'Escape') {
     e.preventDefault()
     closePanel()
+    return
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    if (e.target.closest('input, textarea, iframe')) return
+    e.preventDefault()
+    step(e.key === 'ArrowRight' ? 1 : -1)
     return
   }
   if (e.key === 'Tab') {
@@ -379,14 +475,21 @@ els.placesMenu.addEventListener('keydown', (e) => {
 })
 
 // atalhos
-els.nav.addEventListener('click', (e) => {
+els.nav.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-open]')
   if (!b) return
   setPlacesOpen(false)
   if (!started) startGame()
-  if (game) game.teleportTo(b.dataset.open)
-  else pendingTeleport = b.dataset.open
-  openPanel(b.dataset.open)
+  const key = b.dataset.open
+  if (!game) {
+    pendingTeleport = key
+    openPanel(key)
+    return
+  }
+  if (roomKey === key) return
+  if (roomKey) await leaveBuilding()
+  game.teleportTo(key)
+  enterBuilding(key)
 })
 
 // ---------- idioma ----------
@@ -507,7 +610,9 @@ import('./game3d.js')
     game = createGame(els.canvas, {
       getLabels: labels,
       onNear: (key) => updatePrompt(key),
-      onEnter: (key) => openPanel(key),
+      onEnter: (key) => enterBuilding(key),
+      onRoomNear: (hs) => updateRoomPrompt(hs),
+      onRoomOpen: (hs) => openRoomHotspot(hs),
       onCollect: (collected, total) => {
         if (els.coffeeCounter) els.coffeeCounter.innerHTML = `<i class="fa-solid fa-mug-hot" aria-hidden="true"></i> <span>${collected}/${total}</span>`
         els.coffeeCounter?.classList.remove('is-bump')

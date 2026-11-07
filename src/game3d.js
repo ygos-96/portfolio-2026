@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 import { BUILDINGS, H, PLACES, POND, START, T, W, buildWorld } from './world.js'
 import { sound } from './audio.js'
+import { ROOM_D, ROOM_W, buildRoom } from './interiors.js'
 import { WEATHER_PRESETS } from './weather.js'
 
 const SPEED = 6.6 // unidades por segundo (mais ágil)
@@ -1382,8 +1383,14 @@ function makePlayer() {
 }
 
 // ---------- jogo ----------
-export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAllCollected }) {
+export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, getLabels, onCollect, onAllCollected }) {
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+  // interior de um prédio (null = estamos no mapa). A sala fica longe da cidade, no mesmo cenário.
+  let room = null
+  let roomNear = null
+  let pendingWeather = null
+  const ROOM_ORIGIN = { x: 400, z: 400 }
+  const roomCache = new Map()
   const world = buildWorld()
   let level = isMobile ? 1 : 0
 
@@ -1667,6 +1674,10 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   // Clima dinâmico e presets de iluminação
   let currentWeatherKey = 'day'
   function applyWeather(presetKey) {
+    if (room) {
+      pendingWeather = presetKey
+      return
+    }
     const p = WEATHER_PRESETS[presetKey] || WEATHER_PRESETS.day
     currentWeatherKey = presetKey
 
@@ -1756,7 +1767,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     el.innerHTML = `<span class="label3d__icon" aria-hidden="true">${ICONS[b.key]}</span><span class="label3d__text"></span>`
     el.addEventListener('click', () => !paused && onEnter(b.key))
     labelLayer.appendChild(el)
-    labelEls.set(b.key, { el, text: el.querySelector('.label3d__text'), last: '', tf: '' })
+    labelEls.set(b.key, { el, text: el.querySelector('.label3d__text'), last: '', tf: null })
   }
   canvas.parentElement.appendChild(labelLayer)
 
@@ -1819,9 +1830,14 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
       return
     }
     if (paused) return
-    if ((e.code === 'Enter' || e.code === 'NumpadEnter') && near) {
-      e.preventDefault()
-      onEnter(near.key)
+    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+      if (room && roomNear) {
+        e.preventDefault()
+        onRoomOpen(roomNear)
+      } else if (near) {
+        e.preventDefault()
+        onEnter(near.key)
+      }
     }
   }
   const onKeyUp = (e) => {
@@ -1869,7 +1885,15 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     if (tx < 0 || tz < 0 || tx >= W || tz >= H) return true
     return world.solid[tz][tx]
   }
-  const blocked = (x, z) => solidAt(x - RADIUS, z - RADIUS) || solidAt(x + RADIUS, z - RADIUS) || solidAt(x - RADIUS, z + RADIUS) || solidAt(x + RADIUS, z + RADIUS)
+  const roomBlocked = (x, z) => {
+    const lx = x - ROOM_ORIGIN.x
+    const lz = z - ROOM_ORIGIN.z
+    if (lx < 0.5 || lx > ROOM_W - 0.5 || lz < 0.45 || lz > ROOM_D - 0.35) return true
+    for (const o of room.data.solids) if (lx + RADIUS > o.x0 && lx - RADIUS < o.x1 && lz + RADIUS > o.z0 && lz - RADIUS < o.z1) return true
+    return false
+  }
+  const blocked = (x, z) => (room ? roomBlocked(x, z) : worldBlocked(x, z))
+  const worldBlocked = (x, z) => solidAt(x - RADIUS, z - RADIUS) || solidAt(x + RADIUS, z - RADIUS) || solidAt(x - RADIUS, z + RADIUS) || solidAt(x + RADIUS, z + RADIUS)
 
   function update(dt) {
     let ix = 0
@@ -1986,6 +2010,15 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
       }
     }
 
+    if (room) {
+      let f = null
+      for (const hs of room.data.hotspots) if (Math.hypot(player.x - (ROOM_ORIGIN.x + hs.x), player.z - (ROOM_ORIGIN.z + hs.z)) <= hs.r) f = hs
+      if (f?.id !== roomNear?.id) {
+        roomNear = f
+        onRoomNear(f)
+      }
+      return
+    }
     let found = null
     for (const b of PLACES) {
       const d = Math.hypot(player.x - b.spot.x, player.z - b.spot.z)
@@ -2162,6 +2195,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     }
 
     extras.update(time)
+    room?.data.update(time)
 
     if (near) {
       glow.visible = true
@@ -2174,8 +2208,20 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
     const wide = camera.aspect < 0.9 ? 1.5 : 1
     const targetPos = new THREE.Vector3(player.x, 15 * wide, player.z + 14 * wide)
     const targetLook = new THREE.Vector3(player.x, 0.3, player.z - 2.5)
+    if (room) {
+      const rcx = ROOM_ORIGIN.x + ROOM_W / 2
+      const rcz = ROOM_ORIGIN.z + ROOM_D / 2
+      targetPos.set(rcx + (player.x - rcx) * 0.18, 12.5 * wide, rcz + 10.2 * wide)
+      targetLook.set(rcx + (player.x - rcx) * 0.12, 0.8, rcz - 0.4)
+    }
 
-    if (introFly.active) {
+    if (!camReady) {
+      camPos.copy(targetPos)
+      camLook.copy(targetLook)
+      camReady = true
+    }
+
+    if (introFly.active && !room) {
       introFly.progress += dt
       const t = Math.min(1, introFly.progress / introFly.duration)
       // Ease-out cúbico suave passando por dentro das nuvens/neblina até a cidade
@@ -2249,7 +2295,7 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
       idleAcc = 0
     }
     renderer.render(scene, camera)
-    updateLabels()
+    if (!room) updateLabels()
 
     if (!paused && time > 3 && level < LEVELS.length - 1 && raw < 0.25) {
       samples.push(raw)
@@ -2265,7 +2311,68 @@ export function createGame(canvas, { onNear, onEnter, getLabels, onCollect, onAl
   }
   raf = requestAnimationFrame(frame)
 
+  // ---------- interiores ----------
+  const dayBg = scene.background
+  function enterRoom(key) {
+    if (room) return
+    let data = roomCache.get(key)
+    if (!data) {
+      data = buildRoom(key, { mesh, ramp, textSign })
+      data.group.position.set(ROOM_ORIGIN.x, 0, ROOM_ORIGIN.z)
+      roomCache.set(key, data)
+    }
+    room = { key, data }
+    scene.add(data.group)
+    scene.background = new THREE.Color(data.theme.bg)
+    labelLayer.style.display = 'none'
+    rainMesh.visible = false
+    glow.visible = false
+    hemi.color.set('#fff6e0')
+    hemi.groundColor.set('#b8a8d8')
+    hemi.intensity = 1.5
+    sun.color.set('#fff0cc')
+    sun.intensity = 1.4
+    near = null
+    onNear(null)
+    player.x = ROOM_ORIGIN.x + data.spawn.x
+    player.z = ROOM_ORIGIN.z + data.spawn.z
+    player.vx = player.vz = 0
+    player.rot = Math.PI
+    player.y = 0
+    player.isGrounded = true
+    player.currentEmote = null
+    roomNear = null
+    camReady = false
+  }
+  function exitRoom() {
+    if (!room) return
+    const b = PLACES.find((i) => i.key === room.key)
+    scene.remove(room.data.group)
+    room = null
+    roomNear = null
+    onRoomNear(null)
+    scene.background = dayBg
+    labelLayer.style.display = ''
+    player.x = b.spot.x
+    player.z = b.spot.z
+    player.vx = player.vz = 0
+    player.rot = b.rot + Math.PI
+    applyWeather(pendingWeather || currentWeatherKey)
+    pendingWeather = null
+    camReady = false
+  }
+
   return {
+    enterRoom,
+    exitRoom,
+    inRoom: () => !!room,
+    getRoomHotspots: () => (room ? room.data.hotspots.filter((x) => x.kind === 'info') : []),
+    teleportInRoom(id) {
+      const hs = room?.data.hotspots.find((x) => x.id === id)
+      if (!hs) return
+      player.x = ROOM_ORIGIN.x + hs.x
+      player.z = ROOM_ORIGIN.z + hs.z
+    },
     setPaused(v) {
       paused = v
       if (v) clearInput()

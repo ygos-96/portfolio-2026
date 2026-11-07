@@ -89,34 +89,26 @@
   </div>
 </section>
 
+<div id="fade" class="fade" aria-hidden="true"></div>
+
 <div id="panel" class="panel" hidden>
   <div id="panel-box" class="panel__box" role="dialog" aria-modal="true" aria-labelledby="panel-title">
-    <aside class="panel__side">
-      <div class="panel__who">
-        <strong id="panel-who">Ygor Gomes</strong>
-        <span id="panel-who-role">Front-End · n8n/IA</span>
+    <header class="panel__head">
+      <button id="panel-prev" class="panel__arrow" type="button" aria-label="Anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <span id="panel-icon" class="panel__icon" aria-hidden="true"></span>
+      <div class="panel__head-info">
+        <p id="panel-badge" class="panel__badge"><span id="panel-step">1 / 9</span> · <span id="panel-building">Casa</span></p>
+        <h2 id="panel-title"></h2>
       </div>
-      <div id="panel-tabs" class="panel__tabs" role="tablist" aria-orientation="vertical" aria-label="Seções do portfólio"></div>
-      <figure class="panel__map">
-        <svg id="panel-map" viewBox="0 0 112 66" role="img" aria-label="Mini-mapa"></svg>
-        <figcaption id="panel-map-caption">Você está aqui</figcaption>
-      </figure>
-    </aside>
-    <div class="panel__main">
-      <header class="panel__head">
-        <span id="panel-icon" class="panel__icon" aria-hidden="true"></span>
-        <div class="panel__head-info">
-          <p id="panel-badge" class="panel__badge"><span id="panel-step">1 / 9</span> · <span id="panel-building">Casa</span></p>
-          <h2 id="panel-title"></h2>
-        </div>
-        <button id="panel-close" class="panel__close" type="button" aria-label="Fechar">✕ <kbd class="panel__close-key">Esc</kbd></button>
-      </header>
-      <div id="panel-body" class="panel__body" role="tabpanel" tabindex="-1"></div>
-      <footer class="panel__foot">
-        <p id="panel-tip" class="panel__foot-tip">Use <kbd>↑</kbd> <kbd>↓</kbd> para trocar de seção · <kbd>Esc</kbd> volta ao mapa</p>
-        <p class="panel__stat panel__stat--live"><span class="panel__dot-live" aria-hidden="true"></span> <span id="panel-available">Disponível</span></p>
-      </footer>
-    </div>
+      <button id="panel-next" class="panel__arrow" type="button" aria-label="Próximo"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      <button id="panel-close" class="panel__close" type="button" aria-label="Fechar">✕ <kbd class="panel__close-key">Esc</kbd></button>
+    </header>
+    <div id="panel-body" class="panel__body" tabindex="-1"></div>
+    <footer class="panel__foot">
+      <div id="panel-dots" class="panel__dots" aria-hidden="true"></div>
+      <p id="panel-tip" class="panel__foot-tip">Use <kbd>←</kbd> <kbd>→</kbd> para navegar · <kbd>Esc</kbd> fecha</p>
+      <button id="panel-all" class="panel__all" type="button" hidden>Ver tudo</button>
+    </footer>
   </div>
 </div>
 
