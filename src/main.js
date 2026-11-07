@@ -1,6 +1,6 @@
 import './style.css'
-import { CONTENT, LINKS, SECTION_ORDER } from './content.js'
-import { sectionHtml } from './render.js'
+import { ARTISTS, CONTENT, LINKS, SECTION_ORDER, SPOTIFY } from './content.js'
+import { esc, sectionHtml } from './render.js'
 import { sound } from './audio.js'
 import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
 
@@ -72,6 +72,11 @@ const els = {
   panelClose: $('#panel-close'),
   btnWeather: $('#btn-weather'),
   btnAudio: $('#btn-audio'),
+  btnMusic: $('#btn-music'),
+  jukebox: $('#jukebox'),
+  jukeboxEmbed: $('#jukebox-embed'),
+  jukeboxTitle: $('#jukebox-title'),
+  jukeboxClose: $('#jukebox-close'),
   coffeeCounter: $('#coffee-counter'),
   btnJump: $('#btn-jump'),
   btnEmote: $('#btn-emote'),
@@ -143,6 +148,7 @@ function applyLang() {
   els.btnEmote.title = els.btnEmote.ariaLabel = t.ui.wave
   updateAudioButton()
   updateWeatherButton(weatherKey, weatherIsReal)
+  refreshMusicUi()
   if (els.btnPlacesToggle) {
     els.btnPlacesToggle.title = t.ui.places
     els.btnPlacesToggle.setAttribute('aria-label', t.ui.places)
@@ -188,17 +194,26 @@ async function fade(on) {
 }
 
 async function enterBuilding(key) {
+  // o palco fica ao ar livre: abre direto o painel com as playlists
+  if (key === 'palco') {
+    if (!transitioning && !roomKey) openPanel(key)
+    return
+  }
   if (transitioning || roomKey || !game || !SECTION_ORDER.includes(key)) return
   transitioning = true
   game.setPaused(true)
   updatePrompt(null)
   sound.click()
   await fade(true)
-  game.enterRoom(key)
-  roomKey = key
-  roomHs = null
-  document.body.classList.add('in-room')
-  updateRoomPrompt(null)
+  try {
+    game.enterRoom(key)
+    roomKey = key
+    roomHs = null
+    document.body.classList.add('in-room')
+    updateRoomPrompt(null)
+  } catch (err) {
+    console.error('Erro ao montar a sala:', err)
+  }
   await wait(160)
   await fade(false)
   game.setPaused(false)
@@ -254,7 +269,7 @@ function updatePrompt(key) {
   }
   const t = c()
   els.prompt.hidden = false
-  els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${t.ui.enterIn} ${t.sections[key].label}</span>`
+  els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${key === 'palco' ? t.ui.playMusic : `${t.ui.enterIn} ${t.sections[key].label}`}</span>`
 }
 function updateRoomPrompt(hs) {
   roomHs = hs
@@ -276,6 +291,129 @@ els.prompt.addEventListener('click', () => {
   if (roomKey) openRoomHotspot(roomHs)
   else if (promptKey) enterBuilding(promptKey)
 })
+
+// ---------- música (Spotify) ----------
+// O player fica num dock fixo, fora do painel: a música continua tocando enquanto você anda pelo mapa
+// e o palco entra em modo show (fogos, luzes e confete) enquanto estiver tocando.
+const spotify = { api: null, ctrl: null, id: null, playing: false, loading: null, uri: null, lastPos: 0, wasPaused: true, finale: false }
+const SHOW_START_S = 4 // efeitos no começo da música
+const SHOW_END_S = 10 // efeitos nos últimos segundos (finale)
+
+function loadSpotifyApi() {
+  if (spotify.loading) return spotify.loading
+  spotify.loading = new Promise((resolve, reject) => {
+    window.onSpotifyIframeApiReady = (api) => {
+      spotify.api = api
+      resolve(api)
+    }
+    const sc = document.createElement('script')
+    sc.src = 'https://open.spotify.com/embed/iframe-api/v1'
+    sc.async = true
+    sc.onerror = () => {
+      spotify.loading = null
+      reject(new Error('spotify'))
+    }
+    document.head.appendChild(sc)
+  })
+  return spotify.loading
+}
+
+// o Spotify avisa a posição e a duração da faixa: daí saem o começo e o fim da música
+function onPlayback(d) {
+  const playing = !d.isPaused
+  const pos = d.position || 0
+  const dur = d.duration || 0
+  const newTrack = d.playingURI !== spotify.uri || pos + 1500 < spotify.lastPos
+  if (newTrack) spotify.finale = false
+  spotify.playing = playing
+  if (playing && (newTrack || (spotify.wasPaused && pos < 2500))) game?.showBurst('start', SHOW_START_S)
+  if (playing && dur > 0 && dur - pos <= SHOW_END_S * 1000 && !spotify.finale) {
+    spotify.finale = true
+    game?.showBurst('end', Math.min(SHOW_END_S, (dur - pos) / 1000 + 1))
+  }
+  spotify.uri = d.playingURI
+  spotify.lastPos = pos
+  spotify.wasPaused = !playing
+  refreshMusicUi()
+}
+
+function refreshMusicUi() {
+  const u = c().ui
+  game?.setMusic(spotify.playing)
+  document.body.classList.toggle('music-on', spotify.playing)
+  els.btnMusic.hidden = !spotify.id
+  els.btnMusic.setAttribute('aria-pressed', String(spotify.playing))
+  els.btnMusic.title = spotify.playing ? u.musicPause : u.musicResume
+  els.btnMusic.setAttribute('aria-label', els.btnMusic.title)
+  els.jukeboxTitle.textContent = u.nowPlaying
+  els.jukeboxClose.setAttribute('aria-label', u.hidePlayer)
+  els.panelBody.querySelectorAll('[data-play]').forEach((b) => b.setAttribute('aria-pressed', String(spotify.playing && spotify.id === b.dataset.play)))
+}
+
+async function playPlaylist(id) {
+  if (spotify.ctrl && spotify.id === id) {
+    spotify.ctrl.togglePlay()
+    return
+  }
+  const wasPlaying = spotify.playing
+  spotify.id = id
+  els.jukebox.classList.add('is-on')
+  refreshMusicUi()
+  try {
+    const api = await loadSpotifyApi()
+    const uri = `spotify:playlist:${id}`
+    if (!spotify.ctrl) {
+      await new Promise((resolve) =>
+        api.createController(els.jukeboxEmbed, { uri, width: '100%', height: 152 }, (ctrl) => {
+          spotify.ctrl = ctrl
+          ctrl.addListener('playback_update', (e) => onPlayback(e.data))
+          resolve()
+        }),
+      )
+      spotify.ctrl.play()
+    } else {
+      spotify.ctrl.loadUri(uri)
+      setTimeout(() => spotify.ctrl.play(), 500)
+    }
+    // na primeira vez, fecha o painel para você ver o show no mapa
+    if (!wasPlaying && openKey === 'palco' && !roomKey) setTimeout(() => closePanel(), 900)
+  } catch {
+    // sem acesso ao Spotify: abre a playlist numa aba nova
+    spotify.id = null
+    els.jukebox.classList.remove('is-on')
+    refreshMusicUi()
+    window.open(`https://open.spotify.com/playlist/${id}`, '_blank', 'noopener,noreferrer')
+  }
+}
+
+function palcoHtml() {
+  const t = c().palco
+  return `<p class="lead">${esc(t.intro)}</p>
+    <h3>${esc(t.playlistsTitle)}</h3>
+    <ul class="jukebox-list">${SPOTIFY.map(
+      (p) => `<li><button type="button" class="jb" data-play="${esc(p.id)}" aria-pressed="${spotify.playing && spotify.id === p.id}">
+        <span class="jb__icon" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span>
+        <span class="jb__name">${esc(p.name)}</span>
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </button></li>`,
+    ).join('')}</ul>
+    <p class="note">${esc(c().ui.jukeboxHint)}</p>
+    <h3>${esc(t.artistsTitle)}</h3>
+    <ul class="chips">${ARTISTS.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>`
+}
+
+els.panelBody.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-play]')
+  if (b) playPlaylist(b.dataset.play)
+})
+els.btnMusic.addEventListener('click', () => spotify.ctrl?.togglePlay())
+// o iframe do Spotify rouba o foco do teclado; sem isso WASD e Esc deixam de funcionar no jogo
+window.addEventListener('blur', () =>
+  setTimeout(() => {
+    if (document.activeElement?.tagName === 'IFRAME' && !openKey) els.canvas.focus()
+  }, 0),
+)
+els.jukeboxClose.addEventListener('click', () => els.jukebox.classList.remove('is-on'))
 
 // ---------- painel / ficha ----------
 function contactQuick() {
@@ -308,7 +446,7 @@ function renderPanel(key) {
     pos = SECTION_ORDER.indexOf(key)
     total = SECTION_ORDER.length
     els.panelTitle.textContent = t.sections[key].title
-    els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + sectionHtml(lang, key)
+    els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + (key === 'palco' ? palcoHtml() : sectionHtml(lang, key))
   }
   els.panelStep.textContent = `${pos + 1} / ${total}`
   els.panelBuilding.textContent = t.sections[key].building

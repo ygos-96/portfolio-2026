@@ -43,6 +43,7 @@
   </div>
   <div id="hud-tools" class="hud__tools" role="toolbar" aria-label="Ferramentas">
     <button id="btn-weather" class="chip chip--icon" type="button" title="Clima e horário" aria-label="Clima e horário"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
+    <button id="btn-music" class="chip chip--icon chip--music" type="button" aria-pressed="false" title="Música" aria-label="Música" hidden><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
     <button id="btn-audio" class="chip chip--icon" type="button" aria-pressed="false" title="Som ativado" aria-label="Som ativado"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></button>
     <output id="coffee-counter" class="chip chip--counter" title="Colete todos os 8 cafés pelo mapa!" aria-label="Cafés coletados"><i class="fa-solid fa-mug-hot" aria-hidden="true"></i> <span>0/8</span></output>
     <a id="fast" class="chip chip--icon" href="/rapido/" title="Modo rápido" aria-label="Modo rápido"><i class="fa-solid fa-bolt" aria-hidden="true"></i></a>
@@ -90,6 +91,15 @@
 </section>
 
 <div id="fade" class="fade" aria-hidden="true"></div>
+
+<aside id="jukebox" class="jukebox" aria-label="Player de música">
+  <header class="jukebox__bar">
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <strong id="jukebox-title">Tocando agora</strong>
+    <button id="jukebox-close" type="button" aria-label="Recolher player"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+  </header>
+  <div id="jukebox-embed"></div>
+</aside>
 
 <div id="panel" class="panel" hidden>
   <div id="panel-box" class="panel__box" role="dialog" aria-modal="true" aria-labelledby="panel-title">

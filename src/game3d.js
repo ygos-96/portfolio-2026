@@ -1059,11 +1059,11 @@ function buildExtras(scene, reduceMotion) {
   const nx = paCenter.x
   const nz = paCenter.z
   return {
-    update(time) {
+    update(time, boost = 0) {
       for (const { m, phase } of sceneObjs.members) {
         const u = m.userData
-        const t = time * 7 + phase
-        const k = reduceMotion ? 0 : 1
+        const t = time * (7 + boost * 4) + phase
+        const k = (reduceMotion ? 0 : 1) * (1 + boost * 0.9)
         u.body.position.y = Math.abs(Math.sin(t)) * 0.07 * k
         u.head.rotation.z = Math.sin(t * 0.5) * 0.12 * k
         if (u.kind === 'drums') {
@@ -1082,9 +1082,9 @@ function buildExtras(scene, reduceMotion) {
           n.visible = false
           continue
         }
-        const t = (time * 0.35 + i / 6) % 1
+        const t = (time * 0.35 * (1 + boost * 1.5) + i / 6) % 1
         n.position.set(nx + (i - 2.5) * 0.75 + Math.sin(t * 7 + i) * 0.25, top + 3.0 + t * 3, nz)
-        n.scale.setScalar(Math.max(0.01, Math.sin(t * Math.PI)))
+        n.scale.setScalar(Math.max(0.01, Math.sin(t * Math.PI)) * (1 + boost * 0.9))
         n.rotation.z = Math.sin(t * 5 + i) * 0.4
       }
     },
@@ -1458,6 +1458,124 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
   const town = buildTown()
   scene.add(town.group)
   const extras = buildExtras(scene, reduceMotion)
+
+  // ---------- show do palco ----------
+  // A banda toca enquanto a música toca. Os efeitos pesados (fogos, feixes, brilho e confete) só acontecem
+  // em dois momentos: 4 segundos no começo da música e 10 segundos no fim, este com bem mais fogos.
+  const stageP = PLACES.find((p) => p.key === 'palco')
+  let musicOn = false
+  let musicLevel = 0 // 0 = banda parada, 1 = banda tocando
+  let showLevel = 0 // 0 = sem efeitos, 1 = show completo (suaviza a entrada e a saída)
+  let showT = 0 // segundos que ainda faltam para o show terminar
+  let showKind = 'start'
+  let showClock = 0
+  let confettiTimer = 0
+  const fwColors = ['#ff4d6d', '#ffd166', '#4cc9f0', '#80ed99', '#d65bff', '#ffffff']
+  const fireworks = []
+  for (let i = 0; i < 14; i++) {
+    const N = 46
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3))
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: '#ffffff', size: 0.55, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }))
+    pts.frustumCulled = false
+    pts.visible = false
+    scene.add(pts)
+    fireworks.push({ pts, N, vel: new Float32Array(N * 3), t: -i * 0.25, live: false, exploded: false, ox: 0, oz: 0, ty: 0 })
+  }
+  const showBeams = ['#ff6bd6', '#ffd166', '#4cc9f0', '#80ed99'].map((c, i) => {
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(1.3, 7, 18, 1, true), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending }))
+    cone.position.set(stageP.cx + (i - 1.5) * 1.8, 4.6, stageP.cz)
+    cone.visible = false
+    scene.add(cone)
+    return cone
+  })
+  const stageGlow = new THREE.Mesh(new THREE.CircleGeometry(5.5, 36), new THREE.MeshBasicMaterial({ color: '#ff6bd6', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }))
+  stageGlow.rotation.x = -Math.PI / 2
+  stageGlow.position.set(stageP.cx, 0.08, stageP.cz)
+  stageGlow.visible = false
+  scene.add(stageGlow)
+
+  function updateShow(dt) {
+    musicLevel += ((musicOn ? 1 : 0) - musicLevel) * (1 - Math.exp(-3 * dt))
+    showT = Math.max(0, showT - dt)
+    showLevel += ((showT > 0 ? 1 : 0) - showLevel) * (1 - Math.exp(-4 * dt))
+    const finale = showKind === 'end'
+    const on = showLevel > 0.02
+    stageGlow.visible = on
+    if (on) {
+      showClock += dt
+      stageGlow.material.color.setHSL((showClock * (finale ? 0.5 : 0.25)) % 1, 0.9, 0.55)
+      stageGlow.material.opacity = (0.16 + 0.16 * Math.abs(Math.sin(showClock * (finale ? 7 : 4)))) * showLevel
+      showBeams.forEach((b, i) => {
+        b.visible = true
+        b.rotation.z = Math.sin(showClock * (finale ? 2.6 : 1.6) + i * 1.7) * 0.35
+        b.rotation.x = Math.cos(showClock * 1.3 + i) * 0.2
+        b.material.color.setHSL((showClock * 0.2 + i * 0.25) % 1, 1, 0.6)
+        b.material.opacity = 0.16 * showLevel
+      })
+    } else showBeams.forEach((b) => (b.visible = false))
+    if (reduceMotion || room) return
+
+    // no começo poucos fogos; no fim todos eles, em sequência rápida
+    const allowed = showT > 0 ? (finale ? fireworks.length : 5) : 0
+    fireworks.forEach((f, idx) => {
+      if (!f.live && idx >= allowed) {
+        f.pts.visible = false
+        return
+      }
+      f.t += dt
+      if (f.t < 0) return
+      const mat = f.pts.material
+      const pos = f.pts.geometry.attributes.position
+      if (!f.live) {
+        f.live = true
+        f.exploded = false
+        f.ox = stageP.cx + (Math.random() - 0.5) * (finale ? 22 : 16)
+        f.oz = stageP.cz + (Math.random() - 0.5) * 8 - 3
+        f.ty = 8 + Math.random() * (finale ? 7 : 5)
+        mat.color.set(fwColors[Math.floor(Math.random() * fwColors.length)])
+        f.pts.visible = true
+      }
+      if (f.t < 0.75) {
+        const y = 0.5 + (f.ty - 0.5) * (f.t / 0.75)
+        for (let i = 0; i < f.N; i++) pos.setXYZ(i, f.ox, y, f.oz)
+        mat.size = 0.35
+        mat.opacity = 0.95
+      } else {
+        if (!f.exploded) {
+          f.exploded = true
+          mat.size = 0.65
+          for (let i = 0; i < f.N; i++) {
+            const th = Math.random() * Math.PI * 2
+            const ph = Math.acos(2 * Math.random() - 1)
+            const sp = 3.5 + Math.random() * 3.2
+            f.vel[i * 3] = Math.sin(ph) * Math.cos(th) * sp
+            f.vel[i * 3 + 1] = Math.cos(ph) * sp
+            f.vel[i * 3 + 2] = Math.sin(ph) * Math.sin(th) * sp
+            pos.setXYZ(i, f.ox, f.ty, f.oz)
+          }
+        }
+        for (let i = 0; i < f.N; i++) {
+          f.vel[i * 3 + 1] -= 4.5 * dt
+          pos.setXYZ(i, pos.getX(i) + f.vel[i * 3] * dt, pos.getY(i) + f.vel[i * 3 + 1] * dt, pos.getZ(i) + f.vel[i * 3 + 2] * dt)
+        }
+        mat.opacity = Math.max(0, 1 - (f.t - 0.75) / 1.6)
+      }
+      pos.needsUpdate = true
+      if (f.t > 2.5) {
+        f.live = false
+        f.t = -(finale ? 0.05 + Math.random() * 0.35 : 0.3 + Math.random() * 1.0)
+        f.pts.visible = false
+        mat.opacity = 0
+      }
+    })
+
+    confettiTimer -= dt
+    if (showT > 0 && confettiTimer <= 0 && Math.hypot(player.x - stageP.cx, player.z - stageP.cz) < 40) {
+      spawnConfetti(stageP.cx + (Math.random() - 0.5) * 6, stageP.cz + (Math.random() - 0.5) * 4)
+      confettiTimer = finale ? 0.35 : 0.9
+    }
+  }
   const smoke = []
   for (const b of BUILDINGS)
     for (let i = 0; i < 3; i++) {
@@ -2194,7 +2312,8 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
       }
     }
 
-    extras.update(time)
+    extras.update(time, musicLevel * 0.5 + showLevel * 0.7)
+    updateShow(dt)
     room?.data.update(time)
 
     if (near) {
@@ -2211,7 +2330,7 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     if (room) {
       const rcx = ROOM_ORIGIN.x + ROOM_W / 2
       const rcz = ROOM_ORIGIN.z + ROOM_D / 2
-      targetPos.set(rcx + (player.x - rcx) * 0.18, 12.5 * wide, rcz + 10.2 * wide)
+      targetPos.set(rcx + (player.x - rcx) * 0.18, 11.4 * wide, rcz + 9.2 * wide)
       targetLook.set(rcx + (player.x - rcx) * 0.12, 0.8, rcz - 0.4)
     }
 
@@ -2317,7 +2436,7 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     if (room) return
     let data = roomCache.get(key)
     if (!data) {
-      data = buildRoom(key, { mesh, ramp, textSign })
+      data = buildRoom(key, { mesh, ramp, textSign, addOutline })
       data.group.position.set(ROOM_ORIGIN.x, 0, ROOM_ORIGIN.z)
       roomCache.set(key, data)
     }
@@ -2336,6 +2455,20 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     onNear(null)
     player.x = ROOM_ORIGIN.x + data.spawn.x
     player.z = ROOM_ORIGIN.z + data.spawn.z
+    if (roomBlocked(player.x, player.z)) {
+      const sx = player.x
+      const sz = player.z
+      search: for (let r = 0.4; r < 6; r += 0.4)
+        for (let a = 0; a < 16; a++) {
+          const x = sx + Math.cos((a / 16) * Math.PI * 2) * r
+          const z = sz + Math.sin((a / 16) * Math.PI * 2) * r
+          if (!roomBlocked(x, z)) {
+            player.x = x
+            player.z = z
+            break search
+          }
+        }
+    }
     player.vx = player.vz = 0
     player.rot = Math.PI
     player.y = 0
@@ -2366,6 +2499,16 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     enterRoom,
     exitRoom,
     inRoom: () => !!room,
+    setMusic(v) {
+      musicOn = !!v
+    },
+    // começa um show de efeitos: 'start' (curto) ou 'end' (finale, com mais fogos)
+    showBurst(kind, seconds) {
+      showKind = kind
+      showT = seconds
+      confettiTimer = 0
+    },
+    isMusicOn: () => musicOn,
     getRoomHotspots: () => (room ? room.data.hotspots.filter((x) => x.kind === 'info') : []),
     teleportInRoom(id) {
       const hs = room?.data.hotspots.find((x) => x.id === id)
