@@ -1,5 +1,6 @@
 import './style.css'
-import { ARTISTS, CONTENT, LINKS, SECTION_ORDER, SPOTIFY } from './content.js'
+import { ARTISTS, CONTENT, LINKS, PROJECT_BASE, SECTION_ORDER, SPOTIFY } from './content.js'
+import { DOCS, DOC_UI, docHtml } from './projectdocs.js'
 import { esc, sectionHtml } from './render.js'
 import { sound } from './audio.js'
 import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
@@ -587,6 +588,119 @@ document.addEventListener('keydown', (e) => {
   }
 })
 
+
+// ---------- documentação dos projetos ----------
+document.body.classList.add('js-on')
+const docEl = $('#doc')
+const docBox = $('#doc-box')
+const lbEl = $('#lightbox')
+let docSlug = null
+let docFocus = null
+let lbIndex = -1
+
+function renderDoc(slug) {
+  const item = CONTENT[lang].projetos.items.find((i) => i.slug === slug)
+  const base = PROJECT_BASE[slug]
+  if (!item || !base || !DOCS[slug]) return false
+  docBox.innerHTML = docHtml(lang, slug, { name: item.name, tag: item.tag, stack: base.stack })
+  return true
+}
+
+function openDoc(slug) {
+  docFocus = document.activeElement
+  if (!renderDoc(slug)) return
+  sound.click()
+  docSlug = slug
+  docEl.hidden = false
+  document.body.classList.add('doc-visible')
+  const body = $('#doc-body')
+  if (body) {
+    body.scrollTop = 0
+    body.focus({ preventScroll: true })
+  }
+}
+
+function closeDoc() {
+  if (!docSlug) return
+  sound.click()
+  closeLightbox()
+  docSlug = null
+  docEl.hidden = true
+  document.body.classList.remove('doc-visible')
+  if (docFocus && document.contains(docFocus)) docFocus.focus({ preventScroll: true })
+}
+
+function showLightbox(i) {
+  const shots = DOCS[docSlug]?.shots
+  if (!shots) return
+  lbIndex = (i + shots.length) % shots.length
+  const s = shots[lbIndex]
+  $('#lightbox-img').src = s.src
+  $('#lightbox-img').alt = s[lang]
+  $('#lightbox-cap').textContent = `${s[lang]} · ${lbIndex + 1}/${shots.length}`
+  lbEl.hidden = false
+}
+function closeLightbox() {
+  lbIndex = -1
+  lbEl.hidden = true
+}
+
+document.addEventListener('click', (e) => {
+  const open = e.target.closest('[data-doc]')
+  if (open) return openDoc(open.dataset.doc)
+  if (e.target.closest('[data-doc-close]') || e.target === docEl) return closeDoc()
+  const shot = e.target.closest('[data-doc-shot]')
+  if (shot) return showLightbox(Number(shot.dataset.docShot))
+  const nav = e.target.closest('.doc__nav a')
+  if (nav) {
+    e.preventDefault()
+    document.getElementById(nav.getAttribute('href').slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+})
+$('#lightbox-close').addEventListener('click', closeLightbox)
+$('#lightbox-prev').addEventListener('click', () => showLightbox(lbIndex - 1))
+$('#lightbox-next').addEventListener('click', () => showLightbox(lbIndex + 1))
+lbEl.addEventListener('click', (e) => {
+  if (e.target === lbEl) closeLightbox()
+})
+// a documentação e a imagem ampliada têm prioridade sobre o painel que está atrás
+document.addEventListener(
+  'keydown',
+  (e) => {
+    if (!docSlug) return
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      if (lbIndex >= 0) closeLightbox()
+      else closeDoc()
+      return
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (lbIndex >= 0) {
+        e.preventDefault()
+        showLightbox(lbIndex + (e.key === 'ArrowRight' ? 1 : -1))
+      }
+      e.stopImmediatePropagation()
+      return
+    }
+    if (e.key === 'Tab') {
+      const scope = lbIndex >= 0 ? lbEl : docBox
+      const f = [...scope.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')].filter((n) => n.offsetParent !== null)
+      if (!f.length) return
+      const first = f[0]
+      const last = f[f.length - 1]
+      if (e.shiftKey && (document.activeElement === first || !scope.contains(document.activeElement))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (document.activeElement === last || !scope.contains(document.activeElement))) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+  },
+  true,
+)
+
 // ---------- menu lateral de lugares ----------
 function setPlacesOpen(open) {
   if (!els.nav || !els.btnPlacesToggle) return
@@ -638,6 +752,10 @@ els.lang.addEventListener('click', () => {
   lang = lang === 'pt' ? 'en' : 'pt'
   store.set('lang', lang)
   applyLang()
+  if (docSlug) {
+    renderDoc(docSlug)
+    closeLightbox()
+  }
 })
 
 // ---------- joystick ----------

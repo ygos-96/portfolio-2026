@@ -459,10 +459,10 @@ export function buildRoom(key, h) {
     projetos() {
       bx(7, 0, 1.0, 12.6, 0.9, 1.5, '#6b4a2f', true)
       bx(7, 0.9, 1.0, 12.8, 0.1, 1.6, '#8a5a3b')
-      const maps = [art('code', '#7cfc7c'), art('nodes'), art('code', '#4cc9f0'), art('code', '#ff6bd6'), art('nodes'), art('code', '#ffd166')]
-      for (let i = 0; i < 6; i++) {
-        monitor(1.8 + i * 2.08, 1.55, 0.6, maps[i])
-        keyboard(1.8 + i * 2.08, 1.0, 1.4)
+      const maps = [art('code', '#7cfc7c'), art('nodes'), art('code', '#4cc9f0'), art('code', '#ff6bd6'), art('nodes')]
+      for (let i = 0; i < 5; i++) {
+        monitor(2.2 + i * 2.4, 1.55, 0.6, maps[i])
+        keyboard(2.2 + i * 2.4, 1.0, 1.4)
       }
       mug(0.9, 1.0, 1.0, '#f6f6f6')
       mug(11.0, 1.0, 1.1, '#e08a2e')
@@ -486,7 +486,7 @@ export function buildRoom(key, h) {
       mug(9.8, 0.84, 8.2, '#d9304f')
       plant(2.8, 8.6)
       lamp(5.2, 7.6, '#f4a259')
-      for (let i = 0; i < 6; i++) hot('proj' + i, 'Projeto ' + (i + 1), 1.8 + i * 2.08, 2.7, ['.card:nth-child(' + (i + 1) + ')'])
+      for (let i = 0; i < 5; i++) hot('proj' + i, 'Projeto ' + (i + 1), 2.2 + i * 2.4, 2.7, ['.card:nth-child(' + (i + 1) + ')'])
     },
     // ESCOLA: sala de aula (diplomas, estante de cursos e o laboratório de computadores)
     formacao() {

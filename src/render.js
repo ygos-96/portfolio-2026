@@ -1,4 +1,5 @@
 // Funções puras que geram HTML (usadas no navegador e no gerador das páginas estáticas).
+import { DOC_UI, DOCS } from './projectdocs.js'
 import { ARTISTS, BOOKS, CONTENT, IDOLS, LINKS, MOVIE_GROUPS, PROJECT_BASE, SECTION_ORDER, SITE_URL, SPOTIFY, TROPHIES } from './content.js'
 
 export const esc = (s) =>
@@ -70,6 +71,7 @@ const sections = {
             <p class="meta">${esc(c.ui.stack)}</p>
             ${chips(base.stack)}
             ${base.internal ? `<p class="note">${esc(c.ui.internalNote)}</p>` : ''}
+            ${DOCS[it.slug] ? `<p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="${esc(it.slug)}">${esc(DOC_UI[lang].open)} · ${esc(DOC_UI[lang].count(DOCS[it.slug].shots.length))}</button></p>` : ''}
           </article>`
         })
         .join('')}</div>`

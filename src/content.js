@@ -190,9 +190,8 @@ export const TROPHIES = [
 
 export const PROJECT_BASE = {
   'central-ygor': { stack: ['Astro', 'React', 'Tailwind', 'Supabase', 'n8n', 'Vercel'], shot: '/shots/central-ygor.png', hue: ['#5b8def', '#8e7dff'] },
-  'portfolio-3d': { stack: ['Three.js', 'Vite', 'JavaScript', 'Spotify API'], shot: '/shots/jogo-casa.png', hue: ['#f4a259', '#e76f51'] },
   'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: '/shots/original-sp-tattoo.png', hue: ['#3b3b4f', '#c8553d'] },
-  conexus: { stack: ['n8n', 'Webhooks', 'REST', 'JSON', 'LLMs'], shot: null, hue: ['#2a9d8f', '#5aa469'] },
+  conexus: { stack: ['n8n', 'Webhooks', 'REST', 'JSON', 'LLMs'], shot: '/shots/conexus/01-fluxo-atendimento.webp', hue: ['#2a9d8f', '#5aa469'] },
   rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: '/shots/rogyfacul.png', hue: ['#1c1c1c', '#f0a92b'] },
   blog: { stack: ['Next.js', 'Tailwind', 'MDX', 'GitHub API', 'Vercel'], shot: '/shots/blog.png', hue: ['#4f7fcf', '#2a9d8f'] },
 }
@@ -311,7 +310,7 @@ const pt = {
     ],
   },
   projetos: {
-    intro: 'Seis projetos que mostram front-end, dados e automação funcionando juntos.',
+    intro: 'Cinco projetos que mostram front-end, dados e automação funcionando juntos.',
     items: [
       {
         slug: 'central-ygor',
@@ -324,19 +323,6 @@ const pt = {
           'Assistente no Telegram que entende texto e áudio transcrito',
           'IA opcional para categorizar gastos e montar dossiês de pauta',
           'Sidebar recolhível e navegação por grupos com sub-páginas',
-        ],
-      },
-      {
-        slug: 'portfolio-3d',
-        name: 'Portfólio interativo 3D',
-        tag: 'Este site · jogo em Three.js',
-        summary:
-          'Meu portfólio é um mapa 3D explorável: cada prédio tem uma sala por dentro com minhas informações, e há um palco com música do Spotify e show de fogos.',
-        points: [
-          'Three.js com visual toon, prédios temáticos e salas internas',
-          'Funciona no celular, com joystick e botões de ação',
-          'Conteúdo em português e inglês, com menus acessíveis',
-          'Fotos reais com licença livre e página de créditos',
         ],
       },
       {
@@ -574,7 +560,7 @@ const en = {
     ],
   },
   projetos: {
-    intro: 'Six projects showing front-end, data and automation working together.',
+    intro: 'Five projects showing front-end, data and automation working together.',
     items: [
       {
         slug: 'central-ygor',
@@ -587,19 +573,6 @@ const en = {
           'Telegram assistant that understands text and transcribed audio',
           'Optional AI to categorize expenses and draft topic briefs',
           'Collapsible sidebar and grouped navigation with sub-pages',
-        ],
-      },
-      {
-        slug: 'portfolio-3d',
-        name: 'Interactive 3D portfolio',
-        tag: 'This site · a Three.js game',
-        summary:
-          'My portfolio is an explorable 3D map: every building has a room inside with my info, plus a stage with Spotify music and a fireworks show.',
-        points: [
-          'Three.js with a toon look, themed buildings and indoor rooms',
-          'Works on mobile, with a joystick and action buttons',
-          'Content in Portuguese and English, with accessible menus',
-          'Real free-license photos and a credits page',
         ],
       },
       {
