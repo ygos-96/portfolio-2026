@@ -1444,8 +1444,8 @@ body.modal-open .action-controls {
 .idol-slide__fig {
   position: relative;
   display: grid;
-  place-items: end center;
-  padding: 12px 0 6px;
+  place-items: center;
+  padding: 64px 0 24px;
   background:
     radial-gradient(ellipse at 50% 45%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 60%),
     repeating-linear-gradient(90deg, #0b7a43 0 34px, #0e8c4e 34px 68px);
@@ -1491,7 +1491,8 @@ body.modal-open .action-controls {
 .idol-slide__info { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px; }
 .idol-slide__role { font-size: 12px; font-weight: 800; color: #0a7b45; text-transform: uppercase; letter-spacing: 0.04em; }
 .idol-slide h4 { margin: -6px 0 0; font-size: 26px; line-height: 1.1; }
-.idol-slide__lead { margin: 0; font-size: 15px; color: var(--ink-soft); }
+.idol-slide__lead { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
+.idol-slide__story { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
 .idol-slide__meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; }
 .idol-slide__meta dd { white-space: nowrap; }
 .idol-slide__meta dt,

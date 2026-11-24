@@ -75,6 +75,7 @@ function idolsHtml(lang) {
         <span class="idol-slide__role">${esc(u.roles[i.role])}${i.nick ? ` · “${esc(i.nick)}”` : ''}</span>
         <h4>${esc(i.name)}</h4>
         <p class="idol-slide__lead">${esc(i[lang])}</p>
+        ${i.story ? `<p class="idol-slide__story">${esc(i.story[lang])}</p>` : ''}
         <dl class="idol-slide__meta">
           <div><dt>${esc(u.country)}</dt><dd>${esc(i.country[lang])}</dd></div>
           <div><dt>${esc(u.years)}</dt><dd>${esc(i.years)}</dd></div>
@@ -83,7 +84,7 @@ function idolsHtml(lang) {
         <blockquote class="idol-slide__fact"><span>${esc(u.fact)}</span>${esc(i.fact[lang])}</blockquote>
         <div class="idol-slide__titles"><span>${esc(u.titles)}</span>${i.titles.length ? `<ul>${i.titles.map(([t, y]) => `<li><strong>${esc(TITLE_NAMES[t][lang])}</strong> ${esc(y)}</li>`).join('')}</ul>` : `<em>${esc(u.none)}</em>`}</div>
       </div></article>`).join('')
-  const dots = IDOLS.map((i, k) => `<button type="button" class="idol-dot${k === 0 ? ' on' : ''}" data-idol-go="${k}" aria-label="${esc(u.go)} ${esc(i.name)}"${k === 0 ? ' aria-current="true"' : ''}>${esc(i.name.split(' ').slice(-1)[0])}</button>`).join('')
+  const dots = IDOLS.map((i, k) => `<button type="button" class="idol-dot${k === 0 ? ' on' : ''}" data-idol-go="${k}" aria-label="${esc(u.go)} ${esc(i.name)}"${k === 0 ? ' aria-current="true"' : ''}>${esc(i.short || i.name.split(' ').slice(-1)[0])}</button>`).join('')
   return `<div class="idol-carousel" aria-roledescription="carousel">
       <div class="idol-track" tabindex="0">${slides}</div>
       <div class="idol-nav">

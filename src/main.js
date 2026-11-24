@@ -536,11 +536,7 @@ function initIdolCarousel(root) {
     sound.click()
     go(b.dataset.idolGo != null ? +b.dataset.idolGo : current() + +b.dataset.idolStep)
   })
-  root.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
-    e.preventDefault()
-    go(current() + (e.key === 'ArrowRight' ? 1 : -1))
-  })
+  root.idolStep = (dir) => go(current() + dir) // usado pelas setas do teclado
   let raf = 0
   track.addEventListener('scroll', () => {
     cancelAnimationFrame(raf)
@@ -604,9 +600,17 @@ document.addEventListener('keydown', (e) => {
     return
   }
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-    if (e.target.closest('input, textarea, iframe, .idol-carousel')) return
+    if (e.target.closest('input, textarea, iframe')) return
     e.preventDefault()
-    step(e.key === 'ArrowRight' ? 1 : -1)
+    const dir = e.key === 'ArrowRight' ? 1 : -1
+    // no card de ídolos (ou com foco no carrossel), as setas trocam o jogador em vez do card
+    const carousel = els.panelBody.querySelector('.idol-carousel')
+    if (carousel?.idolStep && (sliceId || e.target.closest('.idol-carousel'))) {
+      sound.click()
+      carousel.idolStep(dir)
+      return
+    }
+    step(dir)
     return
   }
   if (e.key === 'Tab') {
