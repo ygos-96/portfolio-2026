@@ -63,19 +63,18 @@ function idolSprite(i) {
   return `<svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`
 }
 const IDOL_UI = {
-  pt: { games: 'Jogos pelo Palmeiras', titles: 'Títulos pelo clube', none: 'a confirmar', country: 'País', years: 'No clube', fact: 'Marca no clube', prev: 'Ídolo anterior', next: 'Próximo ídolo', go: 'Ver', roles: { fw: 'Atacante', mf: 'Meia', df: 'Zagueiro', gk: 'Goleiro', coach: 'Técnico' } },
-  en: { games: 'Palmeiras appearances', titles: 'Titles with the club', none: 'to be confirmed', country: 'Country', years: 'At the club', fact: 'Club legacy', prev: 'Previous idol', next: 'Next idol', go: 'Show', roles: { fw: 'Forward', mf: 'Midfielder', df: 'Defender', gk: 'Goalkeeper', coach: 'Coach' } },
+  pt: { games: 'Jogos pelo Palmeiras', titles: 'Títulos pelo clube', none: 'a confirmar', country: 'País', years: 'No clube', fact: 'Marca no clube', prev: 'Página anterior', next: 'Próxima página', page: 'página', roles: { fw: 'Atacante', mf: 'Meia', df: 'Zagueiro', gk: 'Goleiro', coach: 'Técnico' } },
+  en: { games: 'Palmeiras appearances', titles: 'Titles with the club', none: 'to be confirmed', country: 'Country', years: 'At the club', fact: 'Club legacy', prev: 'Previous page', next: 'Next page', page: 'page', roles: { fw: 'Forward', mf: 'Midfielder', df: 'Defender', gk: 'Goalkeeper', coach: 'Coach' } },
 }
 function idolsHtml(lang) {
   const u = IDOL_UI[lang]
   const n = IDOLS.length
-  const slides = IDOLS.map((i, k) => `<article class="idol-slide" role="group" aria-roledescription="slide" aria-label="${k + 1} / ${n}: ${esc(i.name)}">
-      <div class="idol-slide__fig" data-nick="${esc(i.nick || i.name.split(' ')[0])}">${idolSprite(i)}</div>
-      <div class="idol-slide__info">
+  const pages = IDOLS.map((i, k) => `<article class="idol-slide${k === 0 ? ' on' : ''}" role="group" aria-roledescription="${esc(u.page)}" aria-label="${k + 1} / ${n}: ${esc(i.name)}"${k === 0 ? '' : ' aria-hidden="true"'}>
+      <div class="idol-page idol-page--fig" data-nick="${esc(i.nick || i.short || i.name.split(' ')[0])}">${idolSprite(i)}</div>
+      <div class="idol-page idol-page--info">
         <span class="idol-slide__role">${esc(u.roles[i.role])}${i.nick ? ` · “${esc(i.nick)}”` : ''}</span>
         <h4>${esc(i.name)}</h4>
-        <p class="idol-slide__lead">${esc(i[lang])}</p>
-        ${i.story ? `<p class="idol-slide__story">${esc(i.story[lang])}</p>` : ''}
+        <p class="idol-slide__story">${esc((i.story || {})[lang] || i[lang])}</p>
         <dl class="idol-slide__meta">
           <div><dt>${esc(u.country)}</dt><dd>${esc(i.country[lang])}</dd></div>
           <div><dt>${esc(u.years)}</dt><dd>${esc(i.years)}</dd></div>
@@ -83,14 +82,12 @@ function idolsHtml(lang) {
         </dl>
         <blockquote class="idol-slide__fact"><span>${esc(u.fact)}</span>${esc(i.fact[lang])}</blockquote>
         <div class="idol-slide__titles"><span>${esc(u.titles)}</span>${i.titles.length ? `<ul>${i.titles.map(([t, y]) => `<li><strong>${esc(TITLE_NAMES[t][lang])}</strong> ${esc(y)}</li>`).join('')}</ul>` : `<em>${esc(u.none)}</em>`}</div>
+        <span class="idol-page__num">${k + 1} / ${n}</span>
       </div></article>`).join('')
-  const dots = IDOLS.map((i, k) => `<button type="button" class="idol-dot${k === 0 ? ' on' : ''}" data-idol-go="${k}" aria-label="${esc(u.go)} ${esc(i.name)}"${k === 0 ? ' aria-current="true"' : ''}>${esc(i.short || i.name.split(' ').slice(-1)[0])}</button>`).join('')
   return `<div class="idol-carousel" aria-roledescription="carousel">
-      <div class="idol-track" tabindex="0">${slides}</div>
-      <div class="idol-nav">
-        <button type="button" class="idol-arrow" data-idol-step="-1" aria-label="${esc(u.prev)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-        <div class="idol-dots">${dots}</div>
-        <button type="button" class="idol-arrow" data-idol-step="1" aria-label="${esc(u.next)}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      <div class="idol-book" tabindex="0">${pages}
+        <button type="button" class="idol-arrow idol-arrow--prev" data-idol-step="-1" aria-label="${esc(u.prev)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <button type="button" class="idol-arrow idol-arrow--next" data-idol-step="1" aria-label="${esc(u.next)}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
       </div>
     </div>`
 }

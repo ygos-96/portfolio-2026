@@ -523,33 +523,85 @@ function showPanel() {
   els.panelClose.focus({ preventScroll: true })
 }
 
-// carrossel de ídolos: setas, botões com nome e rolagem/arraste com snap
+// ídolos em forma de livro: virar página pelas setas (tela e teclado) ou arrastando
+const TURN_MS = 320
 function initIdolCarousel(root) {
-  const track = root.querySelector('.idol-track')
-  const dots = [...root.querySelectorAll('.idol-dot')]
-  const count = dots.length
-  const current = () => Math.round(track.scrollLeft / track.clientWidth)
-  const go = (n) => track.scrollTo({ left: ((n + count) % count) * track.clientWidth })
+  const book = root.querySelector('.idol-book')
+  if (!book) return
+  const pages = [...root.querySelectorAll('.idol-slide')]
+  const count = pages.length
+  const calm = matchMedia('(prefers-reduced-motion: reduce)')
+  const narrow = () => root.clientWidth <= 560
+  let cur = 0
+  let busy = false
+  const show = (el, on) => {
+    el.classList.toggle('on', on)
+    if (on) el.removeAttribute('aria-hidden')
+    else el.setAttribute('aria-hidden', 'true')
+  }
+  const turn = (dir) => {
+    if (busy || count < 2) return
+    const from = pages[cur]
+    cur = (cur + dir + count) % count
+    const to = pages[cur]
+    if (calm.matches) {
+      show(from, false)
+      show(to, true)
+      return
+    }
+    busy = true
+    const out = dir > 0 ? 'turn-fwd-out' : 'turn-back-out'
+    const inn = dir > 0 ? 'turn-fwd-in' : 'turn-back-in'
+    const half = narrow() ? 0 : TURN_MS
+    // 1) a página da frente levanta pela lombada, revelando a ficha/boneco seguinte por baixo
+    to.classList.add('under')
+    from.classList.add(out)
+    setTimeout(() => {
+      // 2) a página "cai" do outro lado já como a nova
+      from.classList.replace('on', 'under')
+      from.setAttribute('aria-hidden', 'true')
+      to.classList.remove('under')
+      show(to, true)
+      to.classList.add(inn)
+      setTimeout(() => {
+        from.classList.remove('under', out)
+        to.classList.remove(inn)
+        busy = false
+      }, TURN_MS)
+    }, half)
+  }
   root.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-idol-step], [data-idol-go]')
+    const b = e.target.closest('[data-idol-step]')
     if (!b) return
     sound.click()
-    go(b.dataset.idolGo != null ? +b.dataset.idolGo : current() + +b.dataset.idolStep)
+    turn(+b.dataset.idolStep)
   })
-  root.idolStep = (dir) => go(current() + dir) // usado pelas setas do teclado
-  let raf = 0
-  track.addEventListener('scroll', () => {
-    cancelAnimationFrame(raf)
-    raf = requestAnimationFrame(() => {
-      const n = current()
-      dots.forEach((d, k) => {
-        d.classList.toggle('on', k === n)
-        if (k === n) d.setAttribute('aria-current', 'true')
-        else d.removeAttribute('aria-current')
-      })
-    })
+  root.idolStep = turn // usado pelas setas do teclado
+  // arrastar para o lado vira a página
+  let x0 = null
+  book.addEventListener('pointerdown', (e) => { x0 = e.clientX })
+  book.addEventListener('pointerup', (e) => {
+    if (x0 == null) return
+    const dx = e.clientX - x0
+    x0 = null
+    if (Math.abs(dx) > 50) turn(dx < 0 ? 1 : -1)
   })
+  // no card de ídolos o livro ocupa o espaço do painel, sem rolagem
+  root.fit = () => {
+    if (!sliceId || !els.panelBody.contains(root)) return book.style.removeProperty('--book-h')
+    const box = els.panelBox
+    const body = els.panelBody
+    const cs = getComputedStyle(body)
+    const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
+    const maxH = parseFloat(getComputedStyle(box).maxHeight) || Math.min(innerHeight * 0.86, 760)
+    const chrome = box.offsetHeight - body.clientHeight
+    const rest = body.scrollHeight - pad - book.offsetHeight
+    const h = Math.round(Math.max(340, Math.min(620, maxH - chrome - pad - rest - 4)))
+    book.style.setProperty('--book-h', `${h}px`)
+  }
+  requestAnimationFrame(root.fit)
 }
+addEventListener('resize', () => els.panelBody.querySelector('.idol-carousel')?.fit?.())
 
 function openPanel(key) {
   if (!SECTION_ORDER.includes(key)) return
