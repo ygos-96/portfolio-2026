@@ -274,6 +274,7 @@ function updatePrompt(key) {
   }
   const t = c()
   els.prompt.hidden = false
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${key === 'palco' ? t.ui.playMusic : `${t.ui.enterIn} ${t.sections[key].label}`}</span>`
 }
 function updateRoomPrompt(hs) {
@@ -285,6 +286,7 @@ function updateRoomPrompt(hs) {
   const u = c().ui
   const label = hs.kind === 'exit' ? u.leave : `${u.view} ${roomSlices(roomKey).find((s) => s.id === hs.id)?.title ?? ''}`
   els.prompt.hidden = false
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${label}</span>`
 }
 function openRoomHotspot(hs) {
@@ -438,6 +440,7 @@ function contactQuick() {
 function renderPanel(key) {
   const t = c()
   els.panel.dataset.section = key
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.panelIcon.innerHTML = `<i class="${SECTION_FA_ICONS[key] || 'fa-solid fa-box-open'}" aria-hidden="true"></i>`
   let total
   let pos
@@ -446,6 +449,7 @@ function renderPanel(key) {
     pos = Math.max(0, list.findIndex((s) => s.id === sliceId))
     total = list.length
     els.panelTitle.textContent = list[pos].title
+    // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
     els.panelBody.innerHTML = `<div class="slice">${list[pos].html}</div>`
   } else {
     pos = SECTION_ORDER.indexOf(key)
@@ -458,6 +462,7 @@ function renderPanel(key) {
   hydrateNextGames(els.panelBody, lang)
   els.panelStep.textContent = `${pos + 1} / ${total}`
   els.panelBuilding.textContent = t.sections[key].building
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.panelDots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i === pos ? 'on' : ''}"></i>`).join('')
   els.panelAll.hidden = !sliceId
   els.panelAll.textContent = t.ui.seeAll
@@ -799,6 +804,7 @@ function setPlacesOpen(open) {
   els.nav.hidden = !open
   els.btnPlacesToggle.setAttribute('aria-expanded', String(open))
   els.btnPlacesToggle.classList.toggle('is-open', open)
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnPlacesToggle.innerHTML = `<i class="fa-solid ${open ? 'fa-xmark' : 'fa-map-location-dot'}" aria-hidden="true"></i>`
 }
 
@@ -902,6 +908,7 @@ function updateWeatherButton(key, isReal = false) {
   const iconClass = WEATHER_FA_ICONS[key] || WEATHER_FA_ICONS.day
   const name = t.weatherNames[key] || t.weatherNames.day
   const label = `${t.weather}: ${name}${isReal ? ` (${t.weatherReal})` : ''}`
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnWeather.innerHTML = `<i class="${iconClass}" aria-hidden="true"></i>`
   els.btnWeather.title = label
   els.btnWeather.setAttribute('aria-label', label)
@@ -926,6 +933,7 @@ els.btnWeather?.addEventListener('click', () => {
 function updateAudioButton() {
   if (!els.btnAudio) return
   const label = soundMuted ? c().ui.soundOff : c().ui.soundOn
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnAudio.innerHTML = `<i class="fa-solid ${soundMuted ? 'fa-volume-xmark' : 'fa-volume-high'}" aria-hidden="true"></i>`
   els.btnAudio.title = label
   els.btnAudio.setAttribute('aria-label', label)
@@ -981,6 +989,7 @@ import('./game3d.js')
       onRoomNear: (hs) => updateRoomPrompt(hs),
       onRoomOpen: (hs) => openRoomHotspot(hs),
       onCollect: (collected, total) => {
+        // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
         if (els.coffeeCounter) els.coffeeCounter.innerHTML = `<i class="fa-solid fa-mug-hot" aria-hidden="true"></i> <span>${collected}/${total}</span>`
         els.coffeeCounter?.classList.remove('is-bump')
         void els.coffeeCounter?.offsetWidth

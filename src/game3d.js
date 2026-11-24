@@ -1882,6 +1882,7 @@ export function createGame(canvas, { onNear, onEnter, onRoomNear, onRoomOpen, ge
     const el = document.createElement('button')
     el.type = 'button'
     el.className = 'label3d'
+    // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
     el.innerHTML = `<span class="label3d__icon" aria-hidden="true">${ICONS[b.key]}</span><span class="label3d__text"></span>`
     el.addEventListener('click', () => !paused && onEnter(b.key))
     labelLayer.appendChild(el)

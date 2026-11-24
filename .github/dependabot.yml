@@ -4,8 +4,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 3
     open-pull-requests-limit: 5
   - package-ecosystem: github-actions # mantém as próprias actions do pipeline atualizadas
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 3
