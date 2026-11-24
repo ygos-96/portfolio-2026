@@ -42,7 +42,7 @@ export function hydrateNextGames(root, lang) {
     const day = new Intl.DateTimeFormat(u.locale, { timeZone: 'America/Sao_Paulo', weekday: 'short', day: '2-digit', month: '2-digit' })
     const hour = new Intl.DateTimeFormat(u.locale, { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' })
     const team = (t) =>
-      `<span class="ng-team"><img src="${esc(t.logo)}" alt="" width="28" height="28" loading="lazy" onerror="this.remove()"><span>${esc(t.name)}</span></span>`
+      `<span class="ng-team"><img src="${esc(t.logo)}" alt="" width="28" height="28" loading="lazy"><span>${esc(t.name)}</span></span>`
     list.innerHTML = data.games
       .map((g) => {
         const d = new Date(g.date)
@@ -54,5 +54,6 @@ export function hydrateNextGames(root, lang) {
         </li>`
       })
       .join('')
+    list.querySelectorAll('.ng-team img').forEach((img) => img.addEventListener('error', () => img.remove(), { once: true }))
   })
 }

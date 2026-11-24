@@ -64,17 +64,46 @@
 <section id="projetos" class="r-section" aria-labelledby="h-projetos">
   <h2 id="h-projetos">Projects</h2>
   
-      <p class="lead">Five projects showing front-end, data and automation working together.</p>
-      <div class="cards"><article class="card" id="proj-central-ygor">
-            <div class="shot"><img src="/shots/central-ygor.png" alt="Captura de tela: Central Ygor" loading="lazy" width="1280" height="720"></div>
-            <h3>Central Ygor</h3>
-            <p class="meta">Personal management app · live 24/7</p>
-            <p>A personal dashboard with finance, content, work and life modules, protected by a PIN. It includes a Telegram assistant with AI connected to n8n automations.</p>
-            <ul class="list"><li>Astro, React and Tailwind, data on Supabase, deployed on Vercel</li><li>Telegram assistant that understands text and transcribed audio</li><li>Optional AI to categorize expenses and draft topic briefs</li><li>Collapsible sidebar and grouped navigation with sub-pages</li></ul>
+      <p class="lead">Five projects: three on automation and security, two web products.</p>
+      <div class="cards"><article class="card" id="proj-webhook-seguro">
+            <div class="shot shot--mock" style="--c1:#2a9d8f;--c2:#5b8def" aria-hidden="true">
+    <div class="mock-bar"><i></i><i></i><i></i></div>
+    <div class="mock-body"><span class="m1"></span><span class="m2"></span><span class="m3"></span><span class="m4"></span><span class="m5"></span></div>
+  </div>
+            <h3>Secure webhook in n8n</h3>
+            <p class="meta">Automation + security · workflow academy_001</p>
+            <p>A payment webhook that only grants access to legitimate requests: it checks the HMAC signature, a time window against replay and duplicate events. n8n workflow with an equivalent Node receiver and an attack simulator.</p>
+            <ul class="list"><li>HMAC-SHA256 with constant-time comparison and the secret kept out of the code</li><li>5-minute window (anti-replay) and idempotency by event_id</li><li>Simulator with 7 scenarios: 1 legitimate and 6 attacks, all handled</li></ul>
             <p class="meta">Stack</p>
-            <ul class="chips"><li>Astro</li><li>React</li><li>Tailwind</li><li>Supabase</li><li>n8n</li><li>Vercel</li></ul>
+            <ul class="chips"><li>n8n</li><li>Node.js</li><li>HMAC-SHA256</li><li>Webhooks</li></ul>
             
-            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="central-ygor">View documentation · 23 screens</button></p>
+            
+          </article><article class="card" id="proj-devsecops-pipeline">
+            <div class="shot shot--mock" style="--c1:#3b3b4f;--c2:#5aa469" aria-hidden="true">
+    <div class="mock-bar"><i></i><i></i><i></i></div>
+    <div class="mock-body"><span class="m1"></span><span class="m2"></span><span class="m3"></span><span class="m4"></span><span class="m5"></span></div>
+  </div>
+            <h3>DevSecOps pipeline</h3>
+            <p class="meta">GitHub Actions · continuous security</p>
+            <p>A pipeline that runs on every push, PR and weekly: it hunts for secrets, vulnerable dependencies and flaws in the code. Applied to this very portfolio.</p>
+            <ul class="list"><li>gitleaks, npm audit, Semgrep (with custom rules) and Trivy</li><li>Read-only token, no install scripts and Dependabot</li><li>Honest report: false positives triaged and real findings fixed</li></ul>
+            <p class="meta">Stack</p>
+            <ul class="chips"><li>GitHub Actions</li><li>gitleaks</li><li>Semgrep</li><li>Trivy</li><li>Dependabot</li></ul>
+            
+            
+          </article><article class="card" id="proj-lab-vulneravel">
+            <div class="shot shot--mock" style="--c1:#c8553d;--c2:#8e7dff" aria-hidden="true">
+    <div class="mock-bar"><i></i><i></i><i></i></div>
+    <div class="mock-body"><span class="m1"></span><span class="m2"></span><span class="m3"></span><span class="m4"></span><span class="m5"></span></div>
+  </div>
+            <h3>AppSec lab</h3>
+            <p class="meta">OWASP Top 10 · before and after</p>
+            <p>A deliberately vulnerable API with 5 flaws, the fixed version and the exploits. An automated test proves the attacks work on the first and fail on the second.</p>
+            <ul class="list"><li>SQL injection, IDOR, XSS, forgeable token and mass assignment</li><li>Fixes: parameterized queries, ownership check, CSP, server-side sessions, allowlist</li><li>Plain Node, no dependencies; npm test shows 5 exploited and 5 blocked</li></ul>
+            <p class="meta">Stack</p>
+            <ul class="chips"><li>Node.js</li><li>SQLite</li><li>OWASP Top 10</li></ul>
+            
+            
           </article><article class="card" id="proj-original-sp-tattoo">
             <div class="shot"><img src="/shots/original-sp-tattoo.png" alt="Captura de tela: Original SP Tattoo" loading="lazy" width="1280" height="720"></div>
             <h3>Original SP Tattoo</h3>
@@ -85,16 +114,6 @@
             <ul class="chips"><li>Vite</li><li>Tailwind</li><li>JavaScript</li><li>i18n PT/EN/ES</li></ul>
             
             <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="original-sp-tattoo">View documentation · 10 screens</button></p>
-          </article><article class="card" id="proj-conexus">
-            <div class="shot"><img src="/shots/conexus/01-fluxo-atendimento.webp" alt="Captura de tela: Conexus · n8n Automation" loading="lazy" width="1280" height="720"></div>
-            <h3>Conexus · n8n Automation</h3>
-            <p class="meta">Automation agency</p>
-            <p>n8n workflows that connect tools and AI to remove repetitive tasks. Includes a workflow that collects and classifies freelance job posts.</p>
-            <ul class="list"><li>Webhooks, REST APIs and JSON payloads with error handling and retries</li><li>AI-based freelance job classifier (spec and workflow)</li><li>WhatsApp and Instagram DM automations for the studio</li></ul>
-            <p class="meta">Stack</p>
-            <ul class="chips"><li>n8n</li><li>Webhooks</li><li>REST</li><li>JSON</li><li>LLMs</li></ul>
-            
-            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="conexus">View documentation · 2 screens</button></p>
           </article><article class="card" id="proj-rogyfacul">
             <div class="shot"><img src="/shots/rogyfacul.png" alt="Captura de tela: RogyFacul" loading="lazy" width="1280" height="720"></div>
             <h3>RogyFacul</h3>
@@ -105,16 +124,6 @@
             <ul class="chips"><li>Astro 7</li><li>Tailwind 4</li><li>Supabase</li><li>Vitest</li></ul>
             
             <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="rogyfacul">View documentation · 13 screens</button></p>
-          </article><article class="card" id="proj-blog">
-            <div class="shot"><img src="/shots/blog.png" alt="Captura de tela: Blog with API publishing" loading="lazy" width="1280" height="720"></div>
-            <h3>Blog with API publishing</h3>
-            <p class="meta">Next.js and automation</p>
-            <p>A blog about practical AI and automation. A custom endpoint receives the article in markdown and commits it to the repo; Vercel publishes on its own.</p>
-            <ul class="list"><li>Next.js (App Router), Tailwind and MDX</li><li>POST /api/posts, commit via GitHub API and automatic deploy</li><li>Publish from a phone or from an n8n webhook</li></ul>
-            <p class="meta">Stack</p>
-            <ul class="chips"><li>Next.js</li><li>Tailwind</li><li>MDX</li><li>GitHub API</li><li>Vercel</li></ul>
-            
-            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="blog">View documentation · 11 screens</button></p>
           </article></div>
 </section>
 <section id="formacao" class="r-section" aria-labelledby="h-formacao">

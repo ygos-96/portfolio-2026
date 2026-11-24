@@ -207,11 +207,11 @@ export const TROPHIES = [
 ]
 
 export const PROJECT_BASE = {
-  'central-ygor': { stack: ['Astro', 'React', 'Tailwind', 'Supabase', 'n8n', 'Vercel'], shot: '/shots/central-ygor.png', hue: ['#5b8def', '#8e7dff'] },
+  'webhook-seguro': { stack: ['n8n', 'Node.js', 'HMAC-SHA256', 'Webhooks'], shot: null, hue: ['#2a9d8f', '#5b8def'] },
+  'devsecops-pipeline': { stack: ['GitHub Actions', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot'], shot: null, hue: ['#3b3b4f', '#5aa469'] },
+  'lab-vulneravel': { stack: ['Node.js', 'SQLite', 'OWASP Top 10'], shot: null, hue: ['#c8553d', '#8e7dff'] },
   'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: '/shots/original-sp-tattoo.png', hue: ['#3b3b4f', '#c8553d'] },
-  conexus: { stack: ['n8n', 'Webhooks', 'REST', 'JSON', 'LLMs'], shot: '/shots/conexus/01-fluxo-atendimento.webp', hue: ['#2a9d8f', '#5aa469'] },
   rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: '/shots/rogyfacul.png', hue: ['#1c1c1c', '#f0a92b'] },
-  blog: { stack: ['Next.js', 'Tailwind', 'MDX', 'GitHub API', 'Vercel'], shot: '/shots/blog.png', hue: ['#4f7fcf', '#2a9d8f'] },
 }
 
 const pt = {
@@ -328,19 +328,42 @@ const pt = {
     ],
   },
   projetos: {
-    intro: 'Cinco projetos que mostram front-end, dados e automação funcionando juntos.',
+    intro: 'Cinco projetos: três de automação e segurança, dois de produto web.',
     items: [
       {
-        slug: 'central-ygor',
-        name: 'Central Ygor',
-        tag: 'App pessoal de gestão · no ar 24h',
+        slug: 'webhook-seguro',
+        name: 'Webhook seguro em n8n',
+        tag: 'Automação + segurança · fluxo academy_001',
         summary:
-          'Painel pessoal com finanças, conteúdo, trabalho e vida em módulos, protegido por PIN. Tem um assistente no Telegram com IA ligado a automações em n8n.',
+          'Webhook de pagamento que só libera acesso a requisições legítimas: confere assinatura HMAC, janela de tempo contra replay e evento duplicado. Fluxo em n8n com receptor Node equivalente e simulador de ataques.',
         points: [
-          'Astro, React e Tailwind, dados no Supabase e deploy na Vercel',
-          'Assistente no Telegram que entende texto e áudio transcrito',
-          'IA opcional para categorizar gastos e montar dossiês de pauta',
-          'Sidebar recolhível e navegação por grupos com sub-páginas',
+          'HMAC-SHA256 com comparação em tempo constante e segredo fora do código',
+          'Janela de 5 minutos (anti-replay) e idempotência por event_id',
+          'Simulador com 7 cenários: 1 legítimo e 6 ataques, todos tratados',
+        ],
+      },
+      {
+        slug: 'devsecops-pipeline',
+        name: 'Pipeline DevSecOps',
+        tag: 'GitHub Actions · segurança contínua',
+        summary:
+          'Esteira que roda a cada push, PR e toda semana: busca segredos, dependências vulneráveis e falhas no código. Aplicada neste próprio portfólio.',
+        points: [
+          'gitleaks, npm audit, Semgrep (com regras próprias) e Trivy',
+          'Token somente leitura, sem scripts na instalação e Dependabot',
+          'Relatório honesto: falsos positivos triados e achados reais corrigidos',
+        ],
+      },
+      {
+        slug: 'lab-vulneravel',
+        name: 'Laboratório de AppSec',
+        tag: 'OWASP Top 10 · antes e depois',
+        summary:
+          'API propositalmente vulnerável com 5 falhas, a versão corrigida e os exploits. Um teste automático prova que os ataques funcionam na primeira e falham na segunda.',
+        points: [
+          'SQL injection, IDOR, XSS, token forjável e mass assignment',
+          'Correções: query parametrizada, checagem de posse, CSP, sessão no servidor, allowlist',
+          'Node puro, sem dependências; npm test mostra 5 explorados e 5 bloqueados',
         ],
       },
       {
@@ -357,18 +380,6 @@ const pt = {
         ],
       },
       {
-        slug: 'conexus',
-        name: 'Conexus · Automações n8n',
-        tag: 'Agência de automações',
-        summary:
-          'Fluxos n8n que ligam ferramentas e IA para tirar tarefas repetitivas do dia a dia. Inclui um fluxo de captação e classificação de vagas freelancer.',
-        points: [
-          'Webhooks, APIs REST e payloads JSON com tratamento de erro e retry',
-          'Classificador de vagas freelancer com IA (especificação e workflow)',
-          'Automações de WhatsApp e de DM de Instagram para o estúdio',
-        ],
-      },
-      {
         slug: 'rogyfacul',
         name: 'RogyFacul',
         tag: 'Biblioteca de estudo com cara de videogame',
@@ -379,18 +390,6 @@ const pt = {
           'Importação de cursos por JSON; itens complementares ficam fora do progresso',
           'Testes unitários com Vitest',
           'Segurança por RLS no Supabase, sem chave de serviço no navegador',
-        ],
-      },
-      {
-        slug: 'blog',
-        name: 'Blog com publicação via API',
-        tag: 'Next.js e automação',
-        summary:
-          'Blog sobre IA e automação prática. Um endpoint próprio recebe o artigo em markdown e faz o commit no repositório; a Vercel publica sozinha.',
-        points: [
-          'Next.js (App Router), Tailwind e MDX',
-          'POST /api/posts, commit via GitHub API e deploy automático',
-          'Publica do celular ou de um webhook do n8n',
         ],
       },
     ],
@@ -579,19 +578,42 @@ const en = {
     ],
   },
   projetos: {
-    intro: 'Five projects showing front-end, data and automation working together.',
+    intro: 'Five projects: three on automation and security, two web products.',
     items: [
       {
-        slug: 'central-ygor',
-        name: 'Central Ygor',
-        tag: 'Personal management app · live 24/7',
+        slug: 'webhook-seguro',
+        name: 'Secure webhook in n8n',
+        tag: 'Automation + security · workflow academy_001',
         summary:
-          'A personal dashboard with finance, content, work and life modules, protected by a PIN. It includes a Telegram assistant with AI connected to n8n automations.',
+          'A payment webhook that only grants access to legitimate requests: it checks the HMAC signature, a time window against replay and duplicate events. n8n workflow with an equivalent Node receiver and an attack simulator.',
         points: [
-          'Astro, React and Tailwind, data on Supabase, deployed on Vercel',
-          'Telegram assistant that understands text and transcribed audio',
-          'Optional AI to categorize expenses and draft topic briefs',
-          'Collapsible sidebar and grouped navigation with sub-pages',
+          'HMAC-SHA256 with constant-time comparison and the secret kept out of the code',
+          '5-minute window (anti-replay) and idempotency by event_id',
+          'Simulator with 7 scenarios: 1 legitimate and 6 attacks, all handled',
+        ],
+      },
+      {
+        slug: 'devsecops-pipeline',
+        name: 'DevSecOps pipeline',
+        tag: 'GitHub Actions · continuous security',
+        summary:
+          'A pipeline that runs on every push, PR and weekly: it hunts for secrets, vulnerable dependencies and flaws in the code. Applied to this very portfolio.',
+        points: [
+          'gitleaks, npm audit, Semgrep (with custom rules) and Trivy',
+          'Read-only token, no install scripts and Dependabot',
+          'Honest report: false positives triaged and real findings fixed',
+        ],
+      },
+      {
+        slug: 'lab-vulneravel',
+        name: 'AppSec lab',
+        tag: 'OWASP Top 10 · before and after',
+        summary:
+          'A deliberately vulnerable API with 5 flaws, the fixed version and the exploits. An automated test proves the attacks work on the first and fail on the second.',
+        points: [
+          'SQL injection, IDOR, XSS, forgeable token and mass assignment',
+          'Fixes: parameterized queries, ownership check, CSP, server-side sessions, allowlist',
+          'Plain Node, no dependencies; npm test shows 5 exploited and 5 blocked',
         ],
       },
       {
@@ -608,18 +630,6 @@ const en = {
         ],
       },
       {
-        slug: 'conexus',
-        name: 'Conexus · n8n Automation',
-        tag: 'Automation agency',
-        summary:
-          'n8n workflows that connect tools and AI to remove repetitive tasks. Includes a workflow that collects and classifies freelance job posts.',
-        points: [
-          'Webhooks, REST APIs and JSON payloads with error handling and retries',
-          'AI-based freelance job classifier (spec and workflow)',
-          'WhatsApp and Instagram DM automations for the studio',
-        ],
-      },
-      {
         slug: 'rogyfacul',
         name: 'RogyFacul',
         tag: 'A study library with a video-game feel',
@@ -630,18 +640,6 @@ const en = {
           'Course import via JSON; optional items stay out of the progress bar',
           'Unit tests with Vitest',
           'Security through Supabase RLS, no service key in the browser',
-        ],
-      },
-      {
-        slug: 'blog',
-        name: 'Blog with API publishing',
-        tag: 'Next.js and automation',
-        summary:
-          'A blog about practical AI and automation. A custom endpoint receives the article in markdown and commits it to the repo; Vercel publishes on its own.',
-        points: [
-          'Next.js (App Router), Tailwind and MDX',
-          'POST /api/posts, commit via GitHub API and automatic deploy',
-          'Publish from a phone or from an n8n webhook',
         ],
       },
     ],
