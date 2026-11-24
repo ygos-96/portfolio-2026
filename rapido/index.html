@@ -64,24 +64,39 @@
 <section id="projetos" class="r-section" aria-labelledby="h-projetos">
   <h2 id="h-projetos">Projetos</h2>
   
-      <p class="lead">Seis projetos que mostram front-end, dados e automação funcionando juntos.</p>
-      <div class="cards"><article class="card" id="proj-central-ygor">
-            <div class="shot"><img src="/shots/central-ygor.png" alt="Captura de tela: Central Ygor" loading="lazy" width="1280" height="720"></div>
-            <h3>Central Ygor</h3>
-            <p class="meta">App pessoal de gestão · no ar 24h</p>
-            <p>Painel pessoal com finanças, conteúdo, trabalho e vida em módulos, protegido por PIN. Tem um assistente no Telegram com IA ligado a automações em n8n.</p>
-            <ul class="list"><li>Astro, React e Tailwind, dados no Supabase e deploy na Vercel</li><li>Assistente no Telegram que entende texto e áudio transcrito</li><li>IA opcional para categorizar gastos e montar dossiês de pauta</li><li>Sidebar recolhível e navegação por grupos com sub-páginas</li></ul>
+      <p class="lead">Cinco projetos: três de automação e segurança, dois de produto web.</p>
+      <div class="cards"><article class="card" id="proj-webhook-seguro">
+            <div class="shot"><img src="/shots/webhook-seguro.png" alt="Captura de tela: Webhook seguro em n8n" loading="lazy" width="1280" height="720"></div>
+            <h3>Webhook seguro em n8n</h3>
+            <p class="meta">Automação + segurança · fluxo academy_001</p>
+            <p>Webhook de pagamento que só libera acesso a requisições legítimas: confere assinatura HMAC, janela de tempo contra replay e evento duplicado. Fluxo em n8n com receptor Node equivalente e simulador de ataques.</p>
+            <ul class="list"><li>HMAC-SHA256 com comparação em tempo constante e segredo fora do código</li><li>Janela de 5 minutos (anti-replay) e idempotência por event_id</li><li>Simulador com 7 cenários: 1 legítimo e 6 ataques, todos tratados</li></ul>
             <p class="meta">Stack</p>
-            <ul class="chips"><li>Astro</li><li>React</li><li>Tailwind</li><li>Supabase</li><li>n8n</li><li>Vercel</li></ul>
+            <ul class="chips"><li>n8n</li><li>Node.js</li><li>HMAC-SHA256</li><li>Webhooks</li></ul>
             
-          </article><article class="card" id="proj-portfolio-3d">
-            <div class="shot"><img src="/shots/jogo-casa.png" alt="Captura de tela: Portfólio interativo 3D" loading="lazy" width="1280" height="720"></div>
-            <h3>Portfólio interativo 3D</h3>
-            <p class="meta">Este site · jogo em Three.js</p>
-            <p>Meu portfólio é um mapa 3D explorável: cada prédio tem uma sala por dentro com minhas informações, e há um palco com música do Spotify e show de fogos.</p>
-            <ul class="list"><li>Three.js com visual toon, prédios temáticos e salas internas</li><li>Funciona no celular, com joystick e botões de ação</li><li>Conteúdo em português e inglês, com menus acessíveis</li><li>Fotos reais com licença livre e página de créditos</li></ul>
+            <p class="actions"><a class="btn btn--primary" href="https://github.com/ygos-96/webhook-seguro-n8n" target="_blank" rel="noopener noreferrer">Ver código no GitHub</a></p>
+            
+          </article><article class="card" id="proj-devsecops-pipeline">
+            <div class="shot"><img src="/shots/devsecops-pipeline.png" alt="Captura de tela: Pipeline DevSecOps" loading="lazy" width="1280" height="720"></div>
+            <h3>Pipeline DevSecOps</h3>
+            <p class="meta">GitHub Actions · segurança contínua</p>
+            <p>Esteira que roda a cada push, PR e toda semana: busca segredos, dependências vulneráveis e falhas no código. Aplicada neste próprio portfólio.</p>
+            <ul class="list"><li>gitleaks, npm audit, Semgrep (com regras próprias) e Trivy</li><li>Token somente leitura, sem scripts na instalação e Dependabot</li><li>Relatório honesto: falsos positivos triados e achados reais corrigidos</li></ul>
             <p class="meta">Stack</p>
-            <ul class="chips"><li>Three.js</li><li>Vite</li><li>JavaScript</li><li>Spotify API</li></ul>
+            <ul class="chips"><li>GitHub Actions</li><li>gitleaks</li><li>Semgrep</li><li>Trivy</li><li>Dependabot</li></ul>
+            
+            <p class="actions"><a class="btn btn--primary" href="https://github.com/ygos-96/devsecops-pipeline" target="_blank" rel="noopener noreferrer">Ver código no GitHub</a></p>
+            
+          </article><article class="card" id="proj-lab-vulneravel">
+            <div class="shot"><img src="/shots/lab-vulneravel.png" alt="Captura de tela: Laboratório de AppSec" loading="lazy" width="1280" height="720"></div>
+            <h3>Laboratório de AppSec</h3>
+            <p class="meta">OWASP Top 10 · antes e depois</p>
+            <p>API propositalmente vulnerável com 5 falhas, a versão corrigida e os exploits. Um teste automático prova que os ataques funcionam na primeira e falham na segunda.</p>
+            <ul class="list"><li>SQL injection, IDOR, XSS, token forjável e mass assignment</li><li>Correções: query parametrizada, checagem de posse, CSP, sessão no servidor, allowlist</li><li>Node puro, sem dependências; npm test mostra 5 explorados e 5 bloqueados</li></ul>
+            <p class="meta">Stack</p>
+            <ul class="chips"><li>Node.js</li><li>SQLite</li><li>OWASP Top 10</li></ul>
+            
+            <p class="actions"><a class="btn btn--primary" href="https://github.com/ygos-96/appsec-lab-vulneravel" target="_blank" rel="noopener noreferrer">Ver código no GitHub</a></p>
             
           </article><article class="card" id="proj-original-sp-tattoo">
             <div class="shot"><img src="/shots/original-sp-tattoo.png" alt="Captura de tela: Original SP Tattoo" loading="lazy" width="1280" height="720"></div>
@@ -92,18 +107,8 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Vite</li><li>Tailwind</li><li>JavaScript</li><li>i18n PT/EN/ES</li></ul>
             
-          </article><article class="card" id="proj-conexus">
-            <div class="shot shot--mock" style="--c1:#2a9d8f;--c2:#5aa469" aria-hidden="true">
-    <div class="mock-bar"><i></i><i></i><i></i></div>
-    <div class="mock-body"><span class="m1"></span><span class="m2"></span><span class="m3"></span><span class="m4"></span><span class="m5"></span></div>
-  </div>
-            <h3>Conexus · Automações n8n</h3>
-            <p class="meta">Agência de automações</p>
-            <p>Fluxos n8n que ligam ferramentas e IA para tirar tarefas repetitivas do dia a dia. Inclui um fluxo de captação e classificação de vagas freelancer.</p>
-            <ul class="list"><li>Webhooks, APIs REST e payloads JSON com tratamento de erro e retry</li><li>Classificador de vagas freelancer com IA (especificação e workflow)</li><li>Automações de WhatsApp e de DM de Instagram para o estúdio</li></ul>
-            <p class="meta">Stack</p>
-            <ul class="chips"><li>n8n</li><li>Webhooks</li><li>REST</li><li>JSON</li><li>LLMs</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="original-sp-tattoo">Ver documentação · 10 telas</button></p>
           </article><article class="card" id="proj-rogyfacul">
             <div class="shot"><img src="/shots/rogyfacul.png" alt="Captura de tela: RogyFacul" loading="lazy" width="1280" height="720"></div>
             <h3>RogyFacul</h3>
@@ -113,15 +118,8 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Astro 7</li><li>Tailwind 4</li><li>Supabase</li><li>Vitest</li></ul>
             
-          </article><article class="card" id="proj-blog">
-            <div class="shot"><img src="/shots/blog.png" alt="Captura de tela: Blog com publicação via API" loading="lazy" width="1280" height="720"></div>
-            <h3>Blog com publicação via API</h3>
-            <p class="meta">Next.js e automação</p>
-            <p>Blog sobre IA e automação prática. Um endpoint próprio recebe o artigo em markdown e faz o commit no repositório; a Vercel publica sozinha.</p>
-            <ul class="list"><li>Next.js (App Router), Tailwind e MDX</li><li>POST /api/posts, commit via GitHub API e deploy automático</li><li>Publica do celular ou de um webhook do n8n</li></ul>
-            <p class="meta">Stack</p>
-            <ul class="chips"><li>Next.js</li><li>Tailwind</li><li>MDX</li><li>GitHub API</li><li>Vercel</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="rogyfacul">Ver documentação · 13 telas</button></p>
           </article></div>
 </section>
 <section id="formacao" class="r-section" aria-labelledby="h-formacao">
@@ -187,6 +185,10 @@
   <h2 id="h-estadio">Palmeiras, minha paixão</h2>
   
       <p class="lead">Palmeirense de coração. Aqui ficam meus ídolos e as taças da era mais vitoriosa recente do Verdão.</p>
+      <section class="next-games" data-next-games hidden>
+        <h3><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Próximos jogos</h3>
+        <ul class="next-games__list"></ul>
+      </section>
       <div class="inv-grid">
         <div class="inv-col">
           <div class="inv-card">
@@ -216,7 +218,110 @@
         <div class="inv-col">
           <div class="inv-card">
             <h3>Meus ídolos</h3>
-            <ul class="idols"><li><strong>Edmundo</strong><span>O Animal. Atacante de muita raça, campeão brasileiro em 1993 e 1994.</span></li><li><strong>Alex Mineiro</strong><span>Atacante e ídolo da torcida alviverde.</span></li><li><strong>Valdivia</strong><span>O Mago. Meia chileno que decidiu jogos, campeão paulista em 2008 e da Copa do Brasil em 2012.</span></li><li><strong>Weverton</strong><span>Goleiro, campeão da Libertadores em 2020 e 2021 e do Brasileirão em 2022 e 2023.</span></li><li><strong>Gustavo Gómez</strong><span>Zagueiro paraguaio e capitão, bicampeão da Libertadores.</span></li><li><strong>Abel Ferreira</strong><span>Técnico português que comanda a era mais vitoriosa recente do clube, bicampeão da Libertadores.</span></li><li><strong>Luiz Felipe Scolari</strong><span>Felipão. Técnico campeão da Copa do Brasil em 1998 e da Libertadores em 1999.</span></li></ul>
+            <div class="idol-carousel" aria-roledescription="carousel">
+      <div class="idol-book" tabindex="0"><article class="idol-slide on" role="group" aria-roledescription="página" aria-label="1 / 7: Edmundo">
+      <div class="idol-page idol-page--fig" data-nick="Animal"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#2a1a10"/><rect x="3" y="1" width="10" height="1" fill="#2a1a10"/><rect x="2" y="2" width="12" height="1" fill="#2a1a10"/><rect x="2" y="3" width="1" height="1" fill="#2a1a10"/><rect x="3" y="3" width="10" height="1" fill="#d4a074"/><rect x="13" y="3" width="1" height="1" fill="#2a1a10"/><rect x="2" y="4" width="12" height="1" fill="#d4a074"/><rect x="2" y="5" width="2" height="1" fill="#d4a074"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d4a074"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d4a074"/><rect x="2" y="6" width="2" height="1" fill="#d4a074"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d4a074"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d4a074"/><rect x="2" y="7" width="12" height="1" fill="#d4a074"/><rect x="2" y="8" width="4" height="1" fill="#d4a074"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d4a074"/><rect x="3" y="9" width="10" height="1" fill="#d4a074"/><rect x="4" y="10" width="8" height="1" fill="#d4a074"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d4a074"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d4a074"/><rect x="2" y="14" width="1" height="1" fill="#d4a074"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d4a074"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Atacante · “Animal”</span>
+        <h4>Edmundo</h4>
+        <p class="idol-slide__story">Chegou do Vasco em 1993 para o elenco montado com a parceria da Parmalat, ao lado de nomes como Evair, Zinho, Roberto Carlos e César Sampaio. Na final do Paulista daquele ano, o Palmeiras goleou o Corinthians por 4 a 0 e encerrou um jejum de títulos que vinha desde 1976. Vieram depois o bicampeonato brasileiro de 1993 e 1994 e o Rio-São Paulo. Habilidoso, explosivo e de pavio curto, ganhou o apelido de Animal e virou símbolo daquele time. Voltou ao clube em 2006 para uma segunda passagem.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Brasil</dd></div>
+          <div><dt>No clube</dt><dd>1993–1995 · 2006–2007</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~110</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Peça do time da era Parmalat que acabou com o jejum de 16 anos sem títulos, no Paulista de 1993.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Paulista</strong> 1993</li><li><strong>Brasileirão</strong> 1993 · 1994</li><li><strong>Rio-São Paulo</strong> 1993</li></ul></div>
+        <span class="idol-page__num">1 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="2 / 7: Dudu" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Dudu"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#141414"/><rect x="3" y="1" width="10" height="1" fill="#141414"/><rect x="2" y="2" width="12" height="1" fill="#141414"/><rect x="2" y="3" width="1" height="1" fill="#141414"/><rect x="3" y="3" width="10" height="1" fill="#8f5b3a"/><rect x="13" y="3" width="1" height="1" fill="#141414"/><rect x="2" y="4" width="12" height="1" fill="#8f5b3a"/><rect x="2" y="5" width="2" height="1" fill="#8f5b3a"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#8f5b3a"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#8f5b3a"/><rect x="2" y="6" width="2" height="1" fill="#8f5b3a"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#8f5b3a"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#8f5b3a"/><rect x="2" y="7" width="12" height="1" fill="#8f5b3a"/><rect x="2" y="8" width="4" height="1" fill="#8f5b3a"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#8f5b3a"/><rect x="3" y="9" width="10" height="1" fill="#8f5b3a"/><rect x="4" y="10" width="8" height="1" fill="#8f5b3a"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#8f5b3a"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#8f5b3a"/><rect x="2" y="14" width="1" height="1" fill="#8f5b3a"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#8f5b3a"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Atacante</span>
+        <h4>Dudu</h4>
+        <p class="idol-slide__story">Revelado no Cruzeiro, passou por Dínamo de Kiev e Grêmio antes de chegar ao Palmeiras em 2015, numa disputa com rivais que a torcida comemorou como vitória. No mesmo ano levantou a Copa do Brasil e, em 2016, foi peça central do título brasileiro que o clube não ganhava havia 22 anos. Rápido, driblador e incansável na pressão, virou o camisa 7 da torcida e esteve no time campeão brasileiro de 2018. Depois de um empréstimo ao Al-Duhail, voltou em 2021 a tempo de conquistar a Libertadores e somou mais Brasileirões em 2022 e 2023. Deixou o clube no início de 2025.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Brasil</dd></div>
+          <div><dt>No clube</dt><dd>2015–2020 · 2021–2024</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~460</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Camisa 7 e um dos jogadores mais vitoriosos da história do clube, com mais de 400 jogos.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Libertadores</strong> 2021</li><li><strong>Brasileirão</strong> 2016 · 2018 · 2022 · 2023</li><li><strong>Copa do Brasil</strong> 2015</li><li><strong>Recopa</strong> 2022</li><li><strong>Supercopa</strong> 2023</li><li><strong>Paulista</strong> 2022 · 2023</li></ul></div>
+        <span class="idol-page__num">2 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="3 / 7: Valdivia" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Mago"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#2a1a12"/><rect x="3" y="1" width="10" height="1" fill="#2a1a12"/><rect x="2" y="2" width="12" height="1" fill="#2a1a12"/><rect x="2" y="3" width="1" height="1" fill="#2a1a12"/><rect x="3" y="3" width="10" height="1" fill="#d9a67a"/><rect x="13" y="3" width="1" height="1" fill="#2a1a12"/><rect x="2" y="4" width="12" height="1" fill="#d9a67a"/><rect x="2" y="5" width="2" height="1" fill="#d9a67a"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d9a67a"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d9a67a"/><rect x="2" y="6" width="2" height="1" fill="#d9a67a"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d9a67a"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d9a67a"/><rect x="2" y="7" width="12" height="1" fill="#d9a67a"/><rect x="2" y="8" width="4" height="1" fill="#d9a67a"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d9a67a"/><rect x="3" y="9" width="10" height="1" fill="#d9a67a"/><rect x="4" y="10" width="8" height="1" fill="#d9a67a"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d9a67a"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d9a67a"/><rect x="2" y="14" width="1" height="1" fill="#d9a67a"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d9a67a"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Meia · “Mago”</span>
+        <h4>Valdivia</h4>
+        <p class="idol-slide__story">O chileno chegou em 2006 e rapidamente virou o cérebro do time: drible curto, passe de primeira e provocação na medida certa. Em 2008, sob o comando de Vanderlei Luxemburgo, foi o craque do Paulista que tirou o clube de uma fila no estadual. Foi vendido ao Al Ain, dos Emirados, e voltou em 2010 para uma segunda passagem, marcada por lesões mas também pela Copa do Brasil de 2012, conquistada com Felipão. Pela seleção do Chile, foi campeão da Copa América de 2015.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Chile</dd></div>
+          <div><dt>No clube</dt><dd>2006–2008 · 2010–2015</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~300</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Camisa 10 de passe e drible, voltou do Al Ain em 2010 para uma segunda passagem.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Paulista</strong> 2008</li><li><strong>Copa do Brasil</strong> 2012</li></ul></div>
+        <span class="idol-page__num">3 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="4 / 7: Weverton" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Weverton"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="1" width="8" height="1" fill="#1a1a1a"/><rect x="3" y="2" width="10" height="1" fill="#1a1a1a"/><rect x="2" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="3" y="3" width="10" height="1" fill="#b8774a"/><rect x="13" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="2" y="4" width="12" height="1" fill="#b8774a"/><rect x="2" y="5" width="2" height="1" fill="#b8774a"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#b8774a"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#b8774a"/><rect x="2" y="6" width="2" height="1" fill="#b8774a"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#b8774a"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#b8774a"/><rect x="2" y="7" width="12" height="1" fill="#b8774a"/><rect x="2" y="8" width="4" height="1" fill="#b8774a"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#b8774a"/><rect x="3" y="9" width="10" height="1" fill="#b8774a"/><rect x="4" y="10" width="8" height="1" fill="#b8774a"/><rect x="4" y="11" width="8" height="1" fill="#f28c28"/><rect x="3" y="12" width="10" height="1" fill="#f28c28"/><rect x="2" y="13" width="1" height="1" fill="#b8774a"/><rect x="3" y="13" width="10" height="1" fill="#f28c28"/><rect x="13" y="13" width="1" height="1" fill="#b8774a"/><rect x="2" y="14" width="1" height="1" fill="#b8774a"/><rect x="3" y="14" width="10" height="1" fill="#f28c28"/><rect x="13" y="14" width="1" height="1" fill="#b8774a"/><rect x="4" y="15" width="8" height="1" fill="#222222"/><rect x="4" y="16" width="2" height="1" fill="#222222"/><rect x="10" y="16" width="2" height="1" fill="#222222"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Goleiro</span>
+        <h4>Weverton</h4>
+        <p class="idol-slide__story">Antes do Palmeiras, já era capitão do Athletico-PR e foi o goleiro titular do Brasil na medalha de ouro olímpica de 2016, no Maracanã, com defesa na disputa de pênaltis da final contra a Alemanha. Chegou em 2018 e foi campeão brasileiro logo no primeiro ano. Seguro, líder e decisivo nos pênaltis, foi titular nas duas Libertadores da era Abel, em 2020 e 2021, e nos Brasileirões de 2022 e 2023. Foi convocado para a Copa do Mundo de 2022.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Brasil</dd></div>
+          <div><dt>No clube</dt><dd>2018–</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~450</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Chegou do Athletico-PR em 2018 e virou um dos goleiros mais vitoriosos da história do clube.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>Brasileirão</strong> 2018 · 2022 · 2023</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>Recopa</strong> 2022</li><li><strong>Paulista</strong> 2020 · 2022 · 2024</li></ul></div>
+        <span class="idol-page__num">4 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="5 / 7: Gustavo Gómez" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Gustavo"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#1f140d"/><rect x="3" y="1" width="10" height="1" fill="#1f140d"/><rect x="2" y="2" width="12" height="1" fill="#1f140d"/><rect x="2" y="3" width="1" height="1" fill="#1f140d"/><rect x="3" y="3" width="10" height="1" fill="#d9a97c"/><rect x="13" y="3" width="1" height="1" fill="#1f140d"/><rect x="2" y="4" width="12" height="1" fill="#d9a97c"/><rect x="2" y="5" width="2" height="1" fill="#d9a97c"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d9a97c"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d9a97c"/><rect x="2" y="6" width="2" height="1" fill="#d9a97c"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d9a97c"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d9a97c"/><rect x="2" y="7" width="12" height="1" fill="#d9a97c"/><rect x="2" y="8" width="4" height="1" fill="#d9a97c"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d9a97c"/><rect x="3" y="9" width="10" height="1" fill="#d9a97c"/><rect x="4" y="10" width="8" height="1" fill="#d9a97c"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d9a97c"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d9a97c"/><rect x="2" y="14" width="1" height="1" fill="#d9a97c"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d9a97c"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Zagueiro</span>
+        <h4>Gustavo Gómez</h4>
+        <p class="idol-slide__story">Chegou do Milan em 2018 e logo virou dono da zaga. Capitão do Palmeiras e da seleção do Paraguai, é conhecido pela força no jogo aéreo e pelos gols de cabeça em bola parada, raros para um zagueiro na quantidade em que ele marca. Foi um dos pilares das Libertadores de 2020 e 2021 e dos Brasileirões de 2022 e 2023, sempre como a voz de comando em campo.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Paraguai</dd></div>
+          <div><dt>No clube</dt><dd>2018–</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~330</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Capitão e líder da defesa na era Abel, forte no jogo aéreo e perigoso nas bolas paradas.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>Brasileirão</strong> 2022 · 2023</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>Recopa</strong> 2022</li><li><strong>Paulista</strong> 2020 · 2022</li></ul></div>
+        <span class="idol-page__num">5 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="6 / 7: Abel Ferreira" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Abel"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#3a2a20"/><rect x="3" y="1" width="10" height="1" fill="#3a2a20"/><rect x="2" y="2" width="12" height="1" fill="#3a2a20"/><rect x="2" y="3" width="1" height="1" fill="#3a2a20"/><rect x="3" y="3" width="10" height="1" fill="#e8bd98"/><rect x="13" y="3" width="1" height="1" fill="#3a2a20"/><rect x="2" y="4" width="12" height="1" fill="#e8bd98"/><rect x="2" y="5" width="2" height="1" fill="#e8bd98"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#e8bd98"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#e8bd98"/><rect x="2" y="6" width="2" height="1" fill="#e8bd98"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#e8bd98"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#e8bd98"/><rect x="2" y="7" width="12" height="1" fill="#e8bd98"/><rect x="2" y="8" width="4" height="1" fill="#e8bd98"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#e8bd98"/><rect x="3" y="9" width="10" height="1" fill="#e8bd98"/><rect x="4" y="10" width="8" height="1" fill="#e8bd98"/><rect x="4" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="6" y="11" width="1" height="1" fill="#ffffff"/><rect x="7" y="11" width="2" height="1" fill="#0a7b45"/><rect x="9" y="11" width="1" height="1" fill="#ffffff"/><rect x="10" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="6" y="12" width="1" height="1" fill="#ffffff"/><rect x="7" y="12" width="2" height="1" fill="#0a7b45"/><rect x="9" y="12" width="1" height="1" fill="#ffffff"/><rect x="10" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="2" y="13" width="1" height="1" fill="#e8bd98"/><rect x="3" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="13" width="2" height="1" fill="#0a7b45"/><rect x="9" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="13" width="1" height="1" fill="#e8bd98"/><rect x="2" y="14" width="1" height="1" fill="#e8bd98"/><rect x="3" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="14" width="2" height="1" fill="#0a7b45"/><rect x="9" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="14" width="1" height="1" fill="#e8bd98"/><rect x="4" y="15" width="8" height="1" fill="#2a2f3a"/><rect x="4" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="10" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="17" width="3" height="1" fill="#111"/><rect x="10" y="17" width="3" height="1" fill="#111"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Técnico</span>
+        <h4>Abel Ferreira</h4>
+        <p class="idol-slide__story">Ex-lateral português, treinou o Braga e o PAOK antes de chegar ao Palmeiras no fim de 2020, com a temporada em andamento. Em poucos meses venceu a Copa do Brasil e a Libertadores de 2020, decidida no Maracanã contra o Santos com gol de cabeça de Breno Lopes nos acréscimos. Em 2021 repetiu a Libertadores, contra o Flamengo em Montevidéu, e depois vieram Brasileirões, Recopa, Supercopa e Paulistas. Intenso, estudioso e muito ligado ao elenco, tornou-se o técnico com mais títulos da história do clube.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Portugal</dd></div>
+          <div><dt>No clube</dt><dd>2020–</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~650</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Chegou do PAOK em 2020 e se tornou o técnico com mais títulos da história do clube.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>Brasileirão</strong> 2022 · 2023</li><li><strong>Recopa</strong> 2022</li><li><strong>Supercopa</strong> 2023</li><li><strong>Paulista</strong> 2022 · 2024</li></ul></div>
+        <span class="idol-page__num">6 / 7</span>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="página" aria-label="7 / 7: Luiz Felipe Scolari" aria-hidden="true">
+      <div class="idol-page idol-page--fig" data-nick="Felipão"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#ececec"/><rect x="3" y="1" width="10" height="1" fill="#ececec"/><rect x="2" y="2" width="12" height="1" fill="#ececec"/><rect x="2" y="3" width="1" height="1" fill="#ececec"/><rect x="3" y="3" width="10" height="1" fill="#dca383"/><rect x="13" y="3" width="1" height="1" fill="#ececec"/><rect x="2" y="4" width="12" height="1" fill="#dca383"/><rect x="2" y="5" width="2" height="1" fill="#dca383"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#dca383"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#dca383"/><rect x="2" y="6" width="2" height="1" fill="#dca383"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#dca383"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#dca383"/><rect x="2" y="7" width="12" height="1" fill="#dca383"/><rect x="2" y="8" width="4" height="1" fill="#dca383"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#dca383"/><rect x="3" y="9" width="10" height="1" fill="#dca383"/><rect x="4" y="10" width="8" height="1" fill="#dca383"/><rect x="4" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="6" y="11" width="1" height="1" fill="#ffffff"/><rect x="7" y="11" width="2" height="1" fill="#0a7b45"/><rect x="9" y="11" width="1" height="1" fill="#ffffff"/><rect x="10" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="6" y="12" width="1" height="1" fill="#ffffff"/><rect x="7" y="12" width="2" height="1" fill="#0a7b45"/><rect x="9" y="12" width="1" height="1" fill="#ffffff"/><rect x="10" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="2" y="13" width="1" height="1" fill="#dca383"/><rect x="3" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="13" width="2" height="1" fill="#0a7b45"/><rect x="9" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="13" width="1" height="1" fill="#dca383"/><rect x="2" y="14" width="1" height="1" fill="#dca383"/><rect x="3" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="14" width="2" height="1" fill="#0a7b45"/><rect x="9" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="14" width="1" height="1" fill="#dca383"/><rect x="4" y="15" width="8" height="1" fill="#2a2f3a"/><rect x="4" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="10" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="17" width="3" height="1" fill="#111"/><rect x="10" y="17" width="3" height="1" fill="#111"/></svg></div>
+      <div class="idol-page idol-page--info">
+        <span class="idol-slide__role">Técnico · “Felipão”</span>
+        <h4>Luiz Felipe Scolari</h4>
+        <p class="idol-slide__story">Gaúcho, chegou ao Palmeiras em 1997 e montou um time competitivo e copeiro. Ganhou a Copa do Brasil e a Mercosul de 1998 e, em 1999, a primeira Libertadores do clube, nos pênaltis contra o Deportivo Cali, com Marcos no gol. Em 2002 foi pentacampeão do mundo com a Seleção. Voltou em 2010 e levou a Copa do Brasil de 2012. Na terceira passagem, assumiu em 2018 com o campeonato em andamento e conduziu uma longa arrancada invicta até o título brasileiro.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>País</dt><dd>Brasil</dd></div>
+          <div><dt>No clube</dt><dd>1997–2000 · 2010–2012 · 2018–2019</dd></div>
+          <div><dt>Jogos pelo Palmeiras</dt><dd>~200</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Marca no clube</span>Pentacampeão do mundo com a Seleção em 2002; no Palmeiras levou a Libertadores de 1999 e o Brasileirão de 2018.</blockquote>
+        <div class="idol-slide__titles"><span>Títulos pelo clube</span><ul><li><strong>Copa do Brasil</strong> 1998 · 2012</li><li><strong>Mercosul</strong> 1998</li><li><strong>Libertadores</strong> 1999</li><li><strong>Brasileirão</strong> 2018</li></ul></div>
+        <span class="idol-page__num">7 / 7</span>
+      </div></article>
+        <button type="button" class="idol-arrow idol-arrow--prev" data-idol-step="-1" aria-label="Página anterior"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <button type="button" class="idol-arrow idol-arrow--next" data-idol-step="1" aria-label="Próxima página"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
           </div>
         </div>
       </div>

@@ -168,14 +168,32 @@ export const BOOKS = [
   },
 ]
 
+// Dados de jogos são aproximados — confira antes de publicar. games: null = a confirmar.
+export const TITLE_NAMES = {
+  lib: { pt: 'Libertadores', en: 'Libertadores' },
+  bra: { pt: 'Brasileirão', en: 'League' },
+  cdb: { pt: 'Copa do Brasil', en: 'Copa do Brasil' },
+  pau: { pt: 'Paulista', en: 'Paulista' },
+  rec: { pt: 'Recopa', en: 'Recopa' },
+  sup: { pt: 'Supercopa', en: 'Supercopa' },
+  mer: { pt: 'Mercosul', en: 'Mercosul' },
+  rsp: { pt: 'Rio-São Paulo', en: 'Rio-São Paulo' },
+}
 export const IDOLS = [
-  { name: 'Edmundo', pt: 'O Animal. Atacante de muita raça, campeão brasileiro em 1993 e 1994.', en: 'The Animal. A fierce striker, Brazilian champion in 1993 and 1994.' },
-  { name: 'Alex Mineiro', pt: 'Atacante e ídolo da torcida alviverde.', en: 'Striker and a fan favourite.' },
-  { name: 'Valdivia', pt: 'O Mago. Meia chileno que decidiu jogos, campeão paulista em 2008 e da Copa do Brasil em 2012.', en: 'The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.' },
-  { name: 'Weverton', pt: 'Goleiro, campeão da Libertadores em 2020 e 2021 e do Brasileirão em 2022 e 2023.', en: 'Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.' },
-  { name: 'Gustavo Gómez', pt: 'Zagueiro paraguaio e capitão, bicampeão da Libertadores.', en: 'Paraguayan centre-back and captain, two-time Libertadores champion.' },
-  { name: 'Abel Ferreira', pt: 'Técnico português que comanda a era mais vitoriosa recente do clube, bicampeão da Libertadores.', en: 'Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.' },
-  { name: 'Luiz Felipe Scolari', pt: 'Felipão. Técnico campeão da Copa do Brasil em 1998 e da Libertadores em 1999.', en: 'Felipão. Coach who won the 1998 Copa do Brasil and the 1999 Libertadores.' },
+  { name: 'Edmundo', story: { pt: 'Chegou do Vasco em 1993 para o elenco montado com a parceria da Parmalat, ao lado de nomes como Evair, Zinho, Roberto Carlos e César Sampaio. Na final do Paulista daquele ano, o Palmeiras goleou o Corinthians por 4 a 0 e encerrou um jejum de títulos que vinha desde 1976. Vieram depois o bicampeonato brasileiro de 1993 e 1994 e o Rio-São Paulo. Habilidoso, explosivo e de pavio curto, ganhou o apelido de Animal e virou símbolo daquele time. Voltou ao clube em 2006 para uma segunda passagem.', en: 'He arrived from Vasco in 1993 to join the squad built through the Parmalat partnership, alongside Evair, Zinho, Roberto Carlos and César Sampaio. In that year’s Paulista final Palmeiras beat Corinthians 4–0, ending a trophy drought that dated back to 1976. Back-to-back league titles in 1993 and 1994 and the Rio-São Paulo followed. Skilful, explosive and short-tempered, he earned the nickname Animal and became the face of that team. He returned for a second spell in 2006.' }, nick: 'Animal', country: { pt: 'Brasil', en: 'Brazil' }, years: '1993–1995 · 2006–2007', fact: { pt: 'Peça do time da era Parmalat que acabou com o jejum de 16 anos sem títulos, no Paulista de 1993.', en: 'Key man in the Parmalat-era side that ended a 16-year trophy drought with the 1993 Paulista.' },  role: 'fw', skin: '#d4a074', hair: '#2a1a10', hairStyle: 'recede', beard: 'stubble', beardColor: '#3a2a20', games: '~110', titles: [['pau', '1993'], ['bra', '1993 · 1994'], ['rsp', '1993']],
+    pt: 'O Animal. Atacante de muita raça, campeão brasileiro em 1993 e 1994.', en: 'The Animal. A fierce striker, Brazilian champion in 1993 and 1994.' },
+  { name: 'Dudu', story: { pt: 'Revelado no Cruzeiro, passou por Dínamo de Kiev e Grêmio antes de chegar ao Palmeiras em 2015, numa disputa com rivais que a torcida comemorou como vitória. No mesmo ano levantou a Copa do Brasil e, em 2016, foi peça central do título brasileiro que o clube não ganhava havia 22 anos. Rápido, driblador e incansável na pressão, virou o camisa 7 da torcida e esteve no time campeão brasileiro de 2018. Depois de um empréstimo ao Al-Duhail, voltou em 2021 a tempo de conquistar a Libertadores e somou mais Brasileirões em 2022 e 2023. Deixou o clube no início de 2025.', en: 'Developed at Cruzeiro, he played for Dynamo Kyiv and Grêmio before joining Palmeiras in 2015, beating rivals to his signature in a deal fans celebrated like a win. That same year he lifted the Copa do Brasil, and in 2016 he was central to the club’s first league title in 22 years. Quick, tricky and relentless when pressing, he became the fans’ number 7 and was part of the 2018 champions. After a loan at Al-Duhail he returned in 2021 in time to win the Libertadores, adding more league titles in 2022 and 2023. He left the club in early 2025.' }, nick: null, country: { pt: 'Brasil', en: 'Brazil' }, years: '2015–2020 · 2021–2024', fact: { pt: 'Camisa 7 e um dos jogadores mais vitoriosos da história do clube, com mais de 400 jogos.', en: 'The number 7 and one of the most decorated players in club history, with over 400 games.' },  role: 'fw', skin: '#8f5b3a', hair: '#141414', hairStyle: 'buzz', beard: 'full', beardColor: '#161616', games: '~460', titles: [['lib', '2021'], ['bra', '2016 · 2018 · 2022 · 2023'], ['cdb', '2015'], ['rec', '2022'], ['sup', '2023'], ['pau', '2022 · 2023']],
+    pt: 'Atacante rápido e driblador, o camisa 7 da virada de chave do Palmeiras na era moderna.', en: 'A quick, tricky forward, the number 7 of Palmeiras’ modern turnaround.' },
+  { name: 'Valdivia', story: { pt: 'O chileno chegou em 2006 e rapidamente virou o cérebro do time: drible curto, passe de primeira e provocação na medida certa. Em 2008, sob o comando de Vanderlei Luxemburgo, foi o craque do Paulista que tirou o clube de uma fila no estadual. Foi vendido ao Al Ain, dos Emirados, e voltou em 2010 para uma segunda passagem, marcada por lesões mas também pela Copa do Brasil de 2012, conquistada com Felipão. Pela seleção do Chile, foi campeão da Copa América de 2015.', en: 'The Chilean arrived in 2006 and quickly became the brains of the side: short dribbles, first-time passes and just the right amount of provocation. In 2008, under Vanderlei Luxemburgo, he was the star of the Paulista title. He was sold to Al Ain in the UAE and returned in 2010 for a second spell, hampered by injuries but crowned by the 2012 Copa do Brasil under Felipão. With Chile he won the 2015 Copa América.' }, nick: 'Mago', country: { pt: 'Chile', en: 'Chile' }, years: '2006–2008 · 2010–2015', fact: { pt: 'Camisa 10 de passe e drible, voltou do Al Ain em 2010 para uma segunda passagem.', en: 'A dribbling, passing number 10 who returned from Al Ain in 2010 for a second spell.' },  role: 'mf', skin: '#d9a67a', hair: '#2a1a12', hairStyle: 'wavy', beard: 'full', beardColor: '#241710', games: '~300', titles: [['pau', '2008'], ['cdb', '2012']],
+    pt: 'O Mago. Meia chileno que decidiu jogos, campeão paulista em 2008 e da Copa do Brasil em 2012.', en: 'The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.' },
+  { name: 'Weverton', story: { pt: 'Antes do Palmeiras, já era capitão do Athletico-PR e foi o goleiro titular do Brasil na medalha de ouro olímpica de 2016, no Maracanã, com defesa na disputa de pênaltis da final contra a Alemanha. Chegou em 2018 e foi campeão brasileiro logo no primeiro ano. Seguro, líder e decisivo nos pênaltis, foi titular nas duas Libertadores da era Abel, em 2020 e 2021, e nos Brasileirões de 2022 e 2023. Foi convocado para a Copa do Mundo de 2022.', en: 'Before Palmeiras he was already Athletico-PR’s captain and Brazil’s starting goalkeeper for the 2016 Olympic gold at the Maracanã, saving a penalty in the final shootout against Germany. He arrived in 2018 and won the league in his first season. Calm, a leader and decisive in shootouts, he started both Libertadores wins of the Abel era, in 2020 and 2021, and the 2022 and 2023 league titles. He was called up for the 2022 World Cup.' }, nick: null, country: { pt: 'Brasil', en: 'Brazil' }, years: '2018–', fact: { pt: 'Chegou do Athletico-PR em 2018 e virou um dos goleiros mais vitoriosos da história do clube.', en: 'Arrived from Athletico-PR in 2018 and became one of the most decorated goalkeepers in club history.' },  role: 'gk', skin: '#b8774a', hair: '#1a1a1a', hairStyle: 'bald', beard: 'goatee', beardColor: '#2a1c12', games: '~450', titles: [['lib', '2020 · 2021'], ['bra', '2018 · 2022 · 2023'], ['cdb', '2020'], ['rec', '2022'], ['pau', '2020 · 2022 · 2024']],
+    pt: 'Goleiro, campeão da Libertadores em 2020 e 2021 e do Brasileirão em 2022 e 2023.', en: 'Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.' },
+  { name: 'Gustavo Gómez', story: { pt: 'Chegou do Milan em 2018 e logo virou dono da zaga. Capitão do Palmeiras e da seleção do Paraguai, é conhecido pela força no jogo aéreo e pelos gols de cabeça em bola parada, raros para um zagueiro na quantidade em que ele marca. Foi um dos pilares das Libertadores de 2020 e 2021 e dos Brasileirões de 2022 e 2023, sempre como a voz de comando em campo.', en: 'He arrived from AC Milan in 2018 and soon owned the centre of defence. Captain of both Palmeiras and Paraguay, he is known for his aerial strength and headed goals from set pieces, unusually frequent for a centre-back. He was a pillar of the 2020 and 2021 Libertadores wins and the 2022 and 2023 league titles, always the leading voice on the pitch.' }, nick: null, country: { pt: 'Paraguai', en: 'Paraguay' }, years: '2018–', fact: { pt: 'Capitão e líder da defesa na era Abel, forte no jogo aéreo e perigoso nas bolas paradas.', en: 'Captain and defensive leader of the Abel era, dominant in the air and dangerous at set pieces.' },  role: 'df', skin: '#d9a97c', hair: '#1f140d', hairStyle: 'quiff', beard: 'stubble', beardColor: '#2a1a10', games: '~330', titles: [['lib', '2020 · 2021'], ['bra', '2022 · 2023'], ['cdb', '2020'], ['rec', '2022'], ['pau', '2020 · 2022']],
+    pt: 'Zagueiro paraguaio e capitão, bicampeão da Libertadores.', en: 'Paraguayan centre-back and captain, two-time Libertadores champion.' },
+  { name: 'Abel Ferreira', story: { pt: 'Ex-lateral português, treinou o Braga e o PAOK antes de chegar ao Palmeiras no fim de 2020, com a temporada em andamento. Em poucos meses venceu a Copa do Brasil e a Libertadores de 2020, decidida no Maracanã contra o Santos com gol de cabeça de Breno Lopes nos acréscimos. Em 2021 repetiu a Libertadores, contra o Flamengo em Montevidéu, e depois vieram Brasileirões, Recopa, Supercopa e Paulistas. Intenso, estudioso e muito ligado ao elenco, tornou-se o técnico com mais títulos da história do clube.', en: 'A former Portuguese full-back, he coached Braga and PAOK before arriving at Palmeiras in late 2020, mid-season. Within months he won the Copa do Brasil and the 2020 Libertadores, decided at the Maracanã against Santos by Breno Lopes’ stoppage-time header. In 2021 he won the Libertadores again, against Flamengo in Montevideo, followed by league titles, the Recopa, the Supercopa and Paulistas. Intense, studious and close to his players, he became the most decorated coach in club history.' }, short: 'Abel', nick: null, country: { pt: 'Portugal', en: 'Portugal' }, years: '2020–', fact: { pt: 'Chegou do PAOK em 2020 e se tornou o técnico com mais títulos da história do clube.', en: 'Came from PAOK in 2020 and became the most decorated coach in club history.' },  role: 'coach', skin: '#e8bd98', hair: '#3a2a20', hairStyle: 'side', beard: null, games: '~650', titles: [['lib', '2020 · 2021'], ['cdb', '2020'], ['bra', '2022 · 2023'], ['rec', '2022'], ['sup', '2023'], ['pau', '2022 · 2024']],
+    pt: 'Técnico português que comanda a era mais vitoriosa recente do clube, bicampeão da Libertadores.', en: 'Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.' },
+  { name: 'Luiz Felipe Scolari', story: { pt: 'Gaúcho, chegou ao Palmeiras em 1997 e montou um time competitivo e copeiro. Ganhou a Copa do Brasil e a Mercosul de 1998 e, em 1999, a primeira Libertadores do clube, nos pênaltis contra o Deportivo Cali, com Marcos no gol. Em 2002 foi pentacampeão do mundo com a Seleção. Voltou em 2010 e levou a Copa do Brasil de 2012. Na terceira passagem, assumiu em 2018 com o campeonato em andamento e conduziu uma longa arrancada invicta até o título brasileiro.', en: 'From Rio Grande do Sul, he arrived in 1997 and built a tough, cup-winning side. He won the 1998 Copa do Brasil and Mercosur Cup, and in 1999 the club’s first Libertadores, on penalties against Deportivo Cali with Marcos in goal. In 2002 he won the World Cup with Brazil. He returned in 2010 and won the 2012 Copa do Brasil. In a third spell he took over mid-season in 2018 and led a long unbeaten run to the league title.' }, nick: 'Felipão', country: { pt: 'Brasil', en: 'Brazil' }, years: '1997–2000 · 2010–2012 · 2018–2019', fact: { pt: 'Pentacampeão do mundo com a Seleção em 2002; no Palmeiras levou a Libertadores de 1999 e o Brasileirão de 2018.', en: 'World Cup winner with Brazil in 2002; at Palmeiras he won the 1999 Libertadores and the 2018 league.' },  role: 'coach', skin: '#dca383', hair: '#ececec', hairStyle: 'recede', beard: 'mustache', beardColor: '#ececec', games: '~200', titles: [['cdb', '1998 · 2012'], ['mer', '1998'], ['lib', '1999'], ['bra', '2018']],
+    pt: 'Felipão. Técnico campeão da Copa do Brasil em 1998, da Libertadores em 1999 e do Brasileirão em 2018.', en: 'Felipão. Coach who won the 1998 Copa do Brasil, the 1999 Libertadores and the 2018 league.' },
 ]
 
 // Títulos de 2015 em diante (confira os mais recentes antes de publicar).
@@ -189,12 +207,11 @@ export const TROPHIES = [
 ]
 
 export const PROJECT_BASE = {
-  'central-ygor': { stack: ['Astro', 'React', 'Tailwind', 'Supabase', 'n8n', 'Vercel'], shot: '/shots/central-ygor.png', hue: ['#5b8def', '#8e7dff'] },
-  'portfolio-3d': { stack: ['Three.js', 'Vite', 'JavaScript', 'Spotify API'], shot: '/shots/jogo-casa.png', hue: ['#f4a259', '#e76f51'] },
+  'webhook-seguro': { stack: ['n8n', 'Node.js', 'HMAC-SHA256', 'Webhooks'], shot: '/shots/webhook-seguro.png', repo: 'https://github.com/ygos-96/webhook-seguro-n8n', hue: ['#2a9d8f', '#5b8def'] },
+  'devsecops-pipeline': { stack: ['GitHub Actions', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot'], shot: '/shots/devsecops-pipeline.png', repo: 'https://github.com/ygos-96/devsecops-pipeline', hue: ['#3b3b4f', '#5aa469'] },
+  'lab-vulneravel': { stack: ['Node.js', 'SQLite', 'OWASP Top 10'], shot: '/shots/lab-vulneravel.png', repo: 'https://github.com/ygos-96/appsec-lab-vulneravel', hue: ['#c8553d', '#8e7dff'] },
   'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: '/shots/original-sp-tattoo.png', hue: ['#3b3b4f', '#c8553d'] },
-  conexus: { stack: ['n8n', 'Webhooks', 'REST', 'JSON', 'LLMs'], shot: null, hue: ['#2a9d8f', '#5aa469'] },
   rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: '/shots/rogyfacul.png', hue: ['#1c1c1c', '#f0a92b'] },
-  blog: { stack: ['Next.js', 'Tailwind', 'MDX', 'GitHub API', 'Vercel'], shot: '/shots/blog.png', hue: ['#4f7fcf', '#2a9d8f'] },
 }
 
 const pt = {
@@ -311,32 +328,42 @@ const pt = {
     ],
   },
   projetos: {
-    intro: 'Seis projetos que mostram front-end, dados e automação funcionando juntos.',
+    intro: 'Cinco projetos: três de automação e segurança, dois de produto web.',
     items: [
       {
-        slug: 'central-ygor',
-        name: 'Central Ygor',
-        tag: 'App pessoal de gestão · no ar 24h',
+        slug: 'webhook-seguro',
+        name: 'Webhook seguro em n8n',
+        tag: 'Automação + segurança · fluxo academy_001',
         summary:
-          'Painel pessoal com finanças, conteúdo, trabalho e vida em módulos, protegido por PIN. Tem um assistente no Telegram com IA ligado a automações em n8n.',
+          'Webhook de pagamento que só libera acesso a requisições legítimas: confere assinatura HMAC, janela de tempo contra replay e evento duplicado. Fluxo em n8n com receptor Node equivalente e simulador de ataques.',
         points: [
-          'Astro, React e Tailwind, dados no Supabase e deploy na Vercel',
-          'Assistente no Telegram que entende texto e áudio transcrito',
-          'IA opcional para categorizar gastos e montar dossiês de pauta',
-          'Sidebar recolhível e navegação por grupos com sub-páginas',
+          'HMAC-SHA256 com comparação em tempo constante e segredo fora do código',
+          'Janela de 5 minutos (anti-replay) e idempotência por event_id',
+          'Simulador com 7 cenários: 1 legítimo e 6 ataques, todos tratados',
         ],
       },
       {
-        slug: 'portfolio-3d',
-        name: 'Portfólio interativo 3D',
-        tag: 'Este site · jogo em Three.js',
+        slug: 'devsecops-pipeline',
+        name: 'Pipeline DevSecOps',
+        tag: 'GitHub Actions · segurança contínua',
         summary:
-          'Meu portfólio é um mapa 3D explorável: cada prédio tem uma sala por dentro com minhas informações, e há um palco com música do Spotify e show de fogos.',
+          'Esteira que roda a cada push, PR e toda semana: busca segredos, dependências vulneráveis e falhas no código. Aplicada neste próprio portfólio.',
         points: [
-          'Three.js com visual toon, prédios temáticos e salas internas',
-          'Funciona no celular, com joystick e botões de ação',
-          'Conteúdo em português e inglês, com menus acessíveis',
-          'Fotos reais com licença livre e página de créditos',
+          'gitleaks, npm audit, Semgrep (com regras próprias) e Trivy',
+          'Token somente leitura, sem scripts na instalação e Dependabot',
+          'Relatório honesto: falsos positivos triados e achados reais corrigidos',
+        ],
+      },
+      {
+        slug: 'lab-vulneravel',
+        name: 'Laboratório de AppSec',
+        tag: 'OWASP Top 10 · antes e depois',
+        summary:
+          'API propositalmente vulnerável com 5 falhas, a versão corrigida e os exploits. Um teste automático prova que os ataques funcionam na primeira e falham na segunda.',
+        points: [
+          'SQL injection, IDOR, XSS, token forjável e mass assignment',
+          'Correções: query parametrizada, checagem de posse, CSP, sessão no servidor, allowlist',
+          'Node puro, sem dependências; npm test mostra 5 explorados e 5 bloqueados',
         ],
       },
       {
@@ -353,18 +380,6 @@ const pt = {
         ],
       },
       {
-        slug: 'conexus',
-        name: 'Conexus · Automações n8n',
-        tag: 'Agência de automações',
-        summary:
-          'Fluxos n8n que ligam ferramentas e IA para tirar tarefas repetitivas do dia a dia. Inclui um fluxo de captação e classificação de vagas freelancer.',
-        points: [
-          'Webhooks, APIs REST e payloads JSON com tratamento de erro e retry',
-          'Classificador de vagas freelancer com IA (especificação e workflow)',
-          'Automações de WhatsApp e de DM de Instagram para o estúdio',
-        ],
-      },
-      {
         slug: 'rogyfacul',
         name: 'RogyFacul',
         tag: 'Biblioteca de estudo com cara de videogame',
@@ -375,18 +390,6 @@ const pt = {
           'Importação de cursos por JSON; itens complementares ficam fora do progresso',
           'Testes unitários com Vitest',
           'Segurança por RLS no Supabase, sem chave de serviço no navegador',
-        ],
-      },
-      {
-        slug: 'blog',
-        name: 'Blog com publicação via API',
-        tag: 'Next.js e automação',
-        summary:
-          'Blog sobre IA e automação prática. Um endpoint próprio recebe o artigo em markdown e faz o commit no repositório; a Vercel publica sozinha.',
-        points: [
-          'Next.js (App Router), Tailwind e MDX',
-          'POST /api/posts, commit via GitHub API e deploy automático',
-          'Publica do celular ou de um webhook do n8n',
         ],
       },
     ],
@@ -439,6 +442,7 @@ const pt = {
   estadio: {
     intro: 'Palmeirense de coração. Aqui ficam meus ídolos e as taças da era mais vitoriosa recente do Verdão.',
     idolsTitle: 'Meus ídolos',
+    nextTitle: 'Próximos jogos',
     trophiesTitle: 'Taças de 2015 até hoje',
     total: 'títulos no total',
     titlesWord: 'títulos',
@@ -574,32 +578,42 @@ const en = {
     ],
   },
   projetos: {
-    intro: 'Six projects showing front-end, data and automation working together.',
+    intro: 'Five projects: three on automation and security, two web products.',
     items: [
       {
-        slug: 'central-ygor',
-        name: 'Central Ygor',
-        tag: 'Personal management app · live 24/7',
+        slug: 'webhook-seguro',
+        name: 'Secure webhook in n8n',
+        tag: 'Automation + security · workflow academy_001',
         summary:
-          'A personal dashboard with finance, content, work and life modules, protected by a PIN. It includes a Telegram assistant with AI connected to n8n automations.',
+          'A payment webhook that only grants access to legitimate requests: it checks the HMAC signature, a time window against replay and duplicate events. n8n workflow with an equivalent Node receiver and an attack simulator.',
         points: [
-          'Astro, React and Tailwind, data on Supabase, deployed on Vercel',
-          'Telegram assistant that understands text and transcribed audio',
-          'Optional AI to categorize expenses and draft topic briefs',
-          'Collapsible sidebar and grouped navigation with sub-pages',
+          'HMAC-SHA256 with constant-time comparison and the secret kept out of the code',
+          '5-minute window (anti-replay) and idempotency by event_id',
+          'Simulator with 7 scenarios: 1 legitimate and 6 attacks, all handled',
         ],
       },
       {
-        slug: 'portfolio-3d',
-        name: 'Interactive 3D portfolio',
-        tag: 'This site · a Three.js game',
+        slug: 'devsecops-pipeline',
+        name: 'DevSecOps pipeline',
+        tag: 'GitHub Actions · continuous security',
         summary:
-          'My portfolio is an explorable 3D map: every building has a room inside with my info, plus a stage with Spotify music and a fireworks show.',
+          'A pipeline that runs on every push, PR and weekly: it hunts for secrets, vulnerable dependencies and flaws in the code. Applied to this very portfolio.',
         points: [
-          'Three.js with a toon look, themed buildings and indoor rooms',
-          'Works on mobile, with a joystick and action buttons',
-          'Content in Portuguese and English, with accessible menus',
-          'Real free-license photos and a credits page',
+          'gitleaks, npm audit, Semgrep (with custom rules) and Trivy',
+          'Read-only token, no install scripts and Dependabot',
+          'Honest report: false positives triaged and real findings fixed',
+        ],
+      },
+      {
+        slug: 'lab-vulneravel',
+        name: 'AppSec lab',
+        tag: 'OWASP Top 10 · before and after',
+        summary:
+          'A deliberately vulnerable API with 5 flaws, the fixed version and the exploits. An automated test proves the attacks work on the first and fail on the second.',
+        points: [
+          'SQL injection, IDOR, XSS, forgeable token and mass assignment',
+          'Fixes: parameterized queries, ownership check, CSP, server-side sessions, allowlist',
+          'Plain Node, no dependencies; npm test shows 5 exploited and 5 blocked',
         ],
       },
       {
@@ -616,18 +630,6 @@ const en = {
         ],
       },
       {
-        slug: 'conexus',
-        name: 'Conexus · n8n Automation',
-        tag: 'Automation agency',
-        summary:
-          'n8n workflows that connect tools and AI to remove repetitive tasks. Includes a workflow that collects and classifies freelance job posts.',
-        points: [
-          'Webhooks, REST APIs and JSON payloads with error handling and retries',
-          'AI-based freelance job classifier (spec and workflow)',
-          'WhatsApp and Instagram DM automations for the studio',
-        ],
-      },
-      {
         slug: 'rogyfacul',
         name: 'RogyFacul',
         tag: 'A study library with a video-game feel',
@@ -638,18 +640,6 @@ const en = {
           'Course import via JSON; optional items stay out of the progress bar',
           'Unit tests with Vitest',
           'Security through Supabase RLS, no service key in the browser',
-        ],
-      },
-      {
-        slug: 'blog',
-        name: 'Blog with API publishing',
-        tag: 'Next.js and automation',
-        summary:
-          'A blog about practical AI and automation. A custom endpoint receives the article in markdown and commits it to the repo; Vercel publishes on its own.',
-        points: [
-          'Next.js (App Router), Tailwind and MDX',
-          'POST /api/posts, commit via GitHub API and automatic deploy',
-          'Publish from a phone or from an n8n webhook',
         ],
       },
     ],
@@ -702,6 +692,7 @@ const en = {
   estadio: {
     intro: 'Palmeiras fan through and through. Here are my idols and the trophies from the club’s most successful recent era.',
     idolsTitle: 'My idols',
+    nextTitle: 'Upcoming matches',
     trophiesTitle: 'Trophies from 2015 to today',
     total: 'titles in total',
     titlesWord: 'titles',

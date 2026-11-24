@@ -1,0 +1,30 @@
+rules:
+  - id: innerhtml-com-interpolacao-sem-esc
+    languages: [javascript]
+    severity: WARNING
+    message: >-
+      innerHTML recebendo template com interpolação. Se algum valor vier de fora
+      (API, URL, input), passe por esc() antes. Prefira textContent quando não
+      precisa de HTML.
+    metadata:
+      cwe: "CWE-79: Cross-site Scripting"
+      owasp: "A03:2021 Injection"
+    patterns:
+      - pattern: $EL.innerHTML = `...${$X}...`
+      - pattern-not: $EL.innerHTML = `...${esc(...)}...`
+
+  - id: handler-inline-no-html-gerado
+    languages: [javascript]
+    severity: INFO
+    message: >-
+      Atributo on*="" dentro de HTML gerado exige 'unsafe-inline' no CSP e
+      enfraquece a proteção contra XSS. Troque por addEventListener.
+    pattern-regex: 'on(error|click|load)="[^"]*"'
+
+  - id: eval-ou-function-dinamica
+    languages: [javascript]
+    severity: ERROR
+    message: eval / new Function executam texto como código. Quase nunca é necessário.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)

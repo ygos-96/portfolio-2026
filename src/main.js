@@ -1,7 +1,9 @@
 import './style.css'
-import { ARTISTS, CONTENT, LINKS, SECTION_ORDER, SPOTIFY } from './content.js'
+import { ARTISTS, CONTENT, LINKS, PROJECT_BASE, SECTION_ORDER, SPOTIFY } from './content.js'
+import { DOCS, DOC_UI, docHtml } from './projectdocs.js'
 import { esc, sectionHtml } from './render.js'
 import { sound } from './audio.js'
+import { hydrateNextGames } from './nextgames.js'
 import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
 
 const $ = (s) => document.querySelector(s)
@@ -272,6 +274,7 @@ function updatePrompt(key) {
   }
   const t = c()
   els.prompt.hidden = false
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${key === 'palco' ? t.ui.playMusic : `${t.ui.enterIn} ${t.sections[key].label}`}</span>`
 }
 function updateRoomPrompt(hs) {
@@ -283,6 +286,7 @@ function updateRoomPrompt(hs) {
   const u = c().ui
   const label = hs.kind === 'exit' ? u.leave : `${u.view} ${roomSlices(roomKey).find((s) => s.id === hs.id)?.title ?? ''}`
   els.prompt.hidden = false
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.prompt.innerHTML = `${isTouch ? '' : '<kbd>Enter</kbd>'}<span>${label}</span>`
 }
 function openRoomHotspot(hs) {
@@ -436,6 +440,7 @@ function contactQuick() {
 function renderPanel(key) {
   const t = c()
   els.panel.dataset.section = key
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.panelIcon.innerHTML = `<i class="${SECTION_FA_ICONS[key] || 'fa-solid fa-box-open'}" aria-hidden="true"></i>`
   let total
   let pos
@@ -444,6 +449,7 @@ function renderPanel(key) {
     pos = Math.max(0, list.findIndex((s) => s.id === sliceId))
     total = list.length
     els.panelTitle.textContent = list[pos].title
+    // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
     els.panelBody.innerHTML = `<div class="slice">${list[pos].html}</div>`
   } else {
     pos = SECTION_ORDER.indexOf(key)
@@ -451,8 +457,12 @@ function renderPanel(key) {
     els.panelTitle.textContent = t.sections[key].title
     els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + (key === 'palco' ? palcoHtml() : sectionHtml(lang, key))
   }
+  if (els.panelBody.querySelector('.idol__sprite')) import('./idols3d.js').then((m) => m.hydrateIdols(els.panelBody))
+  els.panelBody.querySelectorAll('.idol-carousel').forEach(initIdolCarousel)
+  hydrateNextGames(els.panelBody, lang)
   els.panelStep.textContent = `${pos + 1} / ${total}`
   els.panelBuilding.textContent = t.sections[key].building
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.panelDots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i === pos ? 'on' : ''}"></i>`).join('')
   els.panelAll.hidden = !sliceId
   els.panelAll.textContent = t.ui.seeAll
@@ -518,6 +528,86 @@ function showPanel() {
   els.panelClose.focus({ preventScroll: true })
 }
 
+// ídolos em forma de livro: virar página pelas setas (tela e teclado) ou arrastando
+const TURN_MS = 320
+function initIdolCarousel(root) {
+  const book = root.querySelector('.idol-book')
+  if (!book) return
+  const pages = [...root.querySelectorAll('.idol-slide')]
+  const count = pages.length
+  const calm = matchMedia('(prefers-reduced-motion: reduce)')
+  const narrow = () => root.clientWidth <= 560
+  let cur = 0
+  let busy = false
+  const show = (el, on) => {
+    el.classList.toggle('on', on)
+    if (on) el.removeAttribute('aria-hidden')
+    else el.setAttribute('aria-hidden', 'true')
+  }
+  const turn = (dir) => {
+    if (busy || count < 2) return
+    const from = pages[cur]
+    cur = (cur + dir + count) % count
+    const to = pages[cur]
+    if (calm.matches) {
+      show(from, false)
+      show(to, true)
+      return
+    }
+    busy = true
+    const out = dir > 0 ? 'turn-fwd-out' : 'turn-back-out'
+    const inn = dir > 0 ? 'turn-fwd-in' : 'turn-back-in'
+    const half = narrow() ? 0 : TURN_MS
+    // 1) a página da frente levanta pela lombada, revelando a ficha/boneco seguinte por baixo
+    to.classList.add('under')
+    from.classList.add(out)
+    setTimeout(() => {
+      // 2) a página "cai" do outro lado já como a nova
+      from.classList.replace('on', 'under')
+      from.setAttribute('aria-hidden', 'true')
+      to.classList.remove('under')
+      show(to, true)
+      to.classList.add(inn)
+      setTimeout(() => {
+        from.classList.remove('under', out)
+        to.classList.remove(inn)
+        busy = false
+      }, TURN_MS)
+    }, half)
+  }
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-idol-step]')
+    if (!b) return
+    sound.click()
+    turn(+b.dataset.idolStep)
+  })
+  root.idolStep = turn // usado pelas setas do teclado
+  // arrastar para o lado vira a página
+  let x0 = null
+  book.addEventListener('pointerdown', (e) => { x0 = e.clientX })
+  book.addEventListener('pointerup', (e) => {
+    if (x0 == null) return
+    const dx = e.clientX - x0
+    x0 = null
+    if (Math.abs(dx) > 50) turn(dx < 0 ? 1 : -1)
+  })
+  // no card de ídolos o livro ocupa o espaço do painel, sem rolagem
+  root.fit = () => {
+    if (!sliceId || !els.panelBody.contains(root)) return book.style.removeProperty('--book-h')
+    const box = els.panelBox
+    const body = els.panelBody
+    const cs = getComputedStyle(body)
+    const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
+    const maxH = parseFloat(getComputedStyle(box).maxHeight) || Math.min(innerHeight * 0.86, 760)
+    const chrome = box.offsetHeight - body.clientHeight
+    const rest = body.scrollHeight - pad - book.offsetHeight
+    const h = Math.round(Math.max(340, Math.min(620, maxH - chrome - pad - rest - 4)))
+    book.style.setProperty('--book-h', `${h}px`)
+  }
+  requestAnimationFrame(root.fit)
+}
+addEventListener('resize', () => els.panelBody.querySelector('.idol-carousel')?.fit?.())
+
 function openPanel(key) {
   if (!SECTION_ORDER.includes(key)) return
   sound.click()
@@ -569,7 +659,15 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
     if (e.target.closest('input, textarea, iframe')) return
     e.preventDefault()
-    step(e.key === 'ArrowRight' ? 1 : -1)
+    const dir = e.key === 'ArrowRight' ? 1 : -1
+    // no card de ídolos (ou com foco no carrossel), as setas trocam o jogador em vez do card
+    const carousel = els.panelBody.querySelector('.idol-carousel')
+    if (carousel?.idolStep && (sliceId || e.target.closest('.idol-carousel'))) {
+      sound.click()
+      carousel.idolStep(dir)
+      return
+    }
+    step(dir)
     return
   }
   if (e.key === 'Tab') {
@@ -587,12 +685,126 @@ document.addEventListener('keydown', (e) => {
   }
 })
 
+
+// ---------- documentação dos projetos ----------
+document.body.classList.add('js-on')
+const docEl = $('#doc')
+const docBox = $('#doc-box')
+const lbEl = $('#lightbox')
+let docSlug = null
+let docFocus = null
+let lbIndex = -1
+
+function renderDoc(slug) {
+  const item = CONTENT[lang].projetos.items.find((i) => i.slug === slug)
+  const base = PROJECT_BASE[slug]
+  if (!item || !base || !DOCS[slug]) return false
+  docBox.innerHTML = docHtml(lang, slug, { name: item.name, tag: item.tag, stack: base.stack })
+  return true
+}
+
+function openDoc(slug) {
+  docFocus = document.activeElement
+  if (!renderDoc(slug)) return
+  sound.click()
+  docSlug = slug
+  docEl.hidden = false
+  document.body.classList.add('doc-visible')
+  const body = $('#doc-body')
+  if (body) {
+    body.scrollTop = 0
+    body.focus({ preventScroll: true })
+  }
+}
+
+function closeDoc() {
+  if (!docSlug) return
+  sound.click()
+  closeLightbox()
+  docSlug = null
+  docEl.hidden = true
+  document.body.classList.remove('doc-visible')
+  if (docFocus && document.contains(docFocus)) docFocus.focus({ preventScroll: true })
+}
+
+function showLightbox(i) {
+  const shots = DOCS[docSlug]?.shots
+  if (!shots) return
+  lbIndex = (i + shots.length) % shots.length
+  const s = shots[lbIndex]
+  $('#lightbox-img').src = s.src
+  $('#lightbox-img').alt = s[lang]
+  $('#lightbox-cap').textContent = `${s[lang]} · ${lbIndex + 1}/${shots.length}`
+  lbEl.hidden = false
+}
+function closeLightbox() {
+  lbIndex = -1
+  lbEl.hidden = true
+}
+
+document.addEventListener('click', (e) => {
+  const open = e.target.closest('[data-doc]')
+  if (open) return openDoc(open.dataset.doc)
+  if (e.target.closest('[data-doc-close]') || e.target === docEl) return closeDoc()
+  const shot = e.target.closest('[data-doc-shot]')
+  if (shot) return showLightbox(Number(shot.dataset.docShot))
+  const nav = e.target.closest('.doc__nav a')
+  if (nav) {
+    e.preventDefault()
+    document.getElementById(nav.getAttribute('href').slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+})
+$('#lightbox-close').addEventListener('click', closeLightbox)
+$('#lightbox-prev').addEventListener('click', () => showLightbox(lbIndex - 1))
+$('#lightbox-next').addEventListener('click', () => showLightbox(lbIndex + 1))
+lbEl.addEventListener('click', (e) => {
+  if (e.target === lbEl) closeLightbox()
+})
+// a documentação e a imagem ampliada têm prioridade sobre o painel que está atrás
+document.addEventListener(
+  'keydown',
+  (e) => {
+    if (!docSlug) return
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      if (lbIndex >= 0) closeLightbox()
+      else closeDoc()
+      return
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      if (lbIndex >= 0) {
+        e.preventDefault()
+        showLightbox(lbIndex + (e.key === 'ArrowRight' ? 1 : -1))
+      }
+      e.stopImmediatePropagation()
+      return
+    }
+    if (e.key === 'Tab') {
+      const scope = lbIndex >= 0 ? lbEl : docBox
+      const f = [...scope.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')].filter((n) => n.offsetParent !== null)
+      if (!f.length) return
+      const first = f[0]
+      const last = f[f.length - 1]
+      if (e.shiftKey && (document.activeElement === first || !scope.contains(document.activeElement))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (document.activeElement === last || !scope.contains(document.activeElement))) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+  },
+  true,
+)
+
 // ---------- menu lateral de lugares ----------
 function setPlacesOpen(open) {
   if (!els.nav || !els.btnPlacesToggle) return
   els.nav.hidden = !open
   els.btnPlacesToggle.setAttribute('aria-expanded', String(open))
   els.btnPlacesToggle.classList.toggle('is-open', open)
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnPlacesToggle.innerHTML = `<i class="fa-solid ${open ? 'fa-xmark' : 'fa-map-location-dot'}" aria-hidden="true"></i>`
 }
 
@@ -638,6 +850,10 @@ els.lang.addEventListener('click', () => {
   lang = lang === 'pt' ? 'en' : 'pt'
   store.set('lang', lang)
   applyLang()
+  if (docSlug) {
+    renderDoc(docSlug)
+    closeLightbox()
+  }
 })
 
 // ---------- joystick ----------
@@ -692,6 +908,7 @@ function updateWeatherButton(key, isReal = false) {
   const iconClass = WEATHER_FA_ICONS[key] || WEATHER_FA_ICONS.day
   const name = t.weatherNames[key] || t.weatherNames.day
   const label = `${t.weather}: ${name}${isReal ? ` (${t.weatherReal})` : ''}`
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnWeather.innerHTML = `<i class="${iconClass}" aria-hidden="true"></i>`
   els.btnWeather.title = label
   els.btnWeather.setAttribute('aria-label', label)
@@ -716,6 +933,7 @@ els.btnWeather?.addEventListener('click', () => {
 function updateAudioButton() {
   if (!els.btnAudio) return
   const label = soundMuted ? c().ui.soundOff : c().ui.soundOn
+  // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
   els.btnAudio.innerHTML = `<i class="fa-solid ${soundMuted ? 'fa-volume-xmark' : 'fa-volume-high'}" aria-hidden="true"></i>`
   els.btnAudio.title = label
   els.btnAudio.setAttribute('aria-label', label)
@@ -771,6 +989,7 @@ import('./game3d.js')
       onRoomNear: (hs) => updateRoomPrompt(hs),
       onRoomOpen: (hs) => openRoomHotspot(hs),
       onCollect: (collected, total) => {
+        // nosemgrep: semgrep.innerhtml-com-interpolacao-sem-esc (só constantes internas, sem dado externo)
         if (els.coffeeCounter) els.coffeeCounter.innerHTML = `<i class="fa-solid fa-mug-hot" aria-hidden="true"></i> <span>${collected}/${total}</span>`
         els.coffeeCounter?.classList.remove('is-bump')
         void els.coffeeCounter?.offsetWidth

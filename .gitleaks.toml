@@ -1,0 +1,12 @@
+title = "gitleaks do portfólio"
+
+[extend]
+useDefault = true # regras padrão: AWS, GitHub, Stripe, chaves privadas, etc.
+
+[allowlist]
+description = "pastas geradas, não são código do projeto"
+paths = [
+  '''node_modules/''',
+  '''dist/''',
+  '''package-lock\.json''',
+]
