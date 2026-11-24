@@ -32,7 +32,7 @@ Prints de projetos internos devem ter dados sensíveis ocultados antes de entrar
 
 ## Currículo em PDF
 
-`python3 scripts/make-cv.py https://ygor-portfolio-sigma.vercel.app` (precisa de `reportlab`) gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. Edite o texto no próprio script.
+`python3 scripts/make-cv.py https://ygor-portfolio-sigma.vercel.app` (precisa de `reportlab`) gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. Edite o texto no próprio script. **Atenção:** os PDFs atuais foram gerados a partir de HTML (versão com projetos de AppSec); rodar o script sobrescreve com o texto antigo, então atualize o texto do script antes.
 
 ## Acessibilidade
 
