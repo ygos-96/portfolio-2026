@@ -3,6 +3,7 @@ import { ARTISTS, CONTENT, LINKS, PROJECT_BASE, SECTION_ORDER, SPOTIFY } from '.
 import { DOCS, DOC_UI, docHtml } from './projectdocs.js'
 import { esc, sectionHtml } from './render.js'
 import { sound } from './audio.js'
+import { hydrateNextGames } from './nextgames.js'
 import { detectRealWeather, WEATHER_PRESETS } from './weather.js'
 
 const $ = (s) => document.querySelector(s)
@@ -452,6 +453,9 @@ function renderPanel(key) {
     els.panelTitle.textContent = t.sections[key].title
     els.panelBody.innerHTML = (key === 'contato' ? contactQuick() : '') + (key === 'palco' ? palcoHtml() : sectionHtml(lang, key))
   }
+  if (els.panelBody.querySelector('.idol__sprite')) import('./idols3d.js').then((m) => m.hydrateIdols(els.panelBody))
+  els.panelBody.querySelectorAll('.idol-carousel').forEach(initIdolCarousel)
+  hydrateNextGames(els.panelBody, lang)
   els.panelStep.textContent = `${pos + 1} / ${total}`
   els.panelBuilding.textContent = t.sections[key].building
   els.panelDots.innerHTML = Array.from({ length: total }, (_, i) => `<i class="${i === pos ? 'on' : ''}"></i>`).join('')
@@ -519,6 +523,38 @@ function showPanel() {
   els.panelClose.focus({ preventScroll: true })
 }
 
+// carrossel de ídolos: setas, botões com nome e rolagem/arraste com snap
+function initIdolCarousel(root) {
+  const track = root.querySelector('.idol-track')
+  const dots = [...root.querySelectorAll('.idol-dot')]
+  const count = dots.length
+  const current = () => Math.round(track.scrollLeft / track.clientWidth)
+  const go = (n) => track.scrollTo({ left: ((n + count) % count) * track.clientWidth })
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-idol-step], [data-idol-go]')
+    if (!b) return
+    sound.click()
+    go(b.dataset.idolGo != null ? +b.dataset.idolGo : current() + +b.dataset.idolStep)
+  })
+  root.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    e.preventDefault()
+    go(current() + (e.key === 'ArrowRight' ? 1 : -1))
+  })
+  let raf = 0
+  track.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf)
+    raf = requestAnimationFrame(() => {
+      const n = current()
+      dots.forEach((d, k) => {
+        d.classList.toggle('on', k === n)
+        if (k === n) d.setAttribute('aria-current', 'true')
+        else d.removeAttribute('aria-current')
+      })
+    })
+  })
+}
+
 function openPanel(key) {
   if (!SECTION_ORDER.includes(key)) return
   sound.click()
@@ -568,7 +604,7 @@ document.addEventListener('keydown', (e) => {
     return
   }
   if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-    if (e.target.closest('input, textarea, iframe')) return
+    if (e.target.closest('input, textarea, iframe, .idol-carousel')) return
     e.preventDefault()
     step(e.key === 'ArrowRight' ? 1 : -1)
     return

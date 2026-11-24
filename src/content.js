@@ -168,14 +168,32 @@ export const BOOKS = [
   },
 ]
 
+// Dados de jogos são aproximados — confira antes de publicar. games: null = a confirmar.
+export const TITLE_NAMES = {
+  lib: { pt: 'Libertadores', en: 'Libertadores' },
+  bra: { pt: 'Brasileirão', en: 'League' },
+  cdb: { pt: 'Copa do Brasil', en: 'Copa do Brasil' },
+  pau: { pt: 'Paulista', en: 'Paulista' },
+  rec: { pt: 'Recopa', en: 'Recopa' },
+  sup: { pt: 'Supercopa', en: 'Supercopa' },
+  mer: { pt: 'Mercosul', en: 'Mercosul' },
+  rsp: { pt: 'Rio-São Paulo', en: 'Rio-São Paulo' },
+}
 export const IDOLS = [
-  { name: 'Edmundo', pt: 'O Animal. Atacante de muita raça, campeão brasileiro em 1993 e 1994.', en: 'The Animal. A fierce striker, Brazilian champion in 1993 and 1994.' },
-  { name: 'Alex Mineiro', pt: 'Atacante e ídolo da torcida alviverde.', en: 'Striker and a fan favourite.' },
-  { name: 'Valdivia', pt: 'O Mago. Meia chileno que decidiu jogos, campeão paulista em 2008 e da Copa do Brasil em 2012.', en: 'The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.' },
-  { name: 'Weverton', pt: 'Goleiro, campeão da Libertadores em 2020 e 2021 e do Brasileirão em 2022 e 2023.', en: 'Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.' },
-  { name: 'Gustavo Gómez', pt: 'Zagueiro paraguaio e capitão, bicampeão da Libertadores.', en: 'Paraguayan centre-back and captain, two-time Libertadores champion.' },
-  { name: 'Abel Ferreira', pt: 'Técnico português que comanda a era mais vitoriosa recente do clube, bicampeão da Libertadores.', en: 'Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.' },
-  { name: 'Luiz Felipe Scolari', pt: 'Felipão. Técnico campeão da Copa do Brasil em 1998 e da Libertadores em 1999.', en: 'Felipão. Coach who won the 1998 Copa do Brasil and the 1999 Libertadores.' },
+  { name: 'Edmundo', nick: 'Animal', country: { pt: 'Brasil', en: 'Brazil' }, years: '1993–1995 · 2006–2007', fact: { pt: 'Peça do time da era Parmalat que acabou com o jejum de 16 anos sem títulos, no Paulista de 1993.', en: 'Key man in the Parmalat-era side that ended a 16-year trophy drought with the 1993 Paulista.' },  role: 'fw', skin: '#d4a074', hair: '#2a1a10', hairStyle: 'recede', beard: 'stubble', beardColor: '#3a2a20', games: '~110', titles: [['pau', '1993'], ['bra', '1993 · 1994'], ['rsp', '1993']],
+    pt: 'O Animal. Atacante de muita raça, campeão brasileiro em 1993 e 1994.', en: 'The Animal. A fierce striker, Brazilian champion in 1993 and 1994.' },
+  { name: 'Alex Mineiro', nick: null, country: { pt: 'Brasil', en: 'Brazil' }, years: '2008–2009', fact: { pt: 'Decisivo no Paulista de 2008, com três gols na final contra a Ponte Preta.', en: 'Decisive in the 2008 Paulista, scoring a hat-trick in the final against Ponte Preta.' },  role: 'fw', skin: '#b57a4c', hair: '#1a1a1a', hairStyle: 'buzz', beard: 'stubble', beardColor: '#2a1c12', games: null, titles: [],
+    pt: 'Atacante e ídolo da torcida alviverde.', en: 'Striker and a fan favourite.' },
+  { name: 'Valdivia', nick: 'Mago', country: { pt: 'Chile', en: 'Chile' }, years: '2006–2008 · 2010–2015', fact: { pt: 'Camisa 10 de passe e drible, voltou do Al Ain em 2010 para uma segunda passagem.', en: 'A dribbling, passing number 10 who returned from Al Ain in 2010 for a second spell.' },  role: 'mf', skin: '#d9a67a', hair: '#2a1a12', hairStyle: 'wavy', beard: 'full', beardColor: '#241710', games: '~300', titles: [['pau', '2008'], ['cdb', '2012']],
+    pt: 'O Mago. Meia chileno que decidiu jogos, campeão paulista em 2008 e da Copa do Brasil em 2012.', en: 'The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.' },
+  { name: 'Weverton', nick: null, country: { pt: 'Brasil', en: 'Brazil' }, years: '2018–', fact: { pt: 'Chegou do Athletico-PR em 2018 e virou um dos goleiros mais vitoriosos da história do clube.', en: 'Arrived from Athletico-PR in 2018 and became one of the most decorated goalkeepers in club history.' },  role: 'gk', skin: '#b8774a', hair: '#1a1a1a', hairStyle: 'bald', beard: 'goatee', beardColor: '#2a1c12', games: '~450', titles: [['lib', '2020 · 2021'], ['bra', '2018 · 2022 · 2023'], ['cdb', '2020'], ['rec', '2022'], ['pau', '2020 · 2022 · 2024']],
+    pt: 'Goleiro, campeão da Libertadores em 2020 e 2021 e do Brasileirão em 2022 e 2023.', en: 'Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.' },
+  { name: 'Gustavo Gómez', nick: null, country: { pt: 'Paraguai', en: 'Paraguay' }, years: '2018–', fact: { pt: 'Capitão e líder da defesa na era Abel, forte no jogo aéreo e perigoso nas bolas paradas.', en: 'Captain and defensive leader of the Abel era, dominant in the air and dangerous at set pieces.' },  role: 'df', skin: '#d9a97c', hair: '#1f140d', hairStyle: 'quiff', beard: 'stubble', beardColor: '#2a1a10', games: '~330', titles: [['lib', '2020 · 2021'], ['bra', '2022 · 2023'], ['cdb', '2020'], ['rec', '2022'], ['pau', '2020 · 2022']],
+    pt: 'Zagueiro paraguaio e capitão, bicampeão da Libertadores.', en: 'Paraguayan centre-back and captain, two-time Libertadores champion.' },
+  { name: 'Abel Ferreira', nick: null, country: { pt: 'Portugal', en: 'Portugal' }, years: '2020–', fact: { pt: 'Chegou do PAOK em 2020 e se tornou o técnico com mais títulos da história do clube.', en: 'Came from PAOK in 2020 and became the most decorated coach in club history.' },  role: 'coach', skin: '#e8bd98', hair: '#3a2a20', hairStyle: 'side', beard: null, games: '~650', titles: [['lib', '2020 · 2021'], ['cdb', '2020'], ['bra', '2022 · 2023'], ['rec', '2022'], ['sup', '2023'], ['pau', '2022 · 2024']],
+    pt: 'Técnico português que comanda a era mais vitoriosa recente do clube, bicampeão da Libertadores.', en: 'Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.' },
+  { name: 'Luiz Felipe Scolari', nick: 'Felipão', country: { pt: 'Brasil', en: 'Brazil' }, years: '1997–2000 · 2010–2012 · 2018–2019', fact: { pt: 'Pentacampeão do mundo com a Seleção em 2002; no Palmeiras levou a Libertadores de 1999 e o Brasileirão de 2018.', en: 'World Cup winner with Brazil in 2002; at Palmeiras he won the 1999 Libertadores and the 2018 league.' },  role: 'coach', skin: '#dca383', hair: '#ececec', hairStyle: 'recede', beard: 'mustache', beardColor: '#ececec', games: '~200', titles: [['cdb', '1998 · 2012'], ['mer', '1998'], ['lib', '1999'], ['bra', '2018']],
+    pt: 'Felipão. Técnico campeão da Copa do Brasil em 1998, da Libertadores em 1999 e do Brasileirão em 2018.', en: 'Felipão. Coach who won the 1998 Copa do Brasil, the 1999 Libertadores and the 2018 league.' },
 ]
 
 // Títulos de 2015 em diante (confira os mais recentes antes de publicar).
@@ -425,6 +443,7 @@ const pt = {
   estadio: {
     intro: 'Palmeirense de coração. Aqui ficam meus ídolos e as taças da era mais vitoriosa recente do Verdão.',
     idolsTitle: 'Meus ídolos',
+    nextTitle: 'Próximos jogos',
     trophiesTitle: 'Taças de 2015 até hoje',
     total: 'títulos no total',
     titlesWord: 'títulos',
@@ -675,6 +694,7 @@ const en = {
   estadio: {
     intro: 'Palmeiras fan through and through. Here are my idols and the trophies from the club’s most successful recent era.',
     idolsTitle: 'My idols',
+    nextTitle: 'Upcoming matches',
     trophiesTitle: 'Trophies from 2015 to today',
     total: 'titles in total',
     titlesWord: 'titles',

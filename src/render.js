@@ -1,9 +1,98 @@
 // Funções puras que geram HTML (usadas no navegador e no gerador das páginas estáticas).
 import { DOC_UI, DOCS } from './projectdocs.js'
-import { ARTISTS, BOOKS, CONTENT, IDOLS, LINKS, MOVIE_GROUPS, PROJECT_BASE, SECTION_ORDER, SITE_URL, SPOTIFY, TROPHIES } from './content.js'
+import { ARTISTS, BOOKS, CONTENT, IDOLS, LINKS, MOVIE_GROUPS, PROJECT_BASE, SECTION_ORDER, SITE_URL, SPOTIFY, TITLE_NAMES, TROPHIES } from './content.js'
 
 export const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+
+
+// Bonequinho cabeçudo em 8-bit (grade 16x18, desenhada em SVG sem suavização).
+const SPRITE = [
+  '....HHHHHHHH....',
+  '...HHHHHHHHHH...',
+  '..HHHHHHHHHHHH..',
+  '..HSSSSSSSSSSH..',
+  '..SSSSSSSSSSSS..',
+  '..SSDDSSSSDDSS..',
+  '..SSDDSSSSDDSS..',
+  '..SSSSSSSSSSSS..',
+  '..SSSSMMMMSSSS..',
+  '...SSSSSSSSSS...',
+  '....SSSSSSSS....',
+  '....JJJJJJJJ....',
+  '...JJJJJJJJJJ...',
+  '..SJJJJJJJJJJS..',
+  '..SJJJJJJJJJJS..',
+  '....PPPPPPPP....',
+  '....PP....PP....',
+  '...BBB....BBB...',
+]
+const KITS = {
+  fw: { J: '#0a7b45', P: '#ffffff', B: '#222' },
+  mf: { J: '#0a7b45', P: '#ffffff', B: '#222' },
+  df: { J: '#0a7b45', P: '#ffffff', B: '#222' },
+  gk: { J: '#f28c28', P: '#222222', B: '#222' },
+  coach: { J: '#2a2f3a', P: '#2a2f3a', B: '#111', T: '#0a7b45', W: '#ffffff' },
+}
+function idolSprite(i) {
+  const kit = KITS[i.role] || KITS.fw
+  const rows = SPRITE.map((r) => r.split(''))
+  if (i.hairStyle === 'bald') {
+    rows[0] = '................'.split('')
+    rows[1] = '....HHHHHHHH....'.split('')
+    rows[2] = '...HHHHHHHHHH...'.split('')
+  }
+  if (i.hairStyle === 'long') for (const y of [4, 5, 6, 7, 8]) { rows[y][2] = 'H'; rows[y][13] = 'H' }
+  if (i.role === 'coach') {
+    for (const y of [11, 12, 13, 14]) { rows[y][7] = 'T'; rows[y][8] = 'T' }
+    rows[11][6] = 'W'; rows[11][9] = 'W'; rows[12][6] = 'W'; rows[12][9] = 'W'
+  }
+  const col = { H: i.hair, S: i.skin, D: '#1b1b1b', M: '#a4443a', ...kit }
+  let rects = ''
+  rows.forEach((r, y) => {
+    let x = 0
+    while (x < r.length) {
+      const c = r[x]
+      if (c === '.') { x++; continue }
+      let w = 1
+      while (r[x + w] === c) w++
+      rects += `<rect x="${x}" y="${y}" width="${w}" height="1" fill="${col[c]}"/>`
+      x += w
+    }
+  })
+  return `<svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`
+}
+const IDOL_UI = {
+  pt: { games: 'Jogos pelo Palmeiras', titles: 'Títulos pelo clube', none: 'a confirmar', country: 'País', years: 'No clube', fact: 'Marca no clube', prev: 'Ídolo anterior', next: 'Próximo ídolo', go: 'Ver', roles: { fw: 'Atacante', mf: 'Meia', df: 'Zagueiro', gk: 'Goleiro', coach: 'Técnico' } },
+  en: { games: 'Palmeiras appearances', titles: 'Titles with the club', none: 'to be confirmed', country: 'Country', years: 'At the club', fact: 'Club legacy', prev: 'Previous idol', next: 'Next idol', go: 'Show', roles: { fw: 'Forward', mf: 'Midfielder', df: 'Defender', gk: 'Goalkeeper', coach: 'Coach' } },
+}
+function idolsHtml(lang) {
+  const u = IDOL_UI[lang]
+  const n = IDOLS.length
+  const slides = IDOLS.map((i, k) => `<article class="idol-slide" role="group" aria-roledescription="slide" aria-label="${k + 1} / ${n}: ${esc(i.name)}">
+      <div class="idol-slide__fig" data-nick="${esc(i.nick || i.name.split(' ')[0])}">${idolSprite(i)}</div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">${esc(u.roles[i.role])}${i.nick ? ` · “${esc(i.nick)}”` : ''}</span>
+        <h4>${esc(i.name)}</h4>
+        <p class="idol-slide__lead">${esc(i[lang])}</p>
+        <dl class="idol-slide__meta">
+          <div><dt>${esc(u.country)}</dt><dd>${esc(i.country[lang])}</dd></div>
+          <div><dt>${esc(u.years)}</dt><dd>${esc(i.years)}</dd></div>
+          <div><dt>${esc(u.games)}</dt><dd>${i.games ? esc(i.games) : `<em>${esc(u.none)}</em>`}</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>${esc(u.fact)}</span>${esc(i.fact[lang])}</blockquote>
+        <div class="idol-slide__titles"><span>${esc(u.titles)}</span>${i.titles.length ? `<ul>${i.titles.map(([t, y]) => `<li><strong>${esc(TITLE_NAMES[t][lang])}</strong> ${esc(y)}</li>`).join('')}</ul>` : `<em>${esc(u.none)}</em>`}</div>
+      </div></article>`).join('')
+  const dots = IDOLS.map((i, k) => `<button type="button" class="idol-dot${k === 0 ? ' on' : ''}" data-idol-go="${k}" aria-label="${esc(u.go)} ${esc(i.name)}"${k === 0 ? ' aria-current="true"' : ''}>${esc(i.name.split(' ').slice(-1)[0])}</button>`).join('')
+  return `<div class="idol-carousel" aria-roledescription="carousel">
+      <div class="idol-track" tabindex="0">${slides}</div>
+      <div class="idol-nav">
+        <button type="button" class="idol-arrow" data-idol-step="-1" aria-label="${esc(u.prev)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <div class="idol-dots">${dots}</div>
+        <button type="button" class="idol-arrow" data-idol-step="1" aria-label="${esc(u.next)}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </div>`
+}
 
 const chips = (items) => `<ul class="chips">${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`
 
@@ -155,6 +244,10 @@ const sections = {
     const total = TROPHIES.reduce((n, tr) => n + tr.years.length, 0)
     return `
       <p class="lead">${esc(t.intro)}</p>
+      <section class="next-games" data-next-games hidden>
+        <h3><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> ${esc(t.nextTitle)}</h3>
+        <ul class="next-games__list"></ul>
+      </section>
       <div class="inv-grid">
         <div class="inv-col">
           <div class="inv-card">
@@ -171,7 +264,7 @@ const sections = {
         <div class="inv-col">
           <div class="inv-card">
             <h3>${esc(t.idolsTitle)}</h3>
-            <ul class="idols">${IDOLS.map((i) => `<li><strong>${esc(i.name)}</strong><span>${esc(i[lang])}</span></li>`).join('')}</ul>
+            ${idolsHtml(lang)}
           </div>
         </div>
       </div>`

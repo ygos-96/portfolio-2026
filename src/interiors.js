@@ -615,7 +615,7 @@ export function buildRoom(key, h) {
       beanbag(12.2, 8.0, '#0a7b45')
       hot('taca', 'Taças', 11.0, 4.0, ['.inv-col:nth-child(1) .inv-card'])
       hot('idolos', 'Meus ídolos', 3.8, 2.6, ['.inv-col:nth-child(2) .inv-card'])
-      hot('intro', 'Palmeirense de coração', 7, 3.7, ['.lead'])
+      hot('intro', 'Palmeirense de coração', 7, 3.7, ['.lead', '.next-games'])
     },
     // CINEMA: tela, poltronas, pipoca, projetor e cartazes de cada gênero
     cinema() {

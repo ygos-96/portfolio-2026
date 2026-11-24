@@ -64,7 +64,7 @@
 <section id="projetos" class="r-section" aria-labelledby="h-projetos">
   <h2 id="h-projetos">Projects</h2>
   
-      <p class="lead">Six projects showing front-end, data and automation working together.</p>
+      <p class="lead">Five projects showing front-end, data and automation working together.</p>
       <div class="cards"><article class="card" id="proj-central-ygor">
             <div class="shot"><img src="/shots/central-ygor.png" alt="Captura de tela: Central Ygor" loading="lazy" width="1280" height="720"></div>
             <h3>Central Ygor</h3>
@@ -74,15 +74,7 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Astro</li><li>React</li><li>Tailwind</li><li>Supabase</li><li>n8n</li><li>Vercel</li></ul>
             
-          </article><article class="card" id="proj-portfolio-3d">
-            <div class="shot"><img src="/shots/jogo-casa.png" alt="Captura de tela: Interactive 3D portfolio" loading="lazy" width="1280" height="720"></div>
-            <h3>Interactive 3D portfolio</h3>
-            <p class="meta">This site · a Three.js game</p>
-            <p>My portfolio is an explorable 3D map: every building has a room inside with my info, plus a stage with Spotify music and a fireworks show.</p>
-            <ul class="list"><li>Three.js with a toon look, themed buildings and indoor rooms</li><li>Works on mobile, with a joystick and action buttons</li><li>Content in Portuguese and English, with accessible menus</li><li>Real free-license photos and a credits page</li></ul>
-            <p class="meta">Stack</p>
-            <ul class="chips"><li>Three.js</li><li>Vite</li><li>JavaScript</li><li>Spotify API</li></ul>
-            
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="central-ygor">View documentation · 23 screens</button></p>
           </article><article class="card" id="proj-original-sp-tattoo">
             <div class="shot"><img src="/shots/original-sp-tattoo.png" alt="Captura de tela: Original SP Tattoo" loading="lazy" width="1280" height="720"></div>
             <h3>Original SP Tattoo</h3>
@@ -92,11 +84,9 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Vite</li><li>Tailwind</li><li>JavaScript</li><li>i18n PT/EN/ES</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="original-sp-tattoo">View documentation · 10 screens</button></p>
           </article><article class="card" id="proj-conexus">
-            <div class="shot shot--mock" style="--c1:#2a9d8f;--c2:#5aa469" aria-hidden="true">
-    <div class="mock-bar"><i></i><i></i><i></i></div>
-    <div class="mock-body"><span class="m1"></span><span class="m2"></span><span class="m3"></span><span class="m4"></span><span class="m5"></span></div>
-  </div>
+            <div class="shot"><img src="/shots/conexus/01-fluxo-atendimento.webp" alt="Captura de tela: Conexus · n8n Automation" loading="lazy" width="1280" height="720"></div>
             <h3>Conexus · n8n Automation</h3>
             <p class="meta">Automation agency</p>
             <p>n8n workflows that connect tools and AI to remove repetitive tasks. Includes a workflow that collects and classifies freelance job posts.</p>
@@ -104,6 +94,7 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>n8n</li><li>Webhooks</li><li>REST</li><li>JSON</li><li>LLMs</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="conexus">View documentation · 2 screens</button></p>
           </article><article class="card" id="proj-rogyfacul">
             <div class="shot"><img src="/shots/rogyfacul.png" alt="Captura de tela: RogyFacul" loading="lazy" width="1280" height="720"></div>
             <h3>RogyFacul</h3>
@@ -113,6 +104,7 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Astro 7</li><li>Tailwind 4</li><li>Supabase</li><li>Vitest</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="rogyfacul">View documentation · 13 screens</button></p>
           </article><article class="card" id="proj-blog">
             <div class="shot"><img src="/shots/blog.png" alt="Captura de tela: Blog with API publishing" loading="lazy" width="1280" height="720"></div>
             <h3>Blog with API publishing</h3>
@@ -122,6 +114,7 @@
             <p class="meta">Stack</p>
             <ul class="chips"><li>Next.js</li><li>Tailwind</li><li>MDX</li><li>GitHub API</li><li>Vercel</li></ul>
             
+            <p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="blog">View documentation · 11 screens</button></p>
           </article></div>
 </section>
 <section id="formacao" class="r-section" aria-labelledby="h-formacao">
@@ -187,6 +180,10 @@
   <h2 id="h-estadio">Palmeiras, my passion</h2>
   
       <p class="lead">Palmeiras fan through and through. Here are my idols and the trophies from the club’s most successful recent era.</p>
+      <section class="next-games" data-next-games hidden>
+        <h3><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Upcoming matches</h3>
+        <ul class="next-games__list"></ul>
+      </section>
       <div class="inv-grid">
         <div class="inv-col">
           <div class="inv-card">
@@ -216,7 +213,105 @@
         <div class="inv-col">
           <div class="inv-card">
             <h3>My idols</h3>
-            <ul class="idols"><li><strong>Edmundo</strong><span>The Animal. A fierce striker, Brazilian champion in 1993 and 1994.</span></li><li><strong>Alex Mineiro</strong><span>Striker and a fan favourite.</span></li><li><strong>Valdivia</strong><span>The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.</span></li><li><strong>Weverton</strong><span>Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.</span></li><li><strong>Gustavo Gómez</strong><span>Paraguayan centre-back and captain, two-time Libertadores champion.</span></li><li><strong>Abel Ferreira</strong><span>Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.</span></li><li><strong>Luiz Felipe Scolari</strong><span>Felipão. Coach who won the 1998 Copa do Brasil and the 1999 Libertadores.</span></li></ul>
+            <div class="idol-carousel" aria-roledescription="carousel">
+      <div class="idol-track" tabindex="0"><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="1 / 7: Edmundo">
+      <div class="idol-slide__fig" data-nick="Animal"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#2a1a10"/><rect x="3" y="1" width="10" height="1" fill="#2a1a10"/><rect x="2" y="2" width="12" height="1" fill="#2a1a10"/><rect x="2" y="3" width="1" height="1" fill="#2a1a10"/><rect x="3" y="3" width="10" height="1" fill="#d4a074"/><rect x="13" y="3" width="1" height="1" fill="#2a1a10"/><rect x="2" y="4" width="12" height="1" fill="#d4a074"/><rect x="2" y="5" width="2" height="1" fill="#d4a074"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d4a074"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d4a074"/><rect x="2" y="6" width="2" height="1" fill="#d4a074"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d4a074"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d4a074"/><rect x="2" y="7" width="12" height="1" fill="#d4a074"/><rect x="2" y="8" width="4" height="1" fill="#d4a074"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d4a074"/><rect x="3" y="9" width="10" height="1" fill="#d4a074"/><rect x="4" y="10" width="8" height="1" fill="#d4a074"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d4a074"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d4a074"/><rect x="2" y="14" width="1" height="1" fill="#d4a074"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d4a074"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Forward · “Animal”</span>
+        <h4>Edmundo</h4>
+        <p class="idol-slide__lead">The Animal. A fierce striker, Brazilian champion in 1993 and 1994.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Brazil</dd></div>
+          <div><dt>At the club</dt><dd>1993–1995 · 2006–2007</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~110</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>Key man in the Parmalat-era side that ended a 16-year trophy drought with the 1993 Paulista.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Paulista</strong> 1993</li><li><strong>League</strong> 1993 · 1994</li><li><strong>Rio-São Paulo</strong> 1993</li></ul></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="2 / 7: Alex Mineiro">
+      <div class="idol-slide__fig" data-nick="Alex"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#1a1a1a"/><rect x="3" y="1" width="10" height="1" fill="#1a1a1a"/><rect x="2" y="2" width="12" height="1" fill="#1a1a1a"/><rect x="2" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="3" y="3" width="10" height="1" fill="#b57a4c"/><rect x="13" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="2" y="4" width="12" height="1" fill="#b57a4c"/><rect x="2" y="5" width="2" height="1" fill="#b57a4c"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#b57a4c"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#b57a4c"/><rect x="2" y="6" width="2" height="1" fill="#b57a4c"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#b57a4c"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#b57a4c"/><rect x="2" y="7" width="12" height="1" fill="#b57a4c"/><rect x="2" y="8" width="4" height="1" fill="#b57a4c"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#b57a4c"/><rect x="3" y="9" width="10" height="1" fill="#b57a4c"/><rect x="4" y="10" width="8" height="1" fill="#b57a4c"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#b57a4c"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#b57a4c"/><rect x="2" y="14" width="1" height="1" fill="#b57a4c"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#b57a4c"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Forward</span>
+        <h4>Alex Mineiro</h4>
+        <p class="idol-slide__lead">Striker and a fan favourite.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Brazil</dd></div>
+          <div><dt>At the club</dt><dd>2008–2009</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd><em>to be confirmed</em></dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>Decisive in the 2008 Paulista, scoring a hat-trick in the final against Ponte Preta.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><em>to be confirmed</em></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="3 / 7: Valdivia">
+      <div class="idol-slide__fig" data-nick="Mago"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#2a1a12"/><rect x="3" y="1" width="10" height="1" fill="#2a1a12"/><rect x="2" y="2" width="12" height="1" fill="#2a1a12"/><rect x="2" y="3" width="1" height="1" fill="#2a1a12"/><rect x="3" y="3" width="10" height="1" fill="#d9a67a"/><rect x="13" y="3" width="1" height="1" fill="#2a1a12"/><rect x="2" y="4" width="12" height="1" fill="#d9a67a"/><rect x="2" y="5" width="2" height="1" fill="#d9a67a"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d9a67a"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d9a67a"/><rect x="2" y="6" width="2" height="1" fill="#d9a67a"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d9a67a"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d9a67a"/><rect x="2" y="7" width="12" height="1" fill="#d9a67a"/><rect x="2" y="8" width="4" height="1" fill="#d9a67a"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d9a67a"/><rect x="3" y="9" width="10" height="1" fill="#d9a67a"/><rect x="4" y="10" width="8" height="1" fill="#d9a67a"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d9a67a"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d9a67a"/><rect x="2" y="14" width="1" height="1" fill="#d9a67a"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d9a67a"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Midfielder · “Mago”</span>
+        <h4>Valdivia</h4>
+        <p class="idol-slide__lead">The Wizard. Chilean playmaker who decided matches; 2008 Paulista and 2012 Copa do Brasil champion.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Chile</dd></div>
+          <div><dt>At the club</dt><dd>2006–2008 · 2010–2015</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~300</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>A dribbling, passing number 10 who returned from Al Ain in 2010 for a second spell.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Paulista</strong> 2008</li><li><strong>Copa do Brasil</strong> 2012</li></ul></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="4 / 7: Weverton">
+      <div class="idol-slide__fig" data-nick="Weverton"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="1" width="8" height="1" fill="#1a1a1a"/><rect x="3" y="2" width="10" height="1" fill="#1a1a1a"/><rect x="2" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="3" y="3" width="10" height="1" fill="#b8774a"/><rect x="13" y="3" width="1" height="1" fill="#1a1a1a"/><rect x="2" y="4" width="12" height="1" fill="#b8774a"/><rect x="2" y="5" width="2" height="1" fill="#b8774a"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#b8774a"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#b8774a"/><rect x="2" y="6" width="2" height="1" fill="#b8774a"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#b8774a"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#b8774a"/><rect x="2" y="7" width="12" height="1" fill="#b8774a"/><rect x="2" y="8" width="4" height="1" fill="#b8774a"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#b8774a"/><rect x="3" y="9" width="10" height="1" fill="#b8774a"/><rect x="4" y="10" width="8" height="1" fill="#b8774a"/><rect x="4" y="11" width="8" height="1" fill="#f28c28"/><rect x="3" y="12" width="10" height="1" fill="#f28c28"/><rect x="2" y="13" width="1" height="1" fill="#b8774a"/><rect x="3" y="13" width="10" height="1" fill="#f28c28"/><rect x="13" y="13" width="1" height="1" fill="#b8774a"/><rect x="2" y="14" width="1" height="1" fill="#b8774a"/><rect x="3" y="14" width="10" height="1" fill="#f28c28"/><rect x="13" y="14" width="1" height="1" fill="#b8774a"/><rect x="4" y="15" width="8" height="1" fill="#222222"/><rect x="4" y="16" width="2" height="1" fill="#222222"/><rect x="10" y="16" width="2" height="1" fill="#222222"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Goalkeeper</span>
+        <h4>Weverton</h4>
+        <p class="idol-slide__lead">Goalkeeper, Libertadores champion in 2020 and 2021 and league champion in 2022 and 2023.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Brazil</dd></div>
+          <div><dt>At the club</dt><dd>2018–</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~450</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>Arrived from Athletico-PR in 2018 and became one of the most decorated goalkeepers in club history.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>League</strong> 2018 · 2022 · 2023</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>Recopa</strong> 2022</li><li><strong>Paulista</strong> 2020 · 2022 · 2024</li></ul></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="5 / 7: Gustavo Gómez">
+      <div class="idol-slide__fig" data-nick="Gustavo"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#1f140d"/><rect x="3" y="1" width="10" height="1" fill="#1f140d"/><rect x="2" y="2" width="12" height="1" fill="#1f140d"/><rect x="2" y="3" width="1" height="1" fill="#1f140d"/><rect x="3" y="3" width="10" height="1" fill="#d9a97c"/><rect x="13" y="3" width="1" height="1" fill="#1f140d"/><rect x="2" y="4" width="12" height="1" fill="#d9a97c"/><rect x="2" y="5" width="2" height="1" fill="#d9a97c"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#d9a97c"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#d9a97c"/><rect x="2" y="6" width="2" height="1" fill="#d9a97c"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#d9a97c"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#d9a97c"/><rect x="2" y="7" width="12" height="1" fill="#d9a97c"/><rect x="2" y="8" width="4" height="1" fill="#d9a97c"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#d9a97c"/><rect x="3" y="9" width="10" height="1" fill="#d9a97c"/><rect x="4" y="10" width="8" height="1" fill="#d9a97c"/><rect x="4" y="11" width="8" height="1" fill="#0a7b45"/><rect x="3" y="12" width="10" height="1" fill="#0a7b45"/><rect x="2" y="13" width="1" height="1" fill="#d9a97c"/><rect x="3" y="13" width="10" height="1" fill="#0a7b45"/><rect x="13" y="13" width="1" height="1" fill="#d9a97c"/><rect x="2" y="14" width="1" height="1" fill="#d9a97c"/><rect x="3" y="14" width="10" height="1" fill="#0a7b45"/><rect x="13" y="14" width="1" height="1" fill="#d9a97c"/><rect x="4" y="15" width="8" height="1" fill="#ffffff"/><rect x="4" y="16" width="2" height="1" fill="#ffffff"/><rect x="10" y="16" width="2" height="1" fill="#ffffff"/><rect x="3" y="17" width="3" height="1" fill="#222"/><rect x="10" y="17" width="3" height="1" fill="#222"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Defender</span>
+        <h4>Gustavo Gómez</h4>
+        <p class="idol-slide__lead">Paraguayan centre-back and captain, two-time Libertadores champion.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Paraguay</dd></div>
+          <div><dt>At the club</dt><dd>2018–</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~330</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>Captain and defensive leader of the Abel era, dominant in the air and dangerous at set pieces.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>League</strong> 2022 · 2023</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>Recopa</strong> 2022</li><li><strong>Paulista</strong> 2020 · 2022</li></ul></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="6 / 7: Abel Ferreira">
+      <div class="idol-slide__fig" data-nick="Abel"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#3a2a20"/><rect x="3" y="1" width="10" height="1" fill="#3a2a20"/><rect x="2" y="2" width="12" height="1" fill="#3a2a20"/><rect x="2" y="3" width="1" height="1" fill="#3a2a20"/><rect x="3" y="3" width="10" height="1" fill="#e8bd98"/><rect x="13" y="3" width="1" height="1" fill="#3a2a20"/><rect x="2" y="4" width="12" height="1" fill="#e8bd98"/><rect x="2" y="5" width="2" height="1" fill="#e8bd98"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#e8bd98"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#e8bd98"/><rect x="2" y="6" width="2" height="1" fill="#e8bd98"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#e8bd98"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#e8bd98"/><rect x="2" y="7" width="12" height="1" fill="#e8bd98"/><rect x="2" y="8" width="4" height="1" fill="#e8bd98"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#e8bd98"/><rect x="3" y="9" width="10" height="1" fill="#e8bd98"/><rect x="4" y="10" width="8" height="1" fill="#e8bd98"/><rect x="4" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="6" y="11" width="1" height="1" fill="#ffffff"/><rect x="7" y="11" width="2" height="1" fill="#0a7b45"/><rect x="9" y="11" width="1" height="1" fill="#ffffff"/><rect x="10" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="6" y="12" width="1" height="1" fill="#ffffff"/><rect x="7" y="12" width="2" height="1" fill="#0a7b45"/><rect x="9" y="12" width="1" height="1" fill="#ffffff"/><rect x="10" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="2" y="13" width="1" height="1" fill="#e8bd98"/><rect x="3" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="13" width="2" height="1" fill="#0a7b45"/><rect x="9" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="13" width="1" height="1" fill="#e8bd98"/><rect x="2" y="14" width="1" height="1" fill="#e8bd98"/><rect x="3" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="14" width="2" height="1" fill="#0a7b45"/><rect x="9" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="14" width="1" height="1" fill="#e8bd98"/><rect x="4" y="15" width="8" height="1" fill="#2a2f3a"/><rect x="4" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="10" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="17" width="3" height="1" fill="#111"/><rect x="10" y="17" width="3" height="1" fill="#111"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Coach</span>
+        <h4>Abel Ferreira</h4>
+        <p class="idol-slide__lead">Portuguese coach behind the club’s most successful recent era, two-time Libertadores winner.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Portugal</dd></div>
+          <div><dt>At the club</dt><dd>2020–</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~650</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>Came from PAOK in 2020 and became the most decorated coach in club history.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Libertadores</strong> 2020 · 2021</li><li><strong>Copa do Brasil</strong> 2020</li><li><strong>League</strong> 2022 · 2023</li><li><strong>Recopa</strong> 2022</li><li><strong>Supercopa</strong> 2023</li><li><strong>Paulista</strong> 2022 · 2024</li></ul></div>
+      </div></article><article class="idol-slide" role="group" aria-roledescription="slide" aria-label="7 / 7: Luiz Felipe Scolari">
+      <div class="idol-slide__fig" data-nick="Felipão"><svg class="idol__sprite" viewBox="0 0 16 18" shape-rendering="crispEdges" aria-hidden="true"><rect x="4" y="0" width="8" height="1" fill="#ececec"/><rect x="3" y="1" width="10" height="1" fill="#ececec"/><rect x="2" y="2" width="12" height="1" fill="#ececec"/><rect x="2" y="3" width="1" height="1" fill="#ececec"/><rect x="3" y="3" width="10" height="1" fill="#dca383"/><rect x="13" y="3" width="1" height="1" fill="#ececec"/><rect x="2" y="4" width="12" height="1" fill="#dca383"/><rect x="2" y="5" width="2" height="1" fill="#dca383"/><rect x="4" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="5" width="4" height="1" fill="#dca383"/><rect x="10" y="5" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="5" width="2" height="1" fill="#dca383"/><rect x="2" y="6" width="2" height="1" fill="#dca383"/><rect x="4" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="6" y="6" width="4" height="1" fill="#dca383"/><rect x="10" y="6" width="2" height="1" fill="#1b1b1b"/><rect x="12" y="6" width="2" height="1" fill="#dca383"/><rect x="2" y="7" width="12" height="1" fill="#dca383"/><rect x="2" y="8" width="4" height="1" fill="#dca383"/><rect x="6" y="8" width="4" height="1" fill="#a4443a"/><rect x="10" y="8" width="4" height="1" fill="#dca383"/><rect x="3" y="9" width="10" height="1" fill="#dca383"/><rect x="4" y="10" width="8" height="1" fill="#dca383"/><rect x="4" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="6" y="11" width="1" height="1" fill="#ffffff"/><rect x="7" y="11" width="2" height="1" fill="#0a7b45"/><rect x="9" y="11" width="1" height="1" fill="#ffffff"/><rect x="10" y="11" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="6" y="12" width="1" height="1" fill="#ffffff"/><rect x="7" y="12" width="2" height="1" fill="#0a7b45"/><rect x="9" y="12" width="1" height="1" fill="#ffffff"/><rect x="10" y="12" width="3" height="1" fill="#2a2f3a"/><rect x="2" y="13" width="1" height="1" fill="#dca383"/><rect x="3" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="13" width="2" height="1" fill="#0a7b45"/><rect x="9" y="13" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="13" width="1" height="1" fill="#dca383"/><rect x="2" y="14" width="1" height="1" fill="#dca383"/><rect x="3" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="7" y="14" width="2" height="1" fill="#0a7b45"/><rect x="9" y="14" width="4" height="1" fill="#2a2f3a"/><rect x="13" y="14" width="1" height="1" fill="#dca383"/><rect x="4" y="15" width="8" height="1" fill="#2a2f3a"/><rect x="4" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="10" y="16" width="2" height="1" fill="#2a2f3a"/><rect x="3" y="17" width="3" height="1" fill="#111"/><rect x="10" y="17" width="3" height="1" fill="#111"/></svg></div>
+      <div class="idol-slide__info">
+        <span class="idol-slide__role">Coach · “Felipão”</span>
+        <h4>Luiz Felipe Scolari</h4>
+        <p class="idol-slide__lead">Felipão. Coach who won the 1998 Copa do Brasil, the 1999 Libertadores and the 2018 league.</p>
+        <dl class="idol-slide__meta">
+          <div><dt>Country</dt><dd>Brazil</dd></div>
+          <div><dt>At the club</dt><dd>1997–2000 · 2010–2012 · 2018–2019</dd></div>
+          <div><dt>Palmeiras appearances</dt><dd>~200</dd></div>
+        </dl>
+        <blockquote class="idol-slide__fact"><span>Club legacy</span>World Cup winner with Brazil in 2002; at Palmeiras he won the 1999 Libertadores and the 2018 league.</blockquote>
+        <div class="idol-slide__titles"><span>Titles with the club</span><ul><li><strong>Copa do Brasil</strong> 1998 · 2012</li><li><strong>Mercosul</strong> 1998</li><li><strong>Libertadores</strong> 1999</li><li><strong>League</strong> 2018</li></ul></div>
+      </div></article></div>
+      <div class="idol-nav">
+        <button type="button" class="idol-arrow" data-idol-step="-1" aria-label="Previous idol"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <div class="idol-dots"><button type="button" class="idol-dot on" data-idol-go="0" aria-label="Show Edmundo" aria-current="true">Edmundo</button><button type="button" class="idol-dot" data-idol-go="1" aria-label="Show Alex Mineiro">Mineiro</button><button type="button" class="idol-dot" data-idol-go="2" aria-label="Show Valdivia">Valdivia</button><button type="button" class="idol-dot" data-idol-go="3" aria-label="Show Weverton">Weverton</button><button type="button" class="idol-dot" data-idol-go="4" aria-label="Show Gustavo Gómez">Gómez</button><button type="button" class="idol-dot" data-idol-go="5" aria-label="Show Abel Ferreira">Ferreira</button><button type="button" class="idol-dot" data-idol-go="6" aria-label="Show Luiz Felipe Scolari">Scolari</button></div>
+        <button type="button" class="idol-arrow" data-idol-step="1" aria-label="Next idol"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
           </div>
         </div>
       </div>
