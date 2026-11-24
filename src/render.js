@@ -158,6 +158,7 @@ const sections = {
             <p class="meta">${esc(c.ui.stack)}</p>
             ${chips(base.stack)}
             ${base.internal ? `<p class="note">${esc(c.ui.internalNote)}</p>` : ''}
+            ${base.repo ? `<p class="actions"><a class="btn btn--primary" href="${esc(base.repo)}" target="_blank" rel="noopener noreferrer">${lang === 'en' ? 'View code on GitHub' : 'Ver código no GitHub'}</a></p>` : ''}
             ${DOCS[it.slug] ? `<p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="${esc(it.slug)}">${esc(DOC_UI[lang].open)} · ${esc(DOC_UI[lang].count(DOCS[it.slug].shots.length))}</button></p>` : ''}
           </article>`
         })

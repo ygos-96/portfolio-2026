@@ -207,9 +207,9 @@ export const TROPHIES = [
 ]
 
 export const PROJECT_BASE = {
-  'webhook-seguro': { stack: ['n8n', 'Node.js', 'HMAC-SHA256', 'Webhooks'], shot: null, hue: ['#2a9d8f', '#5b8def'] },
-  'devsecops-pipeline': { stack: ['GitHub Actions', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot'], shot: null, hue: ['#3b3b4f', '#5aa469'] },
-  'lab-vulneravel': { stack: ['Node.js', 'SQLite', 'OWASP Top 10'], shot: null, hue: ['#c8553d', '#8e7dff'] },
+  'webhook-seguro': { stack: ['n8n', 'Node.js', 'HMAC-SHA256', 'Webhooks'], shot: '/shots/webhook-seguro.png', repo: 'https://github.com/ygos-96/webhook-seguro-n8n', hue: ['#2a9d8f', '#5b8def'] },
+  'devsecops-pipeline': { stack: ['GitHub Actions', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot'], shot: '/shots/devsecops-pipeline.png', repo: 'https://github.com/ygos-96/devsecops-pipeline', hue: ['#3b3b4f', '#5aa469'] },
+  'lab-vulneravel': { stack: ['Node.js', 'SQLite', 'OWASP Top 10'], shot: '/shots/lab-vulneravel.png', repo: 'https://github.com/ygos-96/appsec-lab-vulneravel', hue: ['#c8553d', '#8e7dff'] },
   'original-sp-tattoo': { stack: ['Vite', 'Tailwind', 'JavaScript', 'i18n PT/EN/ES'], shot: '/shots/original-sp-tattoo.png', hue: ['#3b3b4f', '#c8553d'] },
   rogyfacul: { stack: ['Astro 7', 'Tailwind 4', 'Supabase', 'Vitest'], shot: '/shots/rogyfacul.png', hue: ['#1c1c1c', '#f0a92b'] },
 }
