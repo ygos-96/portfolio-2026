@@ -2184,3 +2184,4 @@ body.doc-visible .stick, body.doc-visible .action-controls, body.doc-visible .pr
 @media (max-width: 560px) {
   .ng-game { grid-template-columns: 1fr auto; grid-template-areas: 'when tags' 'match match' 'venue venue'; gap: 6px 10px; }
 }
+.ng-msg { padding: 10px 12px; font-size: 14px; color: var(--ink-soft); background: #f3faf6; border-radius: 10px; }

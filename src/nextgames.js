@@ -1,8 +1,8 @@
 // Bloco "Próximos jogos" do Estádio: busca /api/jogos (função na Vercel) e preenche a lista.
-// Se a API falhar ou não houver jogos, o bloco continua escondido.
+// O bloco começa escondido (páginas sem JS não o mostram) e ganha estados de carregando, vazio e erro.
 const UI = {
-  pt: { home: 'Em casa', away: 'Fora', tbd: 'horário a definir', locale: 'pt-BR' },
-  en: { home: 'Home', away: 'Away', tbd: 'time TBC', locale: 'en-GB' },
+  pt: { home: 'Em casa', away: 'Fora', tbd: 'horário a definir', locale: 'pt-BR', loading: 'Buscando a tabela…', empty: 'Nenhum jogo marcado por enquanto.', error: 'Não deu para carregar os jogos agora. Tente de novo mais tarde.' },
+  en: { home: 'Home', away: 'Away', tbd: 'time TBC', locale: 'en-GB', loading: 'Loading fixtures…', empty: 'No matches scheduled yet.', error: 'Couldn’t load the matches right now. Try again later.' },
 }
 const LEAGUES = [
   [/serie a/i, 'Brasileirão'],
@@ -29,14 +29,21 @@ export function hydrateNextGames(root, lang) {
       if (!data) request = null // falhou: tenta de novo na próxima vez que o painel abrir
       return data
     })
+  const u = UI[lang] || UI.pt
+  const list = box.querySelector('.next-games__list')
+  list.innerHTML = `<li class="ng-msg">${esc(u.loading)}</li>`
+  box.hidden = false
   request.then((data) => {
-    if (!data?.games?.length || !box.isConnected) return
-    const u = UI[lang] || UI.pt
+    if (!box.isConnected) return
+    if (!data?.games?.length) {
+      list.innerHTML = `<li class="ng-msg">${esc(data ? u.empty : u.error)}</li>`
+      return
+    }
     const day = new Intl.DateTimeFormat(u.locale, { timeZone: 'America/Sao_Paulo', weekday: 'short', day: '2-digit', month: '2-digit' })
     const hour = new Intl.DateTimeFormat(u.locale, { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' })
     const team = (t) =>
       `<span class="ng-team"><img src="${esc(t.logo)}" alt="" width="28" height="28" loading="lazy" onerror="this.remove()"><span>${esc(t.name)}</span></span>`
-    box.querySelector('.next-games__list').innerHTML = data.games
+    list.innerHTML = data.games
       .map((g) => {
         const d = new Date(g.date)
         return `<li class="ng-game${g.isHome ? ' is-home' : ''}">
@@ -47,6 +54,5 @@ export function hydrateNextGames(root, lang) {
         </li>`
       })
       .join('')
-    box.hidden = false
   })
 }
