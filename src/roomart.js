@@ -722,8 +722,9 @@ export const ART = {
       const sets = {
         pop: ['#6e5ce6', '#ffd166'],
         terror: ['#2a1038', '#ff6b6b'],
-        sandler: ['#e08a2e', '#ffffff'],
-        carrey: ['#2a9d8f', '#ffe08a'],
+        comedia: ['#e08a2e', '#ffffff'],
+        suspense: ['#1f2a44', '#9fb4d9'],
+        acao: ['#d9480f', '#ffd166'],
       }
       const [bg, fg] = sets[kind]
       g.fillStyle = bg
@@ -749,6 +750,19 @@ export const ART = {
         g.fill()
         g.fillStyle = fg
         for (let i = 0; i < 7; i++) g.fillRect(20 + i * 34, 200 + ((i * 17) % 40), 8, 60)
+      } else if (kind === 'suspense') {
+        g.beginPath()
+        g.ellipse(w / 2, 130, 90, 48, 0, 0, 7)
+        g.fill()
+        g.fillStyle = bg
+        g.beginPath()
+        g.arc(w / 2, 130, 30, 0, 7)
+        g.fill()
+      } else if (kind === 'acao') {
+        g.beginPath()
+        for (const [x, y] of [[150, 30], [80, 150], [125, 150], [100, 250], [190, 120], [145, 120], [180, 30]]) g.lineTo(x, y)
+        g.closePath()
+        g.fill()
       } else {
         for (const s of [-1, 1]) {
           g.beginPath()
@@ -770,7 +784,7 @@ export const ART = {
         g.arc(w / 2 + 34, 150, 22, Math.PI + 0.2, -0.2)
         g.stroke()
       }
-      text(g, kind === 'pop' ? 'CULTURA POP' : kind === 'terror' ? 'TERROR' : kind === 'sandler' ? 'COMÉDIA' : 'COMÉDIA', w / 2, 290, 24, fg)
+      text(g, kind === 'pop' ? 'CULTURA POP' : kind === 'terror' ? 'TERROR' : kind === 'suspense' ? 'SUSPENSE' : kind === 'acao' ? 'AÇÃO' : 'COMÉDIA', w / 2, 290, 24, fg)
     }),
   rug: (c1, c2) =>
     tex(256, 160, (g, w, h) => {

@@ -5,3 +5,9 @@ dist
 .claude
 .env
 .env*.local
+
+# gerados por scripts/build-static.mjs (npm run static)
+/rapido/
+/en/
+public/sitemap.xml
+public/robots.txt
