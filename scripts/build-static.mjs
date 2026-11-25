@@ -2,7 +2,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { rapidoPage } from '../src/render.js'
+import { comicPage } from '../src/comic.js'
 import { SITE_URL } from '../src/content.js'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -14,7 +14,7 @@ const out = [
 for (const [file, lang] of out) {
   const path = resolve(root, file)
   mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, rapidoPage(lang))
+  writeFileSync(path, comicPage(lang))
 }
 
 const urls = ['/', '/?lang=en', '/rapido/', '/en/rapido/']
