@@ -1,5 +1,6 @@
 // Funções puras que geram HTML (usadas no navegador e no gerador das páginas estáticas).
 import { DOC_UI, DOCS } from './projectdocs.js'
+import { POSTERS } from './posters.js'
 import { ARTISTS, BOOKS, CONTENT, IDOLS, LINKS, MOVIE_GROUPS, PROJECT_BASE, SECTION_ORDER, SITE_URL, SPOTIFY, TITLE_NAMES, TROPHIES } from './content.js'
 
 export const esc = (s) =>
@@ -158,6 +159,7 @@ const sections = {
             <p class="meta">${esc(c.ui.stack)}</p>
             ${chips(base.stack)}
             ${base.internal ? `<p class="note">${esc(c.ui.internalNote)}</p>` : ''}
+            ${base.live ? `<p class="actions"><a class="btn btn--primary" href="${esc(base.live)}" target="_blank" rel="noopener noreferrer">${esc(c.ui.live)}</a></p>` : ''}
             ${base.repo ? `<p class="actions"><a class="btn btn--primary" href="${esc(base.repo)}" target="_blank" rel="noopener noreferrer">${lang === 'en' ? 'View code on GitHub' : 'Ver código no GitHub'}</a></p>` : ''}
             ${DOCS[it.slug] ? `<p class="actions"><button type="button" class="btn btn--primary doc-open" data-doc="${esc(it.slug)}">${esc(DOC_UI[lang].open)} · ${esc(DOC_UI[lang].count(DOCS[it.slug].shots.length))}</button></p>` : ''}
           </article>`
@@ -295,11 +297,13 @@ const sections = {
         <ul class="movies">${g.items
           .map(([ptTitle, enTitle, year]) => {
             const title = lang === 'pt' ? ptTitle : enTitle
-            return `<li class="movie" style="--c1:${a};--c2:${b}"><span class="movie__year">${year}</span><span class="movie__title">${esc(title)}</span></li>`
+            const poster = POSTERS[`${enTitle}|${year}`]
+            const img = poster ? `<img class="movie__poster" src="https://image.tmdb.org/t/p/w342${esc(poster)}" alt="" width="342" height="513" loading="lazy" decoding="async">` : ''
+            return `<li class="movie${poster ? ' movie--poster' : ''}" style="--c1:${a};--c2:${b}">${img}<span class="movie__year">${year}</span><span class="movie__title">${esc(title)}</span></li>`
           })
           .join('')}</ul>`
       }).join('')}
-      <p class="note">${esc(t.posterHint)}</p>`
+      <p class="note">${esc(Object.keys(POSTERS).length ? t.posterCredit : t.posterHint)}</p>`
   },
 
   biblioteca(lang) {

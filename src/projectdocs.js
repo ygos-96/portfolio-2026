@@ -61,11 +61,8 @@ export const DOCS = {
       ['15-habitos.png', 'Hábitos', 'Habits'],
       ['16-metas.png', 'Metas', 'Goals'],
       ['17-projetos.png', 'Projetos pessoais', 'Personal projects'],
-      ['18-aprendizado.png', 'Aprendizado com revisão espaçada', 'Learning with spaced review'],
       ['19-ideias.png', 'Caixa de ideias', 'Idea box'],
       ['20-inbox.png', 'Inbox', 'Inbox'],
-      ['21-inicio-mobile.png', 'Início no celular', 'Home on mobile'],
-      ['22-cartoes-mobile.png', 'Cartões no celular', 'Cards on mobile'],
       ['23-habitos-mobile.png', 'Hábitos no celular', 'Habits on mobile'],
     ]),
     pt: {

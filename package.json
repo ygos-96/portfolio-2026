@@ -6,6 +6,7 @@
   "description": "Portfólio interativo de Ygor Gomes: mapa top-down com prédios clicáveis.",
   "scripts": {
     "static": "node scripts/build-static.mjs",
+    "posters": "node scripts/fetch-posters.mjs",
     "dev": "npm run static && vite",
     "build": "npm run static && vite build",
     "preview": "vite preview"

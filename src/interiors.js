@@ -626,8 +626,9 @@ export function buildRoom(key, h) {
       for (let r = 0; r < 3; r++) seatRow(3.1, 5.2 + r * 1.3, 7, '#d9304f')
       wallArt('left', 3.4, 2.6, 1.5, 2.0, art('poster', 'pop'), '#ffd166')
       wallArt('left', 6.4, 2.6, 1.5, 2.0, art('poster', 'terror'), '#ffd166')
-      wallArt('right', 3.4, 2.6, 1.5, 2.0, art('poster', 'sandler'), '#ffd166')
-      wallArt('right', 6.4, 2.6, 1.5, 2.0, art('poster', 'carrey'), '#ffd166')
+      wallArt('right', 3.4, 2.6, 1.5, 2.0, art('poster', 'comedia'), '#ffd166')
+      wallArt('right', 6.4, 2.6, 1.5, 2.0, art('poster', 'suspense'), '#ffd166')
+      wallArt('right', 9.0, 2.6, 1.5, 2.0, art('poster', 'acao'), '#ffd166')
       // projetor no fundo da sala, com o feixe de luz até a tela
       bx(7, 3.6, 9.0, 1.0, 0.5, 0.7, '#2d2a32')
       cy(7, 3.7, 8.6, 0.18, 0.2, '#111', 10).rotation.x = Math.PI / 2
@@ -643,8 +644,9 @@ export function buildRoom(key, h) {
       bx(2.6, 0.1, 8.6, 0.8, 0.06, 0.5, '#f6f6f6')
       hot('pop', 'Cultura pop', 2.8, 3.4, ['h3:nth-of-type(1)', 'ul.movies:nth-of-type(1)'])
       hot('terror', 'Terror', 2.8, 6.4, ['h3:nth-of-type(2)', 'ul.movies:nth-of-type(2)'])
-      hot('sandler', 'Adam Sandler', 11.2, 3.4, ['h3:nth-of-type(3)', 'ul.movies:nth-of-type(3)'])
-      hot('carrey', 'Jim Carrey', 11.2, 6.4, ['h3:nth-of-type(4)', 'ul.movies:nth-of-type(4)'])
+      hot('comedia', 'Comédia', 11.2, 3.4, ['h3:nth-of-type(3)', 'ul.movies:nth-of-type(3)'])
+      hot('suspense', 'Suspense', 11.2, 6.4, ['h3:nth-of-type(4)', 'ul.movies:nth-of-type(4)'])
+      hot('acao', 'Ação e aventura', 7, 3.4, ['h3:nth-of-type(5)', 'ul.movies:nth-of-type(5)'])
     },
     // BIBLIOTECA: estantes, escada, poltronas e um gato dormindo no tapete
     biblioteca() {
