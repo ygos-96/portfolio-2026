@@ -27,8 +27,8 @@ body.comic {
 }
 :where(.comic) a { color: inherit; }
 .comic img { max-width: 100%; height: auto; display: block; }
-.comic ul, .comic ol { margin: 0; padding: 0; list-style: none; }
-.comic h1, .comic h2, .comic h3, .comic p { margin: 0; }
+:where(.comic) :is(ul, ol) { margin: 0; padding: 0; list-style: none; }
+:where(.comic) :is(h1, h2, h3, p) { margin: 0; }
 .comic :focus-visible { outline: 4px solid var(--cyan); outline-offset: 3px; }
 .skip { position: absolute; left: -999px; top: 0; background: var(--yellow); padding: 8px 12px; z-index: 50; font-weight: 700; }
 .skip:focus { left: 8px; top: 8px; }
@@ -435,13 +435,16 @@ body.comic {
   .caption:nth-child(even) { transform: none; }
   .channels { grid-template-columns: 1fr; }
   .cover { gap: 18px; padding-top: 22px; }
-  .m-sfx { left: 8px; top: -18px; }
+  .sticky-cta { left: 0; right: 0; bottom: 0; text-align: center; border-width: 4px 0 0; box-shadow: none; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); font-size: 20px; }
+  .chapter { padding-bottom: 72px; }
+  .lead { margin-bottom: 52px; }
+  .mission { margin-bottom: 64px; }
+  .m-sfx { left: 8px; top: -26px; font-size: 26px; padding: 4px 16px; }
   .mission--flip .m-sfx { right: 8px; }
 }
 @media (max-width: 420px) {
   body.comic { font-size: 17px; }
   .btn { font-size: 21px; padding: 8px 16px; }
-  .sticky-cta { right: 10px; bottom: 10px; font-size: 19px; }
 }
 
 /* quem prefere menos movimento recebe a página estática */
