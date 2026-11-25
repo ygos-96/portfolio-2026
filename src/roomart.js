@@ -599,7 +599,7 @@ export const ART = {
       g.fillStyle = '#1c1526'
       g.fillRect(36, 74, 32, 22)
       text(g, 'Ygor Gomes', 190, 40, 20, '#ffffff', '800')
-      text(g, 'Dev Front-End · n8n/IA', 190, 62, 12, '#4cc9f0', '700')
+      text(g, 'AppSec · Dev Front-End', 190, 62, 12, '#4cc9f0', '700')
       g.fillStyle = '#4a4f66'
       for (let i = 0; i < 4; i++) g.fillRect(100, 84 + i * 14, 150 - i * 18, 6)
       g.fillStyle = '#5dca87'

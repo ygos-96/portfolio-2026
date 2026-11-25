@@ -281,9 +281,9 @@ const pt = {
   htmlLang: 'pt-BR',
   ogLocale: 'pt_BR',
   meta: {
-    title: 'Ygor Gomes | Desenvolvedor Front-End · React, Astro e Automações n8n',
+    title: 'Ygor Gomes | Segurança de Aplicações (AppSec) · Desenvolvedor Front-End e Automação',
     description:
-      'Portfólio interativo de Ygor Gomes, desenvolvedor front-end em São Paulo. Sites, painéis e automações com n8n e IA. Explore o mapa ou abra o modo rápido.',
+      'Portfólio interativo de Ygor Gomes, desenvolvedor em São Paulo em transição para segurança de aplicações (AppSec). Projetos públicos: webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10. Explore o mapa ou abra o modo rápido.',
   },
   ui: {
     start: 'Começar',
@@ -350,7 +350,7 @@ const pt = {
   },
   hero: {
     name: 'Ygor Gomes',
-    role: 'Desenvolvedor Front-End · Automações n8n/IA',
+    role: 'Segurança de Aplicações · Desenvolvedor Front-End',
     location: 'São Paulo, SP · Remoto',
   },
   sections: {
@@ -366,25 +366,25 @@ const pt = {
   },
   sobre: {
     paragraphs: [
-      'Sou o Ygor, desenvolvedor front-end em São Paulo. Crio sites, landing pages, painéis e automações com n8n e IA, do layout ao deploy.',
-      'Sou técnico em TI pelo Senac e bacharel em Comunicação e Jornalismo. Gosto de juntar as duas coisas: interface clara e texto que ajuda a pessoa a decidir.',
-      'No dia a dia, cuido de sites e de campanhas de um estúdio de tatuagem, e nas horas livres construo meus próprios apps e automações.',
+      'Sou o Ygor, desenvolvedor em São Paulo, em transição para segurança de aplicações (AppSec). Construo e publico projetos de segurança: webhook assinado com HMAC, pipeline DevSecOps no GitHub Actions e um laboratório de falhas do OWASP Top 10 com correção e testes automatizados.',
+      'Sou técnico em TI pelo Senac e estudei Comunicação e Jornalismo, o que me ajuda a explicar risco técnico em linguagem clara.',
+      'Desde mai/2024 sou desenvolvedor front-end em um estúdio de tatuagem, com sites, automações em n8n com agentes de IA em produção e suporte de TI. Nas horas livres estudo AppSec e construo meus próprios projetos.',
     ],
     focusTitle: 'No que eu trabalho',
-    focus: ['Sites e landing pages de alta conversão', 'Painéis e apps web com React e Astro', 'Automações com n8n, APIs e IA', 'Animações e interface com cuidado de detalhe'],
-    status: 'Aberto a vagas remotas e a projetos freelance.',
+    focus: ['Segurança de aplicações: OWASP Top 10, validação de webhooks e headers de segurança', 'DevSecOps: pipelines com gitleaks, Semgrep, Trivy e Dependabot', 'Automações com n8n, APIs e agentes de IA em produção', 'Sites e painéis com React e Astro'],
+    status: 'Buscando vagas em segurança de aplicações (AppSec). Aberto a trabalho remoto.',
     trajectoryTitle: 'Trajetória',
     trajectory: [
       {
-        role: 'Desenvolvedor front-end e social media',
+        role: 'Desenvolvedor front-end e automação',
         org: 'Estúdio de tatuagem · São Paulo',
-        period: 'atual',
-        text: 'Sites e landing pages, Reels e redes sociais, painéis internos, automações com n8n e suporte de TI.',
+        period: 'mai/2024 – atual',
+        text: 'Sites e landing pages, automações em n8n com agentes de IA em produção (acesso a cursos liberado sem intervenção manual para mais de 1.000 alunos), painéis internos e suporte de TI.',
       },
       {
         role: 'Assistente de cobrança',
         org: 'GRB Services do Brasil',
-        period: 'a partir de nov/2022',
+        period: 'nov/2022 – out/2023',
         text: 'Revisão de contratos, negociação de pendências e reuniões de equipe.',
       },
     ],
@@ -459,8 +459,9 @@ const pt = {
   formacao: {
     educationTitle: 'Formação acadêmica',
     education: [
+      { title: 'Tecnólogo em Análise e Desenvolvimento de Sistemas (incompleto)', org: 'Senac', period: 'ago/2024 – dez/2025' },
       { title: 'Técnico em Tecnologia da Informação', org: 'Senac', period: 'fev/2019 – dez/2021' },
-      { title: 'Bacharelado em Comunicação e Jornalismo', org: 'Uninove', period: 'jan/2014 – jul/2017' },
+      { title: 'Bacharelado em Comunicação Social / Jornalismo (incompleto)', org: 'Uninove', period: '2014 – 2017' },
     ],
     coursesTitle: 'Cursos e certificações',
     courses: [
@@ -479,6 +480,7 @@ const pt = {
   },
   skills: {
     groups: [
+      { title: 'Segurança de aplicações', items: ['OWASP Top 10', 'HMAC e anti-replay', 'DevSecOps', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot', 'CSP e headers de segurança'] },
       { title: 'Front-end', items: ['HTML', 'CSS', 'JavaScript', 'React', 'Astro', 'Tailwind CSS', 'Vite', 'GSAP'] },
       { title: 'Automação e IA', items: ['n8n', 'Webhooks', 'APIs REST', 'JSON', 'LLMs e prompts', 'Bots de Telegram'] },
       { title: 'Dados e deploy', items: ['Supabase', 'MySQL', 'Git e GitHub', 'Vercel', 'Cloudflare'] },
@@ -488,7 +490,7 @@ const pt = {
     softTitle: 'Além do código',
     soft: ['Comunicação', 'Trabalho em equipe', 'Adaptação rápida', 'Aprendizado constante'],
     langsTitle: 'Idiomas',
-    langs: ['Português (nativo)', 'Inglês (intermediário)'],
+    langs: ['Português (nativo)', 'Inglês (leitura técnica)'],
   },
   contato: {
     intro: 'Tem uma vaga remota ou um projeto em mente? Me chame por onde for mais fácil.',
@@ -532,9 +534,9 @@ const en = {
   htmlLang: 'en',
   ogLocale: 'en_US',
   meta: {
-    title: 'Ygor Gomes | Front-End Developer · React, Astro & n8n Automation',
+    title: 'Ygor Gomes | Application Security (AppSec) · Front-End Developer & Automation',
     description:
-      'Interactive portfolio of Ygor Gomes, a front-end developer based in São Paulo, Brazil. Websites, dashboards and automations with n8n and AI. Explore the map or open the quick view.',
+      'Interactive portfolio of Ygor Gomes, a developer in São Paulo, Brazil, moving into application security (AppSec). Public projects: secure webhook, DevSecOps pipeline and an OWASP Top 10 lab. Explore the map or open the quick view.',
   },
   ui: {
     start: 'Start',
@@ -601,7 +603,7 @@ const en = {
   },
   hero: {
     name: 'Ygor Gomes',
-    role: 'Front-End Developer · n8n & AI Automation',
+    role: 'Application Security · Front-End Developer',
     location: 'São Paulo, Brazil · Remote',
   },
   sections: {
@@ -617,25 +619,25 @@ const en = {
   },
   sobre: {
     paragraphs: [
-      "I'm Ygor, a front-end developer in São Paulo. I build websites, landing pages, dashboards and automations with n8n and AI, from layout to deploy.",
-      'I hold a technical degree in IT from Senac and a bachelor’s in Communication and Journalism. I like to combine both: clear interfaces and copy that helps people decide.',
-      'Day to day I run the websites and campaigns of a tattoo studio, and in my spare time I build my own apps and automations.',
+      "I'm Ygor, a developer in São Paulo moving into application security (AppSec). I build and publish security projects: an HMAC-signed webhook, a DevSecOps pipeline on GitHub Actions and an OWASP Top 10 lab with fixes and automated tests.",
+      'I hold a technical degree in IT from Senac and studied Communication and Journalism, which helps me explain technical risk in plain language.',
+      'Since May 2024 I have worked as a front-end developer at a tattoo studio, building websites, n8n automations with AI agents in production and providing IT support. In my spare time I study AppSec and build my own projects.',
     ],
     focusTitle: 'What I work on',
-    focus: ['High-converting websites and landing pages', 'Web apps and dashboards with React and Astro', 'Automations with n8n, APIs and AI', 'Animation and interfaces with attention to detail'],
-    status: 'Open to remote roles and freelance projects.',
+    focus: ['Application security: OWASP Top 10, webhook validation and security headers', 'DevSecOps: pipelines with gitleaks, Semgrep, Trivy and Dependabot', 'Automations with n8n, APIs and AI agents in production', 'Websites and dashboards with React and Astro'],
+    status: 'Looking for application security (AppSec) roles. Open to remote work.',
     trajectoryTitle: 'Background',
     trajectory: [
       {
-        role: 'Front-end developer and social media',
+        role: 'Front-end and automation developer',
         org: 'Tattoo studio · São Paulo',
-        period: 'current',
-        text: 'Websites and landing pages, Reels and social media, internal dashboards, n8n automations and IT support.',
+        period: 'May 2024 – present',
+        text: 'Websites and landing pages, n8n automations with AI agents in production (course access granted with no manual work for over 1,000 students), internal dashboards and IT support.',
       },
       {
         role: 'Collections assistant',
         org: 'GRB Services do Brasil',
-        period: 'since Nov 2022',
+        period: 'Nov 2022 – Oct 2023',
         text: 'Contract review, negotiation of overdue items and team meetings.',
       },
     ],
@@ -710,8 +712,9 @@ const en = {
   formacao: {
     educationTitle: 'Education',
     education: [
+      { title: 'Associate degree in Systems Analysis and Development (incomplete)', org: 'Senac', period: 'Aug 2024 – Dec 2025' },
       { title: 'Technical degree in Information Technology', org: 'Senac', period: 'Feb 2019 – Dec 2021' },
-      { title: "Bachelor's in Communication and Journalism", org: 'Uninove', period: 'Jan 2014 – Jul 2017' },
+      { title: "Bachelor's in Social Communication / Journalism (incomplete)", org: 'Uninove', period: '2014 – 2017' },
     ],
     coursesTitle: 'Courses and certificates',
     courses: [
@@ -730,6 +733,7 @@ const en = {
   },
   skills: {
     groups: [
+      { title: 'Application security', items: ['OWASP Top 10', 'HMAC and anti-replay', 'DevSecOps', 'gitleaks', 'Semgrep', 'Trivy', 'Dependabot', 'CSP and security headers'] },
       { title: 'Front-end', items: ['HTML', 'CSS', 'JavaScript', 'React', 'Astro', 'Tailwind CSS', 'Vite', 'GSAP'] },
       { title: 'Automation and AI', items: ['n8n', 'Webhooks', 'REST APIs', 'JSON', 'LLMs and prompting', 'Telegram bots'] },
       { title: 'Data and deploy', items: ['Supabase', 'MySQL', 'Git and GitHub', 'Vercel', 'Cloudflare'] },
@@ -739,7 +743,7 @@ const en = {
     softTitle: 'Beyond code',
     soft: ['Communication', 'Teamwork', 'Quick adaptation', 'Continuous learning'],
     langsTitle: 'Languages',
-    langs: ['Portuguese (native)', 'English (intermediate)'],
+    langs: ['Portuguese (native)', 'English (technical reading)'],
   },
   contato: {
     intro: 'Have a remote role or a project in mind? Reach me wherever is easiest.',

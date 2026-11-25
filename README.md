@@ -1,5 +1,7 @@
 # Portfólio · Ygor Gomes
 
+Portfólio de Ygor Gomes, desenvolvedor em transição para segurança de aplicações (AppSec). Reúne os projetos de segurança (webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10) em um mapa interativo em 3D.
+
 Portfólio interativo em 3D: um bairro visto de cima onde o personagem anda (WASD/setas no desktop, joystick no celular) e entra em prédios clicáveis, cada um com sala interna própria. Os cinco prédios de trabalho (Sobre, Projetos, Formação, Skills e Contato) ficam no centro. O bairro de lazer, a leste, tem o Estádio (Palmeiras), o Palco (playlists do Spotify), o Cinema e a Biblioteca, além da Casa, com os gostos pessoais. A tecla de ação é o **Enter**.
 
 Para quem tem pressa, leitores de tela e buscadores existe o **modo rápido**, uma versão em HTML estático com o mesmo conteúdo (`/rapido/` e `/en/rapido/`).
@@ -62,7 +64,7 @@ A chave v3 é grátis em themoviedb.org (Configurações > API). Rode de novo ao
 python3 scripts/make-cv.py https://ygor-portfolio-sigma.vercel.app
 ```
 
-Precisa de `reportlab`. Gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. **Atenção:** os PDFs atuais foram gerados a partir de HTML, com os projetos de AppSec. Rodar o script sobrescreve com o texto antigo, então atualize o texto do script antes.
+Precisa de `reportlab` (`pip install reportlab`). Gera `public/Ygor-Gomes-Curriculo.pdf` e `public/Ygor-Gomes-Resume-EN.pdf`. O texto dos currículos fica em `DATA`, dentro do próprio script.
 
 ## Segurança e qualidade
 
