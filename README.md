@@ -1,6 +1,6 @@
 # Portfólio · Ygor Gomes
 
-Portfólio de Ygor Gomes, desenvolvedor em transição para segurança de aplicações (AppSec). Reúne os projetos de segurança (webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10) em um mapa interativo em 3D.
+Portfólio de Ygor Gomes, desenvolvedor front-end e de automação, com atuação em segurança de aplicações (AppSec). Reúne os projetos de segurança (webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10) em um mapa interativo em 3D.
 
 Portfólio interativo em 3D: um bairro visto de cima onde o personagem anda (WASD/setas no desktop, joystick no celular) e entra em prédios clicáveis, cada um com sala interna própria. Os cinco prédios de trabalho (Sobre, Projetos, Formação, Skills e Contato) ficam no centro. O bairro de lazer, a leste, tem o Estádio (Palmeiras), o Palco (playlists do Spotify), o Cinema e a Biblioteca, além da Casa, com os gostos pessoais. A tecla de ação é o **Enter**.
 
