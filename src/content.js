@@ -283,7 +283,7 @@ const pt = {
   meta: {
     title: 'Ygor Gomes | Segurança de Aplicações (AppSec) · Desenvolvedor Front-End e Automação',
     description:
-      'Portfólio interativo de Ygor Gomes, desenvolvedor em São Paulo em transição para segurança de aplicações (AppSec). Projetos públicos: webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10. Explore o mapa ou abra o modo rápido.',
+      'Portfólio interativo de Ygor Gomes, desenvolvedor em São Paulo: front-end, automação com n8n e segurança de aplicações (AppSec). Projetos públicos: webhook seguro, pipeline DevSecOps e laboratório OWASP Top 10. Explore o mapa ou abra o modo rápido.',
   },
   ui: {
     start: 'Começar',
@@ -366,13 +366,13 @@ const pt = {
   },
   sobre: {
     paragraphs: [
-      'Sou o Ygor, desenvolvedor em São Paulo, em transição para segurança de aplicações (AppSec). Construo e publico projetos de segurança: webhook assinado com HMAC, pipeline DevSecOps no GitHub Actions e um laboratório de falhas do OWASP Top 10 com correção e testes automatizados.',
+      'Sou o Ygor, desenvolvedor em São Paulo, com foco em front-end e automação e atuação em segurança de aplicações (AppSec). Construo e publico projetos de segurança: webhook assinado com HMAC, pipeline DevSecOps no GitHub Actions e um laboratório de falhas do OWASP Top 10 com correção e testes automatizados.',
       'Sou técnico em TI pelo Senac e estudei Comunicação e Jornalismo, o que me ajuda a explicar risco técnico em linguagem clara.',
       'Desde mai/2024 sou desenvolvedor front-end em um estúdio de tatuagem, com sites, automações em n8n com agentes de IA em produção e suporte de TI. Nas horas livres estudo AppSec e construo meus próprios projetos.',
     ],
     focusTitle: 'No que eu trabalho',
     focus: ['Segurança de aplicações: OWASP Top 10, validação de webhooks e headers de segurança', 'DevSecOps: pipelines com gitleaks, Semgrep, Trivy e Dependabot', 'Automações com n8n, APIs e agentes de IA em produção', 'Sites e painéis com React e Astro'],
-    status: 'Buscando vagas em segurança de aplicações (AppSec). Aberto a trabalho remoto.',
+    status: 'Buscando vagas em automação, front-end ou segurança de aplicações. Aberto a trabalho remoto.',
     trajectoryTitle: 'Trajetória',
     trajectory: [
       {
@@ -536,7 +536,7 @@ const en = {
   meta: {
     title: 'Ygor Gomes | Application Security (AppSec) · Front-End Developer & Automation',
     description:
-      'Interactive portfolio of Ygor Gomes, a developer in São Paulo, Brazil, moving into application security (AppSec). Public projects: secure webhook, DevSecOps pipeline and an OWASP Top 10 lab. Explore the map or open the quick view.',
+      'Interactive portfolio of Ygor Gomes, a developer in São Paulo, Brazil: front-end, n8n automation and application security (AppSec). Public projects: secure webhook, DevSecOps pipeline and an OWASP Top 10 lab. Explore the map or open the quick view.',
   },
   ui: {
     start: 'Start',
@@ -619,13 +619,13 @@ const en = {
   },
   sobre: {
     paragraphs: [
-      "I'm Ygor, a developer in São Paulo moving into application security (AppSec). I build and publish security projects: an HMAC-signed webhook, a DevSecOps pipeline on GitHub Actions and an OWASP Top 10 lab with fixes and automated tests.",
+      "I'm Ygor, a developer in São Paulo focused on front-end and automation, also working in application security (AppSec). I build and publish security projects: an HMAC-signed webhook, a DevSecOps pipeline on GitHub Actions and an OWASP Top 10 lab with fixes and automated tests.",
       'I hold a technical degree in IT from Senac and studied Communication and Journalism, which helps me explain technical risk in plain language.',
       'Since May 2024 I have worked as a front-end developer at a tattoo studio, building websites, n8n automations with AI agents in production and providing IT support. In my spare time I study AppSec and build my own projects.',
     ],
     focusTitle: 'What I work on',
     focus: ['Application security: OWASP Top 10, webhook validation and security headers', 'DevSecOps: pipelines with gitleaks, Semgrep, Trivy and Dependabot', 'Automations with n8n, APIs and AI agents in production', 'Websites and dashboards with React and Astro'],
-    status: 'Looking for application security (AppSec) roles. Open to remote work.',
+    status: 'Looking for automation, front-end or application security roles. Open to remote work.',
     trajectoryTitle: 'Background',
     trajectory: [
       {
